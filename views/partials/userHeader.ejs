@@ -1,0 +1,56 @@
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="header__top__inner">
+                        <div class=" header__top__left ">
+                            <a href="/home"><img src="img/logo.png" alt=""></a>
+                        </div>
+
+                        <div class="header__top__right">
+                            <div class="header__top__right__links">
+
+                                <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
+                            </div>
+
+                            <div class="header__top__right__cart">
+                                <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                            </div>
+                            <div class="header__top__right__cart">
+
+                                <% if(user){%>
+                                    <a href=" /userAccount" class="signin">
+                                        <%=user.name %>
+                                    </a>
+                                    <a href="/logout" class="logout signin"><img src="img/icon/signout.svg" alt=""></a>
+
+                                    <% } else { %>
+                                        <a href="/login" class="signin">Sign in</a>
+                                        <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li class="active"><a href="/home">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/shop">Shop</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Header Section End -->

@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+    <section class="hero">
+
+        <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg">
+            <div class="container">
+                <div class="row d-flex align-content-center">
+                    <div class="col-lg-4">
+                        <div class="text">
+
+                            <h1>Login</h1>
+                            <!-- <% if(typeof message !=='undefined' ) { %>
+                                <p style="color: green;">
+                                    <%= message %>
+                                        <% } %>
+                                            <% if (errorMessage.length> 0) { %>
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    <%- errorMessage %>
+                                                </div>
+                                                <% } %>
+                                                    <% if (successMessage.length> 0) { %>
+                                                        <div class="alert alert-success alert-dismissible fade show"
+                                                            role="alert">
+                                                            <%- successMessage %>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>
+                                                        <% } %> -->
+
+                            <form action="/login" method="post">
+                                <input type="email" name="email" placeholder="Enter Email">
+                                <br><br>
+                                <input type="password" name="password" placeholder=" Enter Password">
+                                <br><br>
+                                <input type="submit" value="Login">
+
+                                <br><br>
+                            </form>
+                            <form action="/register" method="get">
+                                <button type="submit">Register</button>
+                            </form>
+                            <a href="/forget-password">Forget Password</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('../partials/plugins.ejs') %>

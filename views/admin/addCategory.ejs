@@ -1,0 +1,88 @@
+<%- include('../partials/adminHeader.ejs') -%>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Add Category</h5>
+                <div class="card-body">
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                                <% } %>
+                                    <form action="/admin/addCategory" method="post">
+                                        <div class=" row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">Category Name</label>
+                                                    <input id="inputText3" name="name" type="text"
+                                                        placeholder="Category Name" class="form-control" required>
+                                                </div>
+                                                <div class="product-sidebar-widget">
+                                                    <h4 class="product-sidebar-widget-title">Toppings</h4>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="checkbox"
+                                                            class="custom-control-input" value="Vanila" id="cat-1">
+                                                        <label class="custom-control-label" for="cat-1">Vanila</label>
+                                                    </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="checkbox"
+                                                            class="custom-control-input" value="Strawberry" id="cat-2">
+                                                        <label class="custom-control-label"
+                                                            for="cat-2">Strawberry</label>
+                                                    </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="checkbox"
+                                                            class="custom-control-input" value="Pista" id="cat-3">
+                                                        <label class="custom-control-label" for="cat-3">Pista</label>
+                                                    </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="checkbox"
+                                                            class="custom-control-input" value="Chocolate" id="cat-4">
+                                                        <label class="custom-control-label"
+                                                            for="cat-4">Chocolate</label>
+                                                    </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="checkbox"
+                                                            class="custom-control-input" value="Orange" id="cat-5">
+                                                        <label class="custom-control-label" for="cat-5">Orange</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="inputDefault" class="col-form-label">
+                                                        <h4 class="product-sidebar-widget-title">Status</h4>
+                                                    </label>
+                                                    <br>
+                                                    <label class=" custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" name="status" value="Available" class="
+                                                            custom-control-input"><span
+                                                            class="custom-control-label">Available</span>
+                                                    </label>
+                                                    <label class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" name="status" value="Not available"
+                                                            class="custom-control-input"><span
+                                                            class="custom-control-label">Not available</span>
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-group col-xl-3">
+                                                    <button id="btn-submit" type="submit"
+                                                        class="btn btn-dark btn-ml btn-block">Add
+                                                        Category</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/adminPlugins.ejs') -%>

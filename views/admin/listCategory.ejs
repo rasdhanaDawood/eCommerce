@@ -1,0 +1,69 @@
+<%- include('../partials/adminHeader.ejs') -%>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h2 class="card-header">Category</h2>
+                <br>
+                <div class="card-body">
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                                <% } %>
+                                    <table style="width: 100%">
+                                        <tr style="height: 55%">
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Toppings</th>
+                                            <th>Action</th>
+                                        </tr>
+
+                                        <% if(category.length>0){
+                                            for(let i=0;i<category.length;i++){ %>
+                                                <tr>
+                                                    <td>
+                                                        <%= category[i].name %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%=category[i].status%>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= category[i].toppings %>
+                                                    </td>
+
+                                                    <td>
+                                                        <a href="/admin/editCategory?id=<%= category[i]._id %>">
+                                                            <button class="btn-dark" type="button">Edit</button>
+                                                        </a>
+                                                        <a href="/admin/deleteCategory?id=<%= category[i]._id %>"><button
+                                                                class="btn-dark" type="button">Delete</button>
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="10">Categories Not Found
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                    </table>
+                                    <br><br>
+                </div>
+                <a href="/admin/addCategory">
+                    <button class=" btn-dark" style="width: 20%;">Add
+                        Category</button></a><br>
+
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/adminPlugins.ejs') -%>

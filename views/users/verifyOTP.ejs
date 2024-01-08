@@ -1,0 +1,24 @@
+<form action="/verify" method="post">
+    <label for="mailId">Enter email</label>
+    <input type="email" name="email" placeholder="Enter email" required></input>
+    <br></br>
+    <label for="OTP">Enter OTP</label>
+    <input type="otp" name="otp" placeholder="Enter OTP" required></input>
+    <br></br>
+    <button type="submit">Verify Account</button>
+</form>
+<!-- <% if(typeof message !=='undefined' ) { %>
+    <p style="color: green;">
+        <%= message %>
+            <% } %> -->
+<% if (errorMessage.length> 0) { %>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <%- errorMessage %>
+    </div>
+    <% } %>
+        <% if (successMessage.length> 0) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%- successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
