@@ -8,38 +8,33 @@
                         <div class="text">
 
                             <h1>Login</h1>
-                            <!-- <% if(typeof message !=='undefined' ) { %>
-                                <p style="color: green;">
-                                    <%= message %>
+
+                            <% if (errorMessage.length> 0) { %>
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <%- errorMessage %>
+                                </div>
+                                <% } %>
+                                    <% if (successMessage.length> 0) { %>
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <%- successMessage %>
+
+                                        </div>
                                         <% } %>
-                                            <% if (errorMessage.length> 0) { %>
-                                                <div class="alert alert-warning alert-dismissible fade show"
-                                                    role="alert">
-                                                    <%- errorMessage %>
-                                                </div>
-                                                <% } %>
-                                                    <% if (successMessage.length> 0) { %>
-                                                        <div class="alert alert-success alert-dismissible fade show"
-                                                            role="alert">
-                                                            <%- successMessage %>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="alert" aria-label="Close"></button>
-                                                        </div>
-                                                        <% } %> -->
 
-                            <form action="/login" method="post">
-                                <input type="email" name="email" placeholder="Enter Email">
-                                <br><br>
-                                <input type="password" name="password" placeholder=" Enter Password">
-                                <br><br>
-                                <input type="submit" value="Login">
+                                            <form action="/login" method="post">
 
-                                <br><br>
-                            </form>
-                            <form action="/register" method="get">
-                                <button type="submit">Register</button>
-                            </form>
-                            <a href="/forget-password">Forget Password</a>
+                                                <input type="email" name="email" placeholder="Enter Email">
+                                                <br><br>
+                                                <input type="password" name="password" placeholder=" Enter Password">
+                                                <br><br>
+                                                <input type="submit" value="Login">
+
+                                                <br><br>
+                                            </form>
+                                            <form action="/register" method="get">
+                                                <button type="submit">Register</button>
+                                            </form>
+                                            <a href="/forget-password">Forget Password</a>
 
                         </div>
                     </div>

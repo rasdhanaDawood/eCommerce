@@ -1,0 +1,55 @@
+<div class=" form-group">
+    <label for="inputImage" class="col-form-label">Insert Images</label><br>
+    <img src="/img/shop/<%= product.images[0] %>">
+</div>
+<form action="/resize" method="post">
+    <label for="width">Width:</label>
+    <input type="range" name="width" min="1" max="1200" step="10" value="100" oninput="resizeImage()">
+    <span id="width-value">100 </span>px
+
+    <label for="height">Height:</label>
+    <input type="range" name="height" min="1" max="1200" step="10" value="100" oninput="resizeImage()">
+    <span id="height-value">100 </span>px
+    <button type="submit">Resize Image</button>
+</form>
+<h2>Resize image Preview</h2>
+<img id="resized-image" src="#" alt="" style="max-width: 100%;display:block;">
+<a href="#" id="download-link" style="display: none;">Download resized Image</a>
+<script>
+    const widthInput = document.querySelector('[name="width"]');
+    const heightInput = document.querySelector('[name="height"]');
+    const widthValue = document.getElementById("width-value");
+    const heightValue = document.getElementById("height-value");
+    const resizedImage = document.getElementById("resized-image");
+    const downloadLink = document.getElementById("download-link");
+
+    function resizeImage() {
+        widthValue.textContent = widthInput.value;
+        heightValue.textContent = heightInput.value;
+
+        if (resizeImage.src) {
+            URL.revokeObjectURL(resizeImage.src)
+        }
+        const formData = new FormData();
+        formData.append('width', widthInput.value);
+        formData.append('height', heightInput.value);
+        formData.append("image", document.querySelector('[name="image"]').files[0]);
+        fetch('/resize', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.blob())
+            .then(blob => {
+                const objectUrl = URL.createObjectURL(blob);
+                resizedImage.src = objectUrl;
+                downloadLink.href = objectUrl;
+                downloadLink.style.display = "block";
+            }).catch((error) => {
+                console.error(error);
+                resizedImage.src = "";
+                downloadLink.style.display = "none"
+            });
+    }
+    widthInput.addEventListener("input", resizeImage);
+    heightInput.addEventListener("input", resizeImage);
+
+</script>

@@ -231,7 +231,8 @@ svg:not(:root) {
 }
 
 table {
-    border-collapse: collapse
+    border-collapse: collapse;
+    width: inherit;
 }
 
 caption {

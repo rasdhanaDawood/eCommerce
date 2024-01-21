@@ -1,24 +1,35 @@
-<form action="/verify" method="post">
-    <label for="mailId">Enter email</label>
-    <input type="email" name="email" placeholder="Enter email" required></input>
-    <br></br>
-    <label for="OTP">Enter OTP</label>
-    <input type="otp" name="otp" placeholder="Enter OTP" required></input>
-    <br></br>
-    <button type="submit">Verify Account</button>
-</form>
-<!-- <% if(typeof message !=='undefined' ) { %>
-    <p style="color: green;">
-        <%= message %>
-            <% } %> -->
-<% if (errorMessage.length> 0) { %>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <%- errorMessage %>
-    </div>
-    <% } %>
-        <% if (successMessage.length> 0) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <%- successMessage %>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <% } %>
+<%- include('../partials/head.ejs')%>
+    <% if (errorMessage.length> 0) { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%- errorMessage %>
+        </div>
+        <% } %>
+            <% if (successMessage.length> 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%- successMessage %>
+                </div>
+                <% } %>
+                    <section class="hero align-content-center">
+                        <div class="hero__item set-bg">
+                            <div class="col-lg-3"></div>
+                            <div class="container">
+                                <div class="col-lg-6 card ">
+                                    <form action="/verify" method="post">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Email address</label>
+                                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                                aria-describedby="emailHelp" name="email" placeholder="Enter email"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="OTP">Enter OTP</label>
+                                            <input type="password" class="form-control" id="exampleInputPassword1"
+                                                name="otp" placeholder="Enter OTP">
+                                        </div>
+                                        <button type="submit" class="btn btn-dark">Verify Account</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <%- include('../partials/plugins.ejs')%>

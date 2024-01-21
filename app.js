@@ -33,16 +33,18 @@ app.use(nocache());
 app.use(logger("dev"));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.urlencoded({ extended: true }));
 
 const userRoute = require("./routes/userRoute");
 app.use('/', userRoute);
 
 const adminRoute = require("./routes/adminRoute");
 app.use('/admin', adminRoute);
+
 
 const port = 8000
 app.listen(port, () => {

@@ -6,10 +6,10 @@ const sendOTP = async (req, res, next) => {
     try {
         const { email } = req.body;
         const findUser = await User.findOne({ email });
-        if (findUser) {
+        if (findUser && findUser.verified === true) {
             console.log('User exist');
         }
-        else {
+        else if (findUser) {
             let otp = otpGenerator.generate(6, {
                 upperCaseAlphabets: false,
                 lowerCaseAlphabets: false,
@@ -26,6 +26,9 @@ const sendOTP = async (req, res, next) => {
             const otpBody = await OTP.create(otpPayload);
             console.log("OTP Body:" + otpBody);
             console.log('OTP sent successfully');
+        }
+        else {
+            console.log("No User found")
         }
     } catch (error) {
         console.log(error.message);

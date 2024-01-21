@@ -2,8 +2,9 @@ const User = require("../models/userModel");
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 
-
 const bcrypt = require("bcrypt");
+
+
 
 const securePassword = async (password) => {
     try {
@@ -55,7 +56,9 @@ const verifyLogin = async (req, res) => {
 
 const dashboard = async (req, res) => {
     try {
-        res.render('dashboard');
+        if (req.session.admin) {
+            res.render('dashboard');
+        }
     }
     catch (error) {
         console.log(error.message);
@@ -64,31 +67,22 @@ const dashboard = async (req, res) => {
 
 const listProduct = async (req, res) => {
     try {
-        const productData = await Product.find({});
-        const categoryData = await Category.find({});
+        if (req.session.admin) {
+            const productData = await Product.find({ is_Deleted: false }).populate("category");
 
-        for (let i = 0; i < productData.length; i++) {
-            for (let j = 0; j < categoryData.length; j++) {
-                console.log(productData[i].category)
-                console.log(categoryData[j]._id)
-
-                if (productData[i].category === categoryData[j]._id) {
-                    console.log(categoryData[j].name);
-                }
+            if (productData) {
+                res.render('listProduct', {
+                    product: productData,
+                    errorMessage: req.flash("errorMessage"),
+                    successMessage: req.flash("successMessage")
+                });
+            }
+            else {
+                req.flash("errorMessage", "Product data not found")
+                res.redirect('/admin/listproduct');
             }
         }
-        if (productData) {
-            res.render('listProduct', {
-                product: productData,
-                category: categoryData,
-                errorMessage: req.flash("errorMessage"),
-                successMessage: req.flash("successMessage")
-            });
-        }
-        else {
-            req.flash("errorMessage", "Product data not found")
-            res.redirect('/admin/listproduct');
-        }
+
     } catch (error) {
         console.log(error.message);
     }
@@ -105,10 +99,20 @@ const getProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
+
+        const imageFiles = [];
+        // const basePath = `${req.protocol}://${req.get('host')}/public/img/shop/`;
+        console.log(req.files);
+        if (req.files) {
+            req.files.map(file => {
+                imageFiles.push(file.filename);
+            });
+        }
+        console.log(imageFiles);
         const product = new Product({
             name: req.body.productname,
             price: req.body.price,
-            image: req.file.filename,
+            images: imageFiles,
             short_description: req.body.shortDesc,
             detail_description: req.body.detailDesc,
             is_Featured: req.body.isFeatured,
@@ -134,9 +138,38 @@ const addProduct = async (req, res) => {
     }
 }
 
+const editImage = async (req, res) => {
+    try {
+        console.log(req.query.id);
+
+        const productData = await Product.find({ _id: req.query.id });
+        console.log(productData.images[0])
+
+        res.render('resizeImage', { product: productData });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const resizeImage = async (req, res) => {
+    try {
+        const resizedImageBuffer = await sharp(req.file.buffer).resize(Number(req.body.width), Number(req.body.height)).toBuffer();
+        console.log(resizedImageBuffer);
+        res.writeHead(200, {
+            "Content-Type": "image/png",
+            "Content-Disposition": 'attachment;filename="resized_image.png"'
+        })
+        res.end(resizedImageBuffer)
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
+
         const productData = await Product.findById({ _id: id })
         const categoryData = await Category.find({});
         res.render('editProduct', {
@@ -150,9 +183,57 @@ const getEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
-
+        const imageFiles = [];
+        // const basePath = `${req.protocol}://${req.get('host')}/public/img/shop/`;
+        console.log(req.files);
+        if (req.files) {
+            req.files.map(file => {
+                imageFiles.push(file.filename);
+            });
+        }
+        console.log(req.body);
+        const productData = await Product.findByIdAndUpdate({ _id: req.body.id }, {
+            $set: {
+                name: req.body.name,
+                price: req.body.price,
+                images: imageFiles,
+                short_description: req.body.shortDesc,
+                detail_description: req.body.detailDesc,
+                is_Featured: req.body.isFeatured,
+                is_Deleted: req.body.isDeleted,
+                rating: req.body.rating,
+                category: req.body.category,
+                stock: req.body.stock
+            }
+        });
+        if (productData) {
+            console.log("Update successfull");
+            req.flash("successMessage", "Product updated successfully!!");
+            res.redirect('/admin/listProduct');
+        }
+        else {
+            req.flash("errorMessage", "Something went wrong!!updation failed!")
+            res.redirect('/admin/listProduct');
+        }
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+const deleteProduct = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const productData = await Product.findOne({ _id: id });
+        if (productData) {
+            const deleteProduct = await Product.findByIdAndUpdate({ _id: id }, { $set: { is_Deleted: true } });
+            req.flash("successMessage", "Product deleted successfully!!")
+            res.redirect('/admin/listProduct');
+        } else {
+            req.flash("errorMessage", "Something went wrong!!");
+            res.redirect('/admin/listProduct');
+        }
+    } catch (error) {
+        console.log(error.message)
     }
 }
 
@@ -229,9 +310,11 @@ const addCategory = async (req, res) => {
         console.log(error.message);
     }
 }
+
 const forgotPassword = async (req, res) => {
     try {
         res.render('forgotPassword');
+
     }
     catch (error) {
         console.log(error.message);
@@ -240,9 +323,9 @@ const forgotPassword = async (req, res) => {
 
 const editCategory = async (req, res) => {
     try {
-        const categoryData = await Category.findByIdAndUpdate({ _id: req.body.id }, { $set: { name: req.body.name, status: req.body.status, toppings: req.body.toppings } });
+        const categoryData = await Category.findByIdAndUpdate({ _id: req.body.id }, { $set: { name: req.body.name, status: req.body.status, toppings: req.body.checkbox } });
         if (categoryData) {
-            console.log("Update successfull")
+            req.flash("successMessage", "Category updated Successfully")
             res.redirect('/admin/listCategory');
 
         }
@@ -276,12 +359,72 @@ const deleteCategory = async (req, res) => {
 
         const id = req.query.id;
         await Category.deleteOne({ _id: id });
+        req.flash("successMessage", "Deleted Successfully");
         res.redirect('/admin/listCategory');
     } catch (error) {
         console.log(error.message);
     }
 }
 
+const getUser = async (req, res) => {
+    try {
+        const userData = await User.find({});
+        res.render('editUser', {
+            user: userData,
+            errorMessage: req.flash('errorMessage'),
+            successMessage: req.flash('successMessage')
+
+        });
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+const editUser = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const userData = await User.findOne({ _id: id });
+        if (userData) {
+            if (userData.blocked === true) {
+                userData.blocked = false;
+            } else {
+                userData.blocked = true;
+            }
+            const updateData = await User.findByIdAndUpdate({ _id: id }, { $set: { blocked: userData.blocked } });
+            console.log(updateData.blocked);
+            console.log(updateData);
+            console.log(userData.blocked);
+            if (userData.blocked === true) {
+                req.flash('successMessage', userData.name + ' is blocked successfully');
+                res.redirect('/admin/editUser');
+            } else {
+
+                req.flash('successMessage', userData.name + ' is unblocked successfully');
+                res.redirect('/admin/editUser');
+            }
+        }
+        else {
+            console.log("User not found")
+        }
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+const logout = async (req, res) => {
+    try {
+        console.log("logout");
+
+        req.session.destroy();
+        console.log(req.session);
+        res.redirect("/admin");
+
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 module.exports = {
     loadLogin,
@@ -290,13 +433,19 @@ module.exports = {
     listProduct,
     getProduct,
     addProduct,
+    getEditProduct,
+    editProduct,
+    editImage,
+    resizeImage,
+    deleteProduct,
     listCategory,
     getCategory,
     addCategory,
     getEditCategory,
     editCategory,
     deleteCategory,
-    getEditProduct,
-    editProduct,
+    getUser,
+    editUser,
+    logout,
     forgotPassword
 }

@@ -1,0 +1,77 @@
+<%- include('../partials/adminHeader.ejs') -%>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <h3 class="card-header">Manage User</h3>
+
+            <% if (errorMessage.length> 0) { %>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <%- errorMessage %>
+                </div>
+                <% } %>
+                    <% if (successMessage.length> 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <%- successMessage %>
+                        </div>
+                        <% } %>
+                            <div class="card-body">
+
+                                <table style="width: 100%">
+                                    <tr style="height: 55%">
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Blocked</th>
+                                        <th>Verified</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <% if(user.length>0 ){
+                                        for(let i=0;i<user.length;i++){ %>
+                                            <% if(user[i].is_admin==false){ %>
+                                                <tr>
+                                                    <td>
+                                                        <%= user[i].name %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= user[i].email %>
+
+                                                    </td>
+
+                                                    <td>
+                                                        <%= user[i].phone %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= user[i].blocked %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= user[i].verified %>
+                                                    </td>
+
+                                                    <td>
+                                                        <a href="/admin/updateUser?id=<%= user[i]._id %>">
+                                                            <% if(user[i].blocked===true){ %>
+                                                                <button class="btn-dark" style="width: 100%;"
+                                                                    type="button">Unblock</button>
+                                                                <% } %>
+                                                                    <% if(user[i].blocked===false){ %>
+                                                                        <button class="btn-dark" style="width: 100%;"
+                                                                            type="button">Block</button>
+                                                                        <% } %>
+                                                        </a>
+                                                    </td>
+                                                    <% } %>
+                                                </tr>
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="10">Users Not Found
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                </table>
+
+                            </div>
+        </div>
+    </div>
+    <%- include('../partials/adminPlugins.ejs') -%>

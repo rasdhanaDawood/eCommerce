@@ -12,8 +12,6 @@
                         <% if (successMessage.length> 0) { %>
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <%- successMessage %>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
                             </div>
                             <% } %>
                                 <div class="card-body">
@@ -25,9 +23,10 @@
                                             <th>Short description</th>
                                             <th>Rating</th>
                                             <th>Category</th>
+                                            <th>Toppings</th>
                                             <th>Stock</th>
                                             <th>Featured</th>
-                                            <th>Deleted</th>
+                                            <!-- <th>Deleted</th> -->
                                             <th>Action</th>
                                         </tr>
 
@@ -39,8 +38,13 @@
                                                     </td>
 
                                                     <td>
-                                                        <img src="/img/shop/<%=product[i].image%>"
-                                                            alt="<%=product[i].image%>" width="100px" height="100px">
+                                                        <img src="/img/shop/<%=product[i].images[0]%>"
+                                                            alt="<%=product[i].images[0]%>" width="100px"
+                                                            height="100px">
+                                                        <a href="/admin/resize?id=<%= product[i]._id %>">
+                                                            <button class="btn-dark" style="width: 100%;"
+                                                                type="button">Resize Image</button>
+                                                        </a>
 
                                                     </td>
 
@@ -57,11 +61,20 @@
                                                     </td>
 
                                                     <td>
-                                                        <% for(j=0;j<category.length;j++){%>
-                                                            <% if(product[i].category===category[j]._id){%>
-                                                                <%= category[j].name %>
-                                                                    <% } %>
-                                                                        <% } %>
+                                                        <%= product[i].category.name %>
+                                                    </td>
+
+                                                    <td>
+                                                        <ul>
+
+                                                            <% for(let j=0; j < product[i].category.toppings.length;
+                                                                j++){ %>
+                                                                <li>
+                                                                    <%=product[i].category.toppings[j]%>
+                                                                </li>
+                                                                <% } %>
+                                                        </ul>
+                                                        <!-- <%= product[i].category.toppings %> -->
                                                     </td>
 
                                                     <td>
@@ -72,9 +85,9 @@
                                                         <%=product[i].is_Featured %>
                                                     </td>
 
-                                                    <td>
+                                                    <!-- <td>
                                                         <%= product[i].is_Deleted %>
-                                                    </td>
+                                                    </td> -->
 
                                                     <td>
                                                         <a href="/admin/editProduct?id=<%= product[i]._id %>">
@@ -103,6 +116,7 @@
                                 <a href="/admin/addProduct">
                                     <button class=" btn-dark" style="width: 20%;">Add
                                         Product</button></a><br>
+                                <input type="hidden" name="id" value="<%= product._id %>">
 
             </div>
         </div>
