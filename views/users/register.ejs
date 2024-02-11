@@ -1,45 +1,219 @@
 <%- include('../partials/head.ejs')%>
-    <section class="hero">
-        <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg">
-            <div class="container">
-                <h2>User Registration Form</h2>
-                <br><br>
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+        }
 
-                <div class="row d-flex align-content-center">
-                    <div class="col-lg-4">
-                        <% if (errorMessage.length> 0) { %>
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <%- errorMessage %>
-                            </div>
-                            <% } %>
-                                <% if (successMessage.length> 0) { %>
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <%- successMessage %>
-                                    </div>
-                                    <% } %>
-                                        <div class="text">
-                                            <form action="/register" method="post">
-                                                <input type="text" name="name" placeholder="Enter Name" required>
-                                                <br><br>
-                                                <input type="email" name="email" placeholder="Enter Email Id" required>
-                                                <br><br>
-                                                <input type="text" name="phone" placeholder="Enter Phone No" required>
-                                                <br><br>
-                                                <input type="password" name="password" placeholder="Enter Password"
+        .transparent-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Adjust the last value for opacity (0-1) */
+
+        }
+    </style>
+    <section class="hero">
+        <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg" style="width: 100% ;height: 100vh;">
+            <div class=" container">
+
+
+                <div class="card transparent-card card-body col-lg-7 pt-2">
+                    <h2>User Registration Form</h2>
+                    <br>
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+
+                                </div>
+                                <% } %>
+
+                                    <form action="/register" method="post" class="form" id="form" novalidate>
+                                        <div class="form-group row mb-2 pt-2">
+                                            <label for="firstName" class="col-3 col-lg-4 pl-4 col-form-label">First
+                                                name:</label>
+                                            <div class="col-9 col-lg-8 pr-4 ">
+                                                <input type=" text" class="form-control" id="firstName"
+                                                    placeholder="Firstname" name="firstName" required>
+                                            </div>
+                                        </div> <span class="error" id="firstName_error"></span>
+
+
+                                        <div class="row form-group mb-2">
+                                            <label for="lastName" class="col-3 col-lg-4 pl-4 col-form-label">Last
+                                                Name:</label>
+                                            <div class="col-9 col-lg-8 pr-4">
+                                                <input type="text" class="form-control" id="lastName"
+                                                    placeholder="Last name" name="lastName" required>
+                                            </div>
+                                        </div> <span class="error" id="lastName_error"></span>
+
+
+                                        <div class="row form-group mb-2">
+                                            <label for="email" class="col-3 col-lg-4 pl-4 col-form-label">Email:</label>
+                                            <div class="col-9 col-lg-8 pr-4">
+                                                <input type="email" id="email" class="form-control" placeholder="Email"
+                                                    name="email" required>
+                                            </div>
+                                        </div> <span class="error" id="email_error"></span>
+
+
+                                        <div class="row form-group mb-2">
+                                            <label for="phone" class="col-3 col-lg-4 pl-4 col-form-label"
+                                                placeholder="Phone number">Phone
+                                                Number:</label>
+                                            <div class="col-9 col-lg-8 pr-4">
+                                                <input type="tel" id="phone" class="form-control"
+                                                    placeholder="Phone number" name="phone" pattern="[0-9]{10}"
                                                     required>
-                                                <br><br>
-                                                <input type="submit" value="Register">
-                                            </form>
-                                            <br>
-                                            <form action="/login" method="get">
-                                                <button type="submit">Login</button>
-                                            </form>
-                                            <a href="/forget-password">Forget Password</a>
+                                            </div>
+                                        </div> <span class="error" id="phone_error"></span>
+
+
+                                        <div class="row form-group mb-2 ">
+                                            <label for="password"
+                                                class="col-3 col-lg-4 col-form-label pl-4">Password:</label>
+                                            <div class="col-9 col-lg-8 pr-4">
+                                                <input type="password" class="form-control" placeholder="Password"
+                                                    id="password" name="password" required>
+                                            </div>
+                                        </div> <span class="error" id="password_error"></span>
+
+                                        <div class="row form-group mb-2">
+                                            <label for="confirmPassword"
+                                                class="col-3 col-lg-4 col-form-label  pl-4">Confirm
+                                                Password:</label>
+
+                                            <div class="col-9 col-lg-8 pr-4">
+                                                <input type="password" class="form-control"
+                                                    placeholder="Confirm password" id="confirmPassword"
+                                                    name="confirmPassword" required>
+                                            </div>
+                                        </div> <span class="error" id="confirmPassword_error"></span><br>
+
+
+                                        <div class="form-group text-center pb-2 pt-2">
+                                            <button type="submit" class="submit btn btn-dark">Register</button>
                                         </div>
-                    </div>
+
+                                    </form>
                 </div>
             </div>
         </div>
+        <script>
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
 
+            const form = document.getElementById('form');
+
+            const firstName_error = document.getElementById('firstName_error');
+            const lastName_error = document.getElementById('lastName_error');
+            const phone_error = document.getElementById('phone_error');
+            const email_error = document.getElementById('email_error');
+            const password_error = document.getElementById('password_error');
+            const confirmPassword_error = document.getElementById('confirmPassword_error');
+
+            form.addEventListener('submit', (e) => {
+
+                var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+                var phone_check = /^[0-9]{10}$/;
+
+                if (firstName.value === '' || firstName.value == null) {
+                    e.preventDefault();
+                    firstName_error.innerHTML = "First Name is required";
+                }
+
+                else {
+                    firstName_error.innerHTML = "";
+                }
+
+                if (lastName.value === '' || lastName.value == null) {
+                    e.preventDefault();
+                    lastName_error.innerHTML = "Last Name is required";
+                }
+
+                else {
+                    lastName_error.innerHTML = "";
+                }
+                if (email.value === '' || email.value == null) {
+                    e.preventDefault();
+                    email_error.innerHTML = "Email is required";
+                }
+
+                else {
+                    email_error.innerHTML = "";
+                }
+                if (!email.value.match(email_check)) {
+                    e.preventDefault();
+                    email_error.innerHTML = "Please enter valid email";
+
+                }
+                else {
+                    email_error.innerHTML = "";
+                }
+
+                if (phone.value === '' || phone.value == null) {
+                    e.preventDefault();
+                    phone_error.innerHTML = "Phone number is required";
+                }
+
+                else {
+                    phone_error.innerHTML = "";
+                }
+
+                if (!phone.value.match(phone_check)) {
+                    e.preventDefault();
+                    phone_error.innerHTML = "Please enter valid phone number";
+
+                }
+                else {
+                    phone_error.innerHTML = "";
+                }
+                if (password.value === '' || password.value == null) {
+                    e.preventDefault();
+                    password_error.innerHTML = "Password is required"
+                }
+                else {
+                    password_error.innerHTML = "";
+
+                }
+                if (password.value.length <= 5) {
+                    e.preventDefault();
+                    password_error.innerHTML = "Password must be more than 6 characters";
+                } else {
+                    password_error.innerHTML = "";
+                } if (password.value.length >= 20) {
+                    e.preventDefault();
+                    password_error.innerHTML = "Password cannot be more than 20 characters";
+                }
+
+                if (password.value === 'password') {
+                    e.preventDefault();
+                    password_error.innerHTML = "Password cannot be password";
+                }
+
+                if (confirmPassword.value === '' || confirmPassword.value == null) {
+                    e.preventDefault();
+                    confirmPassword_error.innerHTML = "Confirmation password is required"
+                }
+                else {
+                    confirmPassword_error.innerHTML = "";
+
+                }
+
+                if (password.value !== confirmPassword.value) {
+                    e.preventDefault();
+                    confirmPassword_error.innerHTML = "Password do not match";
+                }
+
+            })
+        </script>
     </section>
     <%- include('../partials/plugins.ejs')%>

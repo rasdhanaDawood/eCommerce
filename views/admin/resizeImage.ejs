@@ -1,6 +1,8 @@
 <div class=" form-group">
     <label for="inputImage" class="col-form-label">Insert Images</label><br>
-    <img src="/img/shop/<%= product.images[0] %>">
+
+    <img src="/public/img/shop/<%= product.images %>" width="100px" height="100px">
+
 </div>
 <form action="/resize" method="post">
     <label for="width">Width:</label>

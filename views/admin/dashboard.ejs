@@ -95,46 +95,44 @@
                                     <th class="border-0">#</th>
                                     <th class="border-0">Image</th>
                                     <th class="border-0">Product Name</th>
-                                    <th class="border-0">Product Id</th>
-                                    <th class="border-0">Quantity</th>
                                     <th class="border-0">Price</th>
-                                    <th class="border-0">Order Time</th>
-                                    <th class="border-0">Customer</th>
+                                    <th class="border-0">Rating</th>
+
+                                    <th class="border-0">Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>
-                                        <div class="m-r-10"><img src="/images/product-pic.jpg" alt="user"
-                                                class="rounded" width="45"></div>
-                                    </td>
-                                    <td>Product #1 </td>
-                                    <td>id000001 </td>
-                                    <td>20</td>
-                                    <td>$80.00</td>
-                                    <td>27-08-2018 01:22:12</td>
-                                    <td>Patricia J. King </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <div class="m-r-10"><img src="/images/product-pic-2.jpg" alt="user"
-                                                class="rounded" width="45"></div>
-                                    </td>
-                                    <td>Product #2 </td>
-                                    <td>id000002 </td>
-                                    <td>12</td>
-                                    <td>$180.00</td>
-                                    <td>25-08-2018 21:12:56</td>
-                                    <td>Rachel J. Wicker </td>
-                                </tr>
+                                <% if(product.length>0){%>
+                                    <%for(let i=0;i<product.length;i++){ %>
+                                        <tr>
+                                            <td>
+                                                <%=i+1%>
+                                            </td>
+                                            <td>
+                                                <div class="m-r-10"><img src="/img/shop/<%=product[i].images[0]%>"
+                                                        alt="<%=product[i].images[0]%>" class="rounded" width="45">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <%= product[i].name %>
+                                            </td>
+                                            <td>
+                                                <%= product[i].price %>
+                                            </td>
+                                            <td>
+                                                <%= product[i].rating %>
+                                            </td>
+                                            <td>
+                                                <%= product[i].stock %>
+                                            </td>
+                                        </tr>
 
-
-                                <tr>
-                                    <td colspan="8"><a href="#" class="btn btn-outline-light float-right">View
-                                            Details</a></td>
-                                </tr>
+                                        <%}}%>
+                                            <tr>
+                                                <td colspan="8"><a href="#"
+                                                        class="btn btn-outline-light float-right">View
+                                                        Details</a></td>
+                                            </tr>
                             </tbody>
                         </table>
                     </div>

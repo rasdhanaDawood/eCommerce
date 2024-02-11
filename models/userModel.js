@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
@@ -30,6 +34,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    address: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address'
+    }],
     coupons: Array,
     wallet: {
         type: Number,

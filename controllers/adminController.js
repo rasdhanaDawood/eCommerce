@@ -1,20 +1,9 @@
 const User = require("../models/userModel");
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
+const SubCategory = require("../models/subCategoryModel");
 
 const bcrypt = require("bcrypt");
-
-
-
-const securePassword = async (password) => {
-    try {
-        const passwordHash = await bcrypt.hash(password, 10);
-        return passwordHash;
-
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 
 const loadLogin = async (req, res) => {
     try {
@@ -38,15 +27,16 @@ const verifyLogin = async (req, res) => {
             const passwordMatch = await bcrypt.compare(password, userData.password);
             if (passwordMatch && userData.is_admin === true) {
                 req.session.admin = userData._id;
+
                 res.redirect('/admin/dashboard');
             }
             else {
-                req.flash('errorMessage', 'Email/password');
+                req.flash('errorMessage', 'Incorrect Email/password');
                 res.redirect('/admin/login');
             }
         }
         else {
-            req.flash('errorMessage', 'Please register before login')
+            req.flash('errorMessage', 'Please register or create an account')
             res.redirect('/admin/login');
         }
     } catch (error) {
@@ -57,7 +47,8 @@ const verifyLogin = async (req, res) => {
 const dashboard = async (req, res) => {
     try {
         if (req.session.admin) {
-            res.render('dashboard');
+            const productData = await Product.find({})
+            res.render('dashboard', { product: productData });
         }
     }
     catch (error) {
@@ -67,24 +58,54 @@ const dashboard = async (req, res) => {
 
 const listProduct = async (req, res) => {
     try {
-        if (req.session.admin) {
-            const productData = await Product.find({ is_Deleted: false }).populate("category");
-
-            if (productData) {
-                res.render('listProduct', {
-                    product: productData,
-                    errorMessage: req.flash("errorMessage"),
-                    successMessage: req.flash("successMessage")
-                });
+        // if (req.session.admin) {
+        console.log(req.query);
+        let category = req.query.category;
+        let featured = req.query.featured;
+        const categoryData = await Category.find({})
+        console.log(`Categories selected: ${category}`)
+        if (category) {
+            if (featured) {
+                const productData = await Product.find({ category: category, featured: true }).populate('category');
+                console.log(productData)
+            } else {
+                const productData = await Product.find({ category: category }).populate('category')
+                console.log(productData)
             }
-            else {
-                req.flash("errorMessage", "Product data not found")
-                res.redirect('/admin/listproduct');
-            }
+        } else if (featured == true) {
+            const productData = await Product.find({ featured: true }).populate('category')
+            console.log(productData)
+        } else {
+            const productData = await Product.find().populate('category')
+            console.log(productData)
         }
+        if (productData) {
 
+            res.render('listProduct', {
+                product: productData,
+                category: categoryData,
+                errorMessage: req.flash("errorMessage"),
+                successMessage: req.flash("successMessage")
+            })
+        }
+        else {
+            req.flash("errorMessage", "Product data not found")
+            res.redirect('/admin/listproduct');
+        }
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+const viewProduct = async (req, res) => {
+    try {
+        let id = req.query.id;
+        const productData = await Product.findById({ _id: id }).populate('category');
+        res.render('viewProduct', {
+            Product: productData
+        })
+    } catch (error) {
+        console.log(error.message)
     }
 }
 
@@ -99,9 +120,7 @@ const getProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-
         const imageFiles = [];
-        // const basePath = `${req.protocol}://${req.get('host')}/public/img/shop/`;
         console.log(req.files);
         if (req.files) {
             req.files.map(file => {
@@ -124,7 +143,6 @@ const addProduct = async (req, res) => {
         console.log(req.body)
         const createProduct = await product.save();
         if (createProduct) {
-            console.log("Product Created", createProduct);
             req.flash("successMessage", "Product created successfully")
             res.redirect('/admin/listProduct');
         }
@@ -138,43 +156,14 @@ const addProduct = async (req, res) => {
     }
 }
 
-const editImage = async (req, res) => {
-    try {
-        console.log(req.query.id);
-
-        const productData = await Product.find({ _id: req.query.id });
-        console.log(productData.images[0])
-
-        res.render('resizeImage', { product: productData });
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const resizeImage = async (req, res) => {
-    try {
-        const resizedImageBuffer = await sharp(req.file.buffer).resize(Number(req.body.width), Number(req.body.height)).toBuffer();
-        console.log(resizedImageBuffer);
-        res.writeHead(200, {
-            "Content-Type": "image/png",
-            "Content-Disposition": 'attachment;filename="resized_image.png"'
-        })
-        res.end(resizedImageBuffer)
-    }
-    catch (error) {
-        console.log(error)
-    }
-}
-
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
-
         const productData = await Product.findById({ _id: id })
         const categoryData = await Category.find({});
         res.render('editProduct', {
-            product: productData,
-            category: categoryData
+            Product: productData,
+            Category: categoryData
         })
     } catch (error) {
         console.log(error.message);
@@ -183,20 +172,30 @@ const getEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
-        const imageFiles = [];
-        // const basePath = `${req.protocol}://${req.get('host')}/public/img/shop/`;
-        console.log(req.files);
-        if (req.files) {
-            req.files.map(file => {
-                imageFiles.push(file.filename);
-            });
+        let id = req.body.id;
+        let images = [];
+
+        if (!req.files.image1) {
+            images.push(req.body.image1);
+        } else {
+            images.push(req.files.image1.originalname);
         }
-        console.log(req.body);
-        const productData = await Product.findByIdAndUpdate({ _id: req.body.id }, {
+        if (!req.files.image2) {
+            images.push(req.body.image2);
+        } else {
+            images.push(req.files.image2.originalname);
+        }
+        if (!req.files.image3) {
+            images.push(req.body.image3);
+        } else {
+            images.push(req.files.image3.originalname);
+        }
+        console.log(req.body.id);
+        const productData = await Product.findByIdAndUpdate({ _id: id }, {
             $set: {
                 name: req.body.name,
                 price: req.body.price,
-                images: imageFiles,
+                images: images,
                 short_description: req.body.shortDesc,
                 detail_description: req.body.detailDesc,
                 is_Featured: req.body.isFeatured,
@@ -237,6 +236,105 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+// const filterProducts = async (req, res) => {
+//     try {
+//         console.log(req.body);
+//         const category = req.body.category;
+//         const allProducts = req.body.allProducts;
+//         const featured = req.body.featured;
+//         const categoryData = await Category.find({})
+//         console.log(`Categories selected: ${category}`)
+//         if (featured == true && category) {
+//             const productData = await Product.find({
+//                 $or: [
+//                     { is_Featured: featured },
+//                     { category: category }
+//                 ]
+//             }).populate('category');
+//             console.log(productData)
+//             res.render('listProduct', {
+//                 product: productData,
+//                 category: categoryData,
+//                 errorMessage: req.flash("errorMessage"),
+//                 successMessage: req.flash("successMessage")
+//             })
+// } else if (category) {
+//     const productData = await Product.find({ category: category }).populate('category')
+//     console.log(productData)
+//     res.render('listProduct', {
+//         product: productData,
+//         category: categoryData,
+//         errorMessage: req.flash("errorMessage"),
+//         successMessage: req.flash("successMessage")
+//     });
+//         } else {
+//     const productData = await Product.find().populate('category')
+//     console.log(productData)
+//     res.render('listProduct', {
+//         product: productData,
+//         category: categoryData,
+//         errorMessage: req.flash("errorMessage"),
+//         successMessage: req.flash("successMessage")
+//     })
+// }
+
+
+//     }
+//     catch (error) {
+//     console.log(error.message)
+// }
+// }
+
+const add_subcategory = async (req, res) => {
+    try {
+        const subCategoryData = await SubCategory.find({});
+        res.render('addSubCategory', {
+            errorMessage: req.flash("errorMessage"),
+            successMessage: req.flash("successMessage"),
+            subcategory: subCategoryData
+        });
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+const create_subcategory = async (req, res) => {
+    try {
+        if (req.body) {
+            const sub_Category = new SubCategory({
+                sub_category: req.body.name
+            });
+            const subCatData = await sub_Category.save();
+            console.log(subCatData);
+            req.flash("successMessage", "Sub Category added!!");
+            res.redirect('/admin/add_subcategory');
+            console.log("subcategory saved successfully")
+        } else {
+            req.flash("errorMessage", "Sub Category not added!!");
+            res.redirect('/admin/add_subcategory');
+        }
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message });
+    }
+}
+
+const delete_subcategory = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const subcategoryData = await SubCategory.findOne({ _id: id });
+        if (subcategoryData) {
+            const deleteSubcategory = await SubCategory.deleteOne({ _id: id });
+            console.log("sub category deleted")
+            res.redirect('/admin/add_subcategory');
+        } else {
+            console.log("sub category not deleted")
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 const listCategory = async (req, res) => {
     try {
         const categoryData = await Category.find({});
@@ -258,7 +356,9 @@ const listCategory = async (req, res) => {
 
 const getCategory = async (req, res) => {
     try {
+        const subCategoryData = await SubCategory.find();
         res.render("addCategory", {
+            subCategory: subCategoryData,
             errorMessage: req.flash("errorMessage"),
             successMessage: req.flash("successMessage")
         });
@@ -342,8 +442,13 @@ const getEditCategory = async (req, res) => {
 
         const id = req.query.id;
         const categoryData = await Category.findById({ _id: id })
+        const subcategoryData = await SubCategory.find({})
+
         if (categoryData) {
-            res.render('editCategory', { category: categoryData });
+            res.render('editCategory', {
+                category: categoryData,
+                subcategory: subcategoryData
+            });
         }
         else {
             req.flash("errorMessage", "Category not found")
@@ -366,6 +471,13 @@ const deleteCategory = async (req, res) => {
     }
 }
 
+const getSubCategory = async (req, res) => {
+    try {
+        // res.render('addSubCategory');
+    } catch (error) {
+        console.log(error);
+    }
+}
 const getUser = async (req, res) => {
     try {
         const userData = await User.find({});
@@ -431,19 +543,22 @@ module.exports = {
     verifyLogin,
     dashboard,
     listProduct,
+    viewProduct,
     getProduct,
     addProduct,
     getEditProduct,
     editProduct,
-    editImage,
-    resizeImage,
     deleteProduct,
+    add_subcategory,
+    create_subcategory,
+    delete_subcategory,
     listCategory,
     getCategory,
     addCategory,
     getEditCategory,
     editCategory,
     deleteCategory,
+    getSubCategory,
     getUser,
     editUser,
     logout,

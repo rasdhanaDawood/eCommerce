@@ -1,0 +1,62 @@
+<%- include('../partials/adminHeader.ejs') -%>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Add Subcategory</h5>
+                <div class="card-body">
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                </div>
+                                <% } %>
+                                    <form action="/admin/add_subcategory" method="post">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">Sub Category
+                                                        Name</label>
+                                                    <input id="inputText3" name="name" type="text"
+                                                        placeholder="Enter Sub Category" class="form-control" required>
+                                                </div>
+                                                <div class="form-group col-xl-6">
+                                                    <button id="btn-submit" type="submit" class=" btn-dark btn-block"
+                                                        style="width: fit-content;">Add
+                                                        Sub Category</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div>
+                                                    <ul class="list-group">
+                                                        <% for(let i=0;i<subcategory.length;i++){ %>
+
+                                                            <li class="list-group-item-secondary">
+                                                                <%=subcategory[i].sub_category %>
+
+                                                                    <a
+                                                                        href="/admin/delete_subcategory?id=<%= subcategory[i]._id %>"><button
+                                                                            class="btn-dark float-right"
+                                                                            style="width: 20%; "
+                                                                            type="button">Delete</button>
+                                                                    </a>
+
+                                                            </li>
+
+                                                            <% } %>
+                                                    </ul>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/adminPlugins.ejs') -%>

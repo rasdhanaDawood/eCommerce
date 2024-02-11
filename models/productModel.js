@@ -10,10 +10,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    images: [{
-        type: String,
+    images: {
+        type: Array,
         required: true
-    }],
+    },
 
     short_description: {
         type: String,

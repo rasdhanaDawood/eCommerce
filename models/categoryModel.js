@@ -12,10 +12,10 @@ const categorySchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
-    toppings: [{
-        type: String,
+    toppings: {
+        type: Array,
         required: true
-    }]
+    }
 });
 
 module.exports = mongoose.model('Category', categorySchema);

@@ -1,6 +1,6 @@
-const db = require("./utils/db");
 require('dotenv').config();
 const express = require('express');
+const db = require("./utils/db");
 const app = new express();
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -33,7 +33,6 @@ app.use(nocache());
 app.use(logger("dev"));
 
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, '/public')));
@@ -44,7 +43,6 @@ app.use('/', userRoute);
 
 const adminRoute = require("./routes/adminRoute");
 app.use('/admin', adminRoute);
-
 
 const port = 8000
 app.listen(port, () => {

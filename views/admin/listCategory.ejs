@@ -16,15 +16,17 @@
                                 </div>
                                 <% } %>
                                     <table style="width: 100%">
+
                                         <tr style="height: 55%">
                                             <th>Name</th>
                                             <th>Status</th>
                                             <th>Toppings</th>
                                             <th>Action</th>
                                         </tr>
-
                                         <% if(category.length>0){
+
                                             for(let i=0;i<category.length;i++){ %>
+
                                                 <tr>
                                                     <td>
                                                         <%= category[i].name %>

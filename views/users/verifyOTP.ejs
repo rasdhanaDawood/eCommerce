@@ -1,35 +1,86 @@
 <%- include('../partials/head.ejs')%>
-    <% if (errorMessage.length> 0) { %>
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <%- errorMessage %>
-        </div>
-        <% } %>
-            <% if (successMessage.length> 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <%- successMessage %>
-                </div>
-                <% } %>
-                    <section class="hero align-content-center">
-                        <div class="hero__item set-bg">
-                            <div class="col-lg-3"></div>
-                            <div class="container">
-                                <div class="col-lg-6 card ">
-                                    <form action="/verify" method="post">
-                                        <div class="form-group">
+
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        .transparent-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Adjust the last value for opacity (0-1) */
+
+        }
+    </style>
+
+    <section class="hero align-content-center">
+        <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg" style="width: 100% ;height: 100vh;">
+
+            <div class="container align-content-center">
+                <div class="col-lg-6 card transparent-card">
+                    <h2>Verify Account</h2>
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                </div>
+                                <% } %>
+                                    <form action="/verify" method="post" class="form" id="form" novalidate>
+                                        <div class="form-group pt-2">
                                             <label for="exampleInputEmail1">Email address</label>
-                                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                            <input type="email" class="form-control" id="email"
                                                 aria-describedby="emailHelp" name="email" placeholder="Enter email"
                                                 required>
+                                            <span class="error" id="email_error"></span>
                                         </div>
                                         <div class="form-group">
                                             <label for="OTP">Enter OTP</label>
-                                            <input type="password" class="form-control" id="exampleInputPassword1"
-                                                name="otp" placeholder="Enter OTP">
+                                            <input type="password" class="form-control" id="otp" name="otp"
+                                                placeholder="Enter OTP">
+                                            <span class="error" id="otp_error"></span><br>
                                         </div>
-                                        <button type="submit" class="btn btn-dark">Verify Account</button>
+                                        <div class="form-group text-center pb-2 pt-2">
+                                            <button type="submit" class="btn btn-dark text-center pb-2">Proceed</button>
+                                        </div>
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <%- include('../partials/plugins.ejs')%>
+                </div>
+            </div>
+        </div>
+        <script>
+            const email = document.getElementById('email');
+            const otp = document.getElementById('otp');
+
+            const form = document.getElementById('form');
+
+            const email_error = document.getElementById('email_error');
+            const otp_error = document.getElementById('otp_error');
+
+            form.addEventListener('submit', (e) => {
+                var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+                var otp_check = /^[0-9]{6}$/;
+
+                if (email.value === '' || email.value == null) {
+                    e.preventDefault();
+                    email_error.innerHTML = " Email is required";
+                } else { email_error.innerHTML = ""; } if
+                    (!email.value.match(email_check)) {
+                    e.preventDefault();
+                    email_error.innerHTML = "Please enter valid email";
+                } else {
+                    email_error.innerHTML = "";
+                } if (otp.value === '' || otp.value == null) {
+                    e.preventDefault(); otp_error.innerHTML = "OTP is required";
+                } else {
+                    otp_error.innerHTML = "";
+                } if (!otp.value.match(otp_check)) {
+                    e.preventDefault(); otp_error.innerHTML = "Incorrect OTP";
+                } else {
+                    otp_error.innerHTML = "";
+                }
+            }) </script>
+    </section>
+    <%- include('../partials/plugins.ejs')%>

@@ -2,123 +2,143 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h2 class="card-header">Product</h2>
-                <br>
-                <% if (errorMessage.length> 0) { %>
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <%- errorMessage %>
-                    </div>
-                    <% } %>
-                        <% if (successMessage.length> 0) { %>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <%- successMessage %>
+                <h2 class="card-header mr-2 ">All Products</h2>
+
+                <div class="row">
+                    <div class=" col-xl-8 col-lg-8">
+                        <% if (errorMessage.length> 0) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <%- errorMessage %>
                             </div>
                             <% } %>
-                                <div class="card-body">
-                                    <table style="width: 100%">
-                                        <tr style="height: 55%">
-                                            <th>Name</th>
-                                            <th>Image</th>
-                                            <th>Price</th>
-                                            <th>Short description</th>
-                                            <th>Rating</th>
-                                            <th>Category</th>
-                                            <th>Toppings</th>
-                                            <th>Stock</th>
-                                            <th>Featured</th>
-                                            <!-- <th>Deleted</th> -->
-                                            <th>Action</th>
-                                        </tr>
+                                <% if (successMessage.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <%- successMessage %>
+                                    </div>
+                                    <% } %>
 
-                                        <% if(product.length>0){
-                                            for(let i=0;i<product.length;i++){ %>
-                                                <tr>
-                                                    <td>
-                                                        <%= product[i].name %>
-                                                    </td>
-
-                                                    <td>
-                                                        <img src="/img/shop/<%=product[i].images[0]%>"
-                                                            alt="<%=product[i].images[0]%>" width="100px"
-                                                            height="100px">
-                                                        <a href="/admin/resize?id=<%= product[i]._id %>">
-                                                            <button class="btn-dark" style="width: 100%;"
-                                                                type="button">Resize Image</button>
-                                                        </a>
-
-                                                    </td>
-
-                                                    <td>
-                                                        <%= product[i].price %>
-                                                    </td>
-
-                                                    <td>
-                                                        <%= product[i].short_description %>
-                                                    </td>
-
-                                                    <td>
-                                                        <%= product[i].rating %>
-                                                    </td>
-
-                                                    <td>
-                                                        <%= product[i].category.name %>
-                                                    </td>
-
-                                                    <td>
-                                                        <ul>
-
-                                                            <% for(let j=0; j < product[i].category.toppings.length;
-                                                                j++){ %>
-                                                                <li>
-                                                                    <%=product[i].category.toppings[j]%>
-                                                                </li>
-                                                                <% } %>
-                                                        </ul>
-                                                        <!-- <%= product[i].category.toppings %> -->
-                                                    </td>
-
-                                                    <td>
-                                                        <%= product[i].stock %>
-                                                    </td>
-
-                                                    <td>
-                                                        <%=product[i].is_Featured %>
-                                                    </td>
-
-                                                    <!-- <td>
-                                                        <%= product[i].is_Deleted %>
-                                                    </td> -->
-
-                                                    <td>
-                                                        <a href="/admin/editProduct?id=<%= product[i]._id %>">
-                                                            <button class="btn-dark" style="width: 100%;"
-                                                                type="button">Edit</button>
-                                                        </a>
-                                                        <a href="/admin/deleteProduct?id=<%= product[i]._id %>"><button
-                                                                class="btn-dark" style="width: 100%;"
-                                                                type="button">Delete</button>
-                                                        </a>
-                                                    </td>
-
-                                                </tr>
-                                                <% } }else{ %>
-                                                    <tr>
-                                                        <td colspan="10">Products Not Found
-                                                        </td>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped w-auto" style="width: 100%">
+                                                    <tr style="height: 55%">
+                                                        <th class="border-0">Name</th>
+                                                        <th class="border-0">Image</th>
+                                                        <th class="border-0">Price</th>
+                                                        <th class="border-0">Rating</th>
+                                                        <th class="border-0">Category</th>
+                                                        <th class="border-0">Stock</th>
+                                                        <th class="border-0">Action</th>
                                                     </tr>
-                                                    <% } %>
-                                    </table>
+                                                    <% if(product.length>0){%>
+                                                        <%for(let i=0;i<product.length;i++){ %>
+                                                            <tr>
+                                                                <td>
+                                                                    <a
+                                                                        href=" /admin/viewProduct?id=<%=product[i]._id %>">
+                                                                        <%= product[i].name %>
+                                                                    </a>
+                                                                </td>
+
+                                                                <td>
+                                                                    <div class="m-r-10">
+                                                                        <img src="/img/shop/<%=product[i].images[0]%>"
+                                                                            alt="<%=product[i].images[0]%>"
+                                                                            width="100px" height="100px">
+                                                                    </div>
+                                                                </td>
+
+                                                                <td>
+                                                                    ₹<%= product[i].price %>
+                                                                </td>
 
 
 
+                                                                <td>
+                                                                    <%= product[i].rating %>&star;
+                                                                </td>
+
+                                                                <td>
+                                                                    <%= product[i].category.name %>
+                                                                </td>
+
+                                                                <td>
+                                                                    <%= product[i].stock %>
+                                                                </td>
+
+
+
+                                                                <td>
+                                                                    <a
+                                                                        href="/admin/editProduct?id=<%= product[i]._id %>">
+                                                                        <button class="btn-dark" style="width: 70%;"
+                                                                            type="button">Edit</button>
+                                                                    </a>
+                                                                    <a
+                                                                        href="/admin/deleteProduct?id=<%= product[i]._id %>"><button
+                                                                            class="btn-dark" style="width: 70%;"
+                                                                            type="button">Delete</button>
+                                                                    </a>
+                                                                </td>
+
+                                                            </tr>
+                                                            <%} } else {%>
+                                                                <tr>
+                                                                    <td colspan="10">Products Not Found
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                </table>
+                                            </div>
+
+
+
+                                        </div>
+                                        <a href="/admin/addProduct">
+                                            <button class=" btn-dark" style="width: 20%;">Add
+                                                Product</button></a><br>
+                                        <input type="hidden" name="id" value="<%= product._id %>">
+
+                    </div>
+                    <div class="col-xl-3 col-lg-3">
+                        <h5>Filter by</h5>
+
+                        <form action="/admin/listProduct" method="get">
+                            <% for(let i=0;i<category.length;i++){ %>
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="category" class="custom-control-input"
+                                        value="<%=category[i]._id%>" id="<%=category[i]._id%>">
+
+                                    <label class="custom-control-label" for="<%=category[i]._id%>">
+                                        <%=category[i].name%>
+                                    </label>
 
                                 </div>
-                                <a href="/admin/addProduct">
-                                    <button class=" btn-dark" style="width: 20%;">Add
-                                        Product</button></a><br>
-                                <input type="hidden" name="id" value="<%= product._id %>">
+                                <%}%>
 
+                                    <div class="custom-control custom-checkbox">
+
+                                        <input type="checkbox" name="checkbox" class="custom-control-input"
+                                            value="allProducts" id="allProducts">
+                                        <label class="custom-control-label" for="allProducts">
+                                            All Products
+                                        </label>
+                                    </div>
+
+                                    <div class="custom-control custom-checkbox">
+
+                                        <input type="checkbox" name="featured" class="custom-control-input" value="true"
+                                            id="featured">
+                                        <label class="custom-control-label" for="featured">
+                                            Featured
+                                        </label>
+                                    </div>
+                                    <button class=" btn-dark " type="submit">Find products</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
     <%- include('../partials/adminPlugins.ejs') -%>

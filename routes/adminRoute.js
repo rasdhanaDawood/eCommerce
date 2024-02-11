@@ -1,28 +1,14 @@
 const express = require("express");
 const admin_route = express();
-// const path = require('path');
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-            cb(null, path.join(__dirname, '../public/img/shop'))
-        }
-    },
-    filename: function (req, file, cb) {
-        const name = file.originalname;
-        cb(null, name);
-    }
-});
-
-const upload = multer({ storage: storage })
-
 
 admin_route.set('view engine', 'ejs');
 admin_route.set("views", "./views/admin");
 
 const auth = require("../middleware/adminAuth");
 const adminController = require("../controllers/adminController");
+
+const { upload } = require("../utils/multer");
+const { editedUploads } = require("../utils/multer");
 
 admin_route.get("/login", auth.isLoggedOut, adminController.loadLogin);
 
@@ -42,19 +28,23 @@ admin_route.post("/editCategory", adminController.editCategory);
 
 admin_route.get("/deleteCategory", adminController.deleteCategory);
 
-admin_route.get("/listProduct", auth.isAuthenticated, adminController.listProduct);
+admin_route.get('/add_subcategory', adminController.add_subcategory);
+
+admin_route.get("/delete_subcategory", adminController.delete_subcategory);
+
+admin_route.post('/add_subcategory', adminController.create_subcategory);
+
+admin_route.get("/listProduct", adminController.listProduct);
+
+admin_route.get("/viewProduct", adminController.viewProduct);
 
 admin_route.get("/addProduct", adminController.getProduct);
 
-admin_route.post("/addProduct", upload.array('image', 3), adminController.addProduct);
+admin_route.post("/addProduct", upload, adminController.addProduct);
 
 admin_route.get("/editProduct", adminController.getEditProduct);
 
-admin_route.get("/resize", adminController.editImage);
-
-admin_route.post('/resize', upload.single('image'), adminController.resizeImage);
-
-admin_route.post("/editProduct", upload.array('image', 3), adminController.editProduct);
+admin_route.post("/editProduct", editedUploads, adminController.editProduct);
 
 admin_route.get("/deleteProduct", adminController.deleteProduct);
 
@@ -66,9 +56,9 @@ admin_route.get("/forgotPassword", auth.isLoggedOut, adminController.forgotPassw
 
 admin_route.get('/logout', auth.isAuthenticated, adminController.logout);
 
-admin_route.get("/*", (req, res) => {
-    req.flash('errormessage', 'Please login First')
-    res.redirect("/admin/login");
-});
+// admin_route.get("/*", (req, res) => {
+//     req.flash('errormessage', 'Please login First')
+//     res.redirect("/admin/login");
+// });
 
 module.exports = admin_route; 

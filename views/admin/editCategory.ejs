@@ -12,102 +12,53 @@
                                     Name</label>
                                 <input id="inputText3" name="name" type="text" value="<%= category.name %>"
                                     class="form-control" required>
-                                <label for="inputText3" class="col-form-label">Toppings</label>
-
+                                <label for="inputText3" class="col-form-label"><b>Toppings</b> </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Vanila" id="cat-1" <%if(category.toppings[i]=='Vanila' ) {
-                                                    %>checked
-                                                <% } %>>
-                                                    <% }%>
-                                                        <label class="custom-control-label" for="cat-1">Vanila</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Strawberry" id="cat-2"
-                                                    <%if(category.toppings[i]=='Strawberry' ) { %>checked
-                                                <% } %>>
-                                                    <% } %>
-                                                        <label class="custom-control-label"
-                                                            for="cat-2">Strawberry</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Pista" id="cat-3" <% if(category.toppings[i]=='Pista' ) { %>
-                                                checked
-                                                <% } %>>
 
-                                                    <% }%>
-                                                        <label class="custom-control-label" for="cat-3">Pista</label>
-                                        </div>
-                                    </div>
+                                        <%let k=0; for(var i=0;i<subcategory.length;i++){ %>
+                                            <% for(var j=0;j<category.toppings.length;j++){k++;%>
 
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="checkbox" class="custom-control-input"
+                                                        value="<%= subcategory[i].sub_category %>" id="cat-<%=k%>"
+                                                        <%if(subcategory[i].sub_category==category.toppings[j]){%>
+                                                    checked
+                                                    <%break;}%>
 
-                                    <div class="col-lg-6">
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Chocolate" id="cat-4" <%if(category.toppings[i]=='Chocolate'
-                                                    ) { %>checked
-                                                <% } %>>
-                                                    <% } %>
-                                                        <label class="custom-control-label"
-                                                            for="cat-4">Chocolate</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Orange" id="cat-5" <%if(category.toppings[i]==='Orange' ) {
-                                                    %>checked
-                                                <% } %>>
-                                                    <% } %>
-                                                        <label class="custom-control-label" for="cat-5"> Orange </label>
-
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% for(let i=0;i<category.toppings.length;i++){%>
-                                                <input type="checkbox" name="checkbox" class="custom-control-input"
-                                                    value="Buttercream" id="cat-6"
-                                                    <%if(category.toppings[i]=='Buttercream' ) { %>checked
-                                                <% } %>>
-                                                    <% } %>
-                                                        <label class="custom-control-label"
-                                                            for="cat-6">Buttercream</label>
-                                        </div>
-
+                                                        <%}%>>
+                                                            <label class="custom-control-label" for="cat-<%=k%>">
+                                                                <%= subcategory[i].sub_category %>
+                                                            </label><br>
+                                                </div>
+                                                <%}%>
 
                                     </div>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="true" name="status"
+                                        id="flexRadioDefault1" <%if(category.status==true) { %>checked <% } %>>
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Available
+                                        </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="false" name="status"
+                                        id="flexRadioDefault2" <% if(category.status==false) { %>checked <% } %>
+                                        >
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Not Available
+                                        </label>
+
+                                        <br><br>
+                                        <input type="hidden" name="id" value="<%= category._id %>">
+                                        <input type="submit" class="btn-dark" value="Update Category">
 
                                 </div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" value="true" name="status"
-                                    id="flexRadioDefault1" <%if(category.status==true) { %>checked <% } %>>
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Available
-                                    </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" value="false" name="status"
-                                    id="flexRadioDefault2" <% if(category.status==false) { %>checked <% } %>
-                                    >
-                                    <label class="form-check-label" for="flexRadioDefault2">
-                                        Not Available
-                                    </label>
-
-                                    <br><br>
-                                    <input type="hidden" name="id" value="<%= category._id %>">
-                                    <input type="submit" class="btn-dark" value="Update Category">
-
-                            </div>
-                        </div>
                 </form>
             </div>
         </div>
     </div>
-    <%- include('../partials/adminPlugins.ejs') -%>
+
+    <%- include('../partials/adminPlugins.ejs')%>

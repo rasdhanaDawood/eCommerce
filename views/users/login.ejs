@@ -1,45 +1,111 @@
 <%- include('../partials/head') %>
     <section class="hero">
+        <style>
+            .error {
+                color: red;
+                font-size: 14px;
+            }
 
+            .transparent-card {
+                background-color: rgba(255, 255, 255, 0.8);
+                /* Adjust the last value for opacity (0-1) */
+
+            }
+        </style>
         <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg">
             <div class="container">
                 <div class="row d-flex align-content-center">
-                    <div class="col-lg-4">
-                        <div class="text">
 
-                            <h1>Login</h1>
 
-                            <% if (errorMessage.length> 0) { %>
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    <%- errorMessage %>
-                                </div>
-                                <% } %>
-                                    <% if (successMessage.length> 0) { %>
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <%- successMessage %>
+                    <div class="card transparent-card card-body col-lg-7 pt-2">
+                        <h2>Login</h2>
+                        <% if (errorMessage.length> 0) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <%- errorMessage %>
+                            </div>
+                            <% } %>
+                                <% if (successMessage.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <%- successMessage %>
 
-                                        </div>
-                                        <% } %>
+                                    </div>
+                                    <% } %>
 
-                                            <form action="/login" method="post">
+                                        <form action="/login" method="post" class="form" id="form" novalidate>
 
-                                                <input type="email" name="email" placeholder="Enter Email">
-                                                <br><br>
-                                                <input type="password" name="password" placeholder=" Enter Password">
-                                                <br><br>
-                                                <input type="submit" value="Login">
+                                            <div class="row form-group mb-2">
+                                                <label for="email"
+                                                    class="col-3 col-lg-4 pl-4 col-form-label">Email:</label>
+                                                <div class="col-9 col-lg-8 pr-4">
+                                                    <input type="email" id="email" class="form-control"
+                                                        placeholder="Email" name="email" required>
+                                                </div>
+                                            </div> <span class="error" id="email_error"></span>
 
-                                                <br><br>
-                                            </form>
-                                            <form action="/register" method="get">
-                                                <button type="submit">Register</button>
-                                            </form>
-                                            <a href="/forget-password">Forget Password</a>
+                                            <div class="row form-group mb-2 ">
+                                                <label for="password"
+                                                    class="col-3 col-lg-4 col-form-label pl-4">Password:</label>
+                                                <div class="col-9 col-lg-8 pr-4">
+                                                    <input type="password" class="form-control" placeholder="Password"
+                                                        id="password" name="password" required>
+                                                </div>
+                                            </div> <span class="error" id="password_error"></span>
+                                            <div class="row pt-2 justify-content-center">
 
-                        </div>
+                                                <div class=" form-group pb-2 pt-2">
+                                                    <button type="submit" class="submit btn btn-dark">Login</button>
+                                                </div>
+
+                                                <div class="form-group text-left pl-4 pb-2 pt-2">
+                                                    <a href="/forget-password"><button type="submit"
+                                                            class="submit btn btn-dark">Forgot Password?</button></a>
+                                                </div>
+                                            </div>
+                                        </form>
+
+
+
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            const form = document.getElementById('form');
+
+            const email_error = document.getElementById('email_error');
+            const password_error = document.getElementById('password_error');
+
+            form.addEventListener('submit', (e) => {
+
+                var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+                if (email.value === '' || email.value == null) {
+                    e.preventDefault();
+                    email_error.innerHTML = "Email is required";
+                }
+
+                else {
+                    email_error.innerHTML = "";
+                }
+                if (!email.value.match(email_check)) {
+                    e.preventDefault();
+                    email_error.innerHTML = "Please enter valid email";
+                }
+                else {
+                    email_error.innerHTML = "";
+                }
+                if (password.value === '' || password.value == null) {
+                    e.preventDefault();
+                    password_error.innerHTML = "Password is required"
+                }
+                else {
+                    password_error.innerHTML = "";
+                }
+            })
+        </script>
     </section>
     <%- include('../partials/plugins.ejs') %>

@@ -1,6 +1,5 @@
 const express = require('express');
 const user_route = express();
-const { check, validationResult } = require('express-validator');
 
 user_route.set('view engine', 'ejs');
 user_route.set("views", "./views/users");
@@ -24,9 +23,9 @@ user_route.post("/login", userController.postLogin);
 
 user_route.get("/verify", userController.getOTP);
 
-user_route.get("/userAccount", userController.userAccount);
-
 user_route.post("/verify", userController.verifyOTP);
+
+user_route.get("/userAccount", userController.userAccount);
 
 user_route.get('/logout', auth.isAuthenticated, userController.logout);
 
