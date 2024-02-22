@@ -2,6 +2,7 @@
 const User = require("../models/userModel");
 const OTP = require("../models/otpModel");
 const Product = require("../models/productModel");
+const Category = require("../models/categoryModel");
 
 const bcrypt = require('bcrypt');
 
@@ -57,20 +58,7 @@ const postRegister = async (req, res) => {
                 req.flash('errorMessage', "User Already Registered!!");
                 res.redirect('/login');
             }
-            // if (userData.verified == false) {
-            //     const updateUserData = await User.findByIdAndUpdate({ _id: userData._id }, { $set: { verified: true } });
-            //     console.log(`${updateUserData}`)
-            //     req.session.user = updateUserData._id;
-            //     req.session.loggedIn = true;
-            //     const productData = await Product.find({});
-
-            //     res.render("home", {
-            //         user: updateUserData._id,
-            //         product: productData
-            //     });
-            // }
         }
-
         else {
             const hashedPassword = await securePassword(req.body.password);
             let user = new User({
@@ -216,12 +204,34 @@ const postLogin = async (req, res) => {
 const viewProduct = async (req, res) => {
     try {
         const id = req.query.id;
-        const productData = await Product.find({ _id: id });
-        const userData = awaitUser.find();
+        const productData = await Product.find({ _id: id }).populate('category');
+        const userData = req.session.user;
+        console.log(userData);
         console.log(productData);
-        res.render('product', { user: userData[0] });
+
+        res.render('product', {
+            user: userData,
+            product: productData
+        });
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+const viewAllProducts = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const userData = await User.find({ _id: userId });
+        const categoryData = await Category.find();
+        const productData = await Product.find().populate('category');
+
+        res.render('shop', {
+            user: userData,
+            category: categoryData,
+            product: productData
+        })
+    } catch (error) {
+        console.log(error.message)
     }
 }
 
@@ -244,5 +254,6 @@ module.exports = {
     verifyOTP,
     userAccount,
     viewProduct,
+    viewAllProducts,
     logout
 }

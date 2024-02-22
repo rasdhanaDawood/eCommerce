@@ -48,6 +48,10 @@ admin_route.post("/editProduct", editedUploads, adminController.editProduct);
 
 admin_route.get("/deleteProduct", adminController.deleteProduct);
 
+admin_route.get('/crop_image', adminController.cropImage);
+
+admin_route.post('/crop_image', adminController.addCroppedImage);
+
 admin_route.get("/editUser", adminController.getUser);
 
 admin_route.get("/updateUser", adminController.editUser);

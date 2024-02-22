@@ -47,7 +47,7 @@ const verifyLogin = async (req, res) => {
 const dashboard = async (req, res) => {
     try {
         if (req.session.admin) {
-            const productData = await Product.find({})
+            const productData = await Product.find({}).sort({ rating: -1 });
             res.render('dashboard', { product: productData });
         }
     }
@@ -59,25 +59,29 @@ const dashboard = async (req, res) => {
 const listProduct = async (req, res) => {
     try {
         // if (req.session.admin) {
-        console.log(req.query);
-        let category = req.query.category;
-        let featured = req.query.featured;
+        var productData = await Product.find({ is_Deleted: false }).populate('category');
         const categoryData = await Category.find({})
-        console.log(`Categories selected: ${category}`)
-        if (category) {
-            if (featured) {
-                const productData = await Product.find({ category: category, featured: true }).populate('category');
+        if (req.query) {
+            console.log(req.query);
+            let category = req.query.category;
+            let featured = req.query.featured;
+
+            console.log(`Categories selected: ${category}`)
+            if (category) {
+                if (featured) {
+                    productData = await Product.find({ category: category, is_Featured: true, is_Deleted: false }).populate('category');
+                    console.log(productData)
+                } else {
+                    productData = await Product.find({ category: category, is_Deleted: false }).populate('category');
+                    console.log(productData)
+                }
+            } else if (featured == 'true') {
+                productData = await Product.find({ is_Featured: true, is_Deleted: false }).populate('category');
                 console.log(productData)
             } else {
-                const productData = await Product.find({ category: category }).populate('category')
+                productData = await Product.find({ is_Deleted: false }).populate('category');
                 console.log(productData)
             }
-        } else if (featured == true) {
-            const productData = await Product.find({ featured: true }).populate('category')
-            console.log(productData)
-        } else {
-            const productData = await Product.find().populate('category')
-            console.log(productData)
         }
         if (productData) {
 
@@ -122,12 +126,14 @@ const addProduct = async (req, res) => {
     try {
         const imageFiles = [];
         console.log(req.files);
+        console.log(req.body);
         if (req.files) {
             req.files.map(file => {
                 imageFiles.push(file.filename);
             });
         }
-        console.log(imageFiles);
+        console.log(imageFiles)
+
         const product = new Product({
             name: req.body.productname,
             price: req.body.price,
@@ -159,12 +165,19 @@ const addProduct = async (req, res) => {
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
-        const productData = await Product.findById({ _id: id })
-        const categoryData = await Category.find({});
-        res.render('editProduct', {
-            Product: productData,
-            Category: categoryData
-        })
+        console.log(id);
+        if (id) {
+            const productData = await Product.findById({ _id: id })
+            const categoryData = await Category.find({});
+            res.render('editProduct', {
+                Product: productData,
+                Category: categoryData
+            })
+        }
+        else {
+            req.flash("errorMessage", "Something went wrong")
+            res.redirect("/admin/listProduct");
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -172,24 +185,35 @@ const getEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
-        let id = req.body.id;
-        let images = [];
+        console.log(req.body);
+        console.log(req.query);
 
+        let id = req.body.id;
+        console.log(req.body);
+        let images = [];
+        console.log(req.files)
         if (!req.files.image1) {
             images.push(req.body.image1);
         } else {
-            images.push(req.files.image1.originalname);
+            images.push(req.files.image1[0].originalname);
+            console.log(req.files.image1[0].originalname)
+
         }
         if (!req.files.image2) {
             images.push(req.body.image2);
         } else {
-            images.push(req.files.image2.originalname);
+            images.push(req.files.image2[0].originalname);
+            console.log(req.files.image2[0].originalname)
+
         }
         if (!req.files.image3) {
             images.push(req.body.image3);
         } else {
-            images.push(req.files.image3.originalname);
+            images.push(req.files.image3[0].originalname);
+            console.log(req.files.image3[0].originalname)
+
         }
+
         console.log(req.body.id);
         const productData = await Product.findByIdAndUpdate({ _id: id }, {
             $set: {
@@ -235,55 +259,25 @@ const deleteProduct = async (req, res) => {
         console.log(error.message)
     }
 }
+const cropImage = async (req, res) => {
+    try {
+        const img = req.query.image;
+        console.log(img);
+        res.render('cropImage', { image: img });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
-// const filterProducts = async (req, res) => {
-//     try {
-//         console.log(req.body);
-//         const category = req.body.category;
-//         const allProducts = req.body.allProducts;
-//         const featured = req.body.featured;
-//         const categoryData = await Category.find({})
-//         console.log(`Categories selected: ${category}`)
-//         if (featured == true && category) {
-//             const productData = await Product.find({
-//                 $or: [
-//                     { is_Featured: featured },
-//                     { category: category }
-//                 ]
-//             }).populate('category');
-//             console.log(productData)
-//             res.render('listProduct', {
-//                 product: productData,
-//                 category: categoryData,
-//                 errorMessage: req.flash("errorMessage"),
-//                 successMessage: req.flash("successMessage")
-//             })
-// } else if (category) {
-//     const productData = await Product.find({ category: category }).populate('category')
-//     console.log(productData)
-//     res.render('listProduct', {
-//         product: productData,
-//         category: categoryData,
-//         errorMessage: req.flash("errorMessage"),
-//         successMessage: req.flash("successMessage")
-//     });
-//         } else {
-//     const productData = await Product.find().populate('category')
-//     console.log(productData)
-//     res.render('listProduct', {
-//         product: productData,
-//         category: categoryData,
-//         errorMessage: req.flash("errorMessage"),
-//         successMessage: req.flash("successMessage")
-//     })
-// }
+const addCroppedImage = (req, res) => {
+    try {
+        console.log(req.query);
+        console.log(req.body);
 
-
-//     }
-//     catch (error) {
-//     console.log(error.message)
-// }
-// }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 const add_subcategory = async (req, res) => {
     try {
@@ -507,11 +501,11 @@ const editUser = async (req, res) => {
             console.log(updateData);
             console.log(userData.blocked);
             if (userData.blocked === true) {
-                req.flash('successMessage', userData.name + ' is blocked successfully');
+                req.flash('successMessage', userData.firstName + ' ' + userData.lastName + ' is blocked successfully');
                 res.redirect('/admin/editUser');
             } else {
 
-                req.flash('successMessage', userData.name + ' is unblocked successfully');
+                req.flash('successMessage', userData.firstName + ' ' + userData.lastName + ' is unblocked successfully');
                 res.redirect('/admin/editUser');
             }
         }
@@ -549,6 +543,8 @@ module.exports = {
     getEditProduct,
     editProduct,
     deleteProduct,
+    cropImage,
+    addCroppedImage,
     add_subcategory,
     create_subcategory,
     delete_subcategory,

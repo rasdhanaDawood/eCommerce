@@ -17,94 +17,97 @@
                                         class="form-control" required><br>
                                     <label for="input-select"> Category</label>
                                     <select class="form-control" name="category" id="input-select">
+                                        <% for(i=0;i<Category.length;i++){%>
 
-                                        <% Category.forEach(function(Category){ %>
-                                            <% if(Category._id==Product.category){ %>
-                                                <option value="<%=Category._id %>">
+                                            <% if(Category[i]._id==Product.category){ %>
+                                                <option value="<%= Product.category %>">
                                                     <%= Category.name %>
                                                 </option>
                                                 <% } %>
-                                                    <% }) %>
+                                                    <% } %>
 
                                                         <% Category.forEach(function(Category){ %>
                                                             <% if(Category._id!==Product.category){ %>
-                                                                <option value="<%=Category._id %>">
+                                                                <option value="<%= Category._id %>">
                                                                     <%= Category.name %>
                                                                 </option>
+
                                                                 <% } %>
                                                                     <% }) %>
                                     </select>
                                 </div>
-                                <label for="">Images</label>
+                                <label for="inputImage">Images</label>
                                 <br>
-                                <img src="/img/shop/<%=Product.images[0]%>" alt="" style="width:100px;height:auto ">
-                                <input type="file" name="image1" class="form-control">
-                                <input style="display: none;" type="text" name="image1" id=""
-                                    value="<%=Product.images[0]%>">
 
-                                <img src="/img/shop/<%=Product.images[1]%>" alt="" style="width:100px;height:auto ">
-                                <input type="file" name="image2" class="form-control">
-                                <input style="display: none;" type="text" name="image2" id=""
-                                    value="<%=Product.images[1]%>">
-
-                                <img src="/img/shop/<%=Product.images[2]%>" alt="" style="width:100px;height:auto ">
-                                <input type="file" name="image3" class="form-control">
-                                <input style="display: none;" type="text" name="image3" id=""
-                                    value="<%=Product.images[2]%>">
-
-
-                                <div class="form-group">
-                                    <label for="inputShort">Short Description</label>
-                                    <input id="inputShort" name="shortDesc" type="text"
-                                        value="<%= Product.short_description %>" class="form-control">
-                                    <br>
-                                    <div class="form-group">
-                                        <label for="exampleFormControlTextarea1">Detailed
-                                            Description</label>
-
-                                        <textarea class="form-control" name="detailDesc"
-                                            id="exampleFormControlTextarea1"
-                                            rows="3"><%=Product.detail_description %></textarea><br>
+                                <%for(i=0;i<3;i++){%>
+                                    <div class="col-lg-4">
+                                        <img src="/img/shop/<%=Product.images[i]%>" id="inputImage" alt=""
+                                            style="width:100px; height:auto;">
+                                        <a href="/admin/crop_image?image=<%=Product.images[i]%>">
+                                            <button class="btn btn-dark" id="CropBtn" type="button">Crop
+                                                Image</button></a>
+                                        <input type="file" name="image<%= i+1 %>>" class="form-control">
+                                        <input style="display: none;" type="text" name="image<%= i+1 %>" id=""
+                                            value="<%= Product.images[i] %>">
                                     </div>
-                                    <label for="inputSmall" class="col-form-label">Stock</label>
-                                    <input id="inputSmall" type="text" name="stock" value="<%= Product.stock %>"
-                                        class="form-control form-control-sm">
-                                    <div class="form-check">
-                                        <label for="radio1" class="col-form-label">Featured</label>
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="isFeatured" value="true" id="radio1"
-                                                class="custom-control-input" <%if(Product.is_Featured==true) { %>checked
-                                            <% } %>
-                                                ><span class="custom-control-label">Yes</span>
-                                        </label>
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="isFeatured" value="false" id="radio1"
-                                                class="custom-control-input" <%if(Product.is_Featured==false) {
-                                                %>checked
-                                            <% } %>
-                                                ><span class="custom-control-label">No</span>
-                                        </label><br>
-                                    </div>
-                                    <div class="form-check">
-                                        <label for="radio2" class="col-form-label">Deleted</label>
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="isDeleted" value="true" id="radio2"
-                                                class="custom-control-input" <%if(Product.is_Deleted==true) { %>checked
-                                            <% } %>
-                                                ><span class="custom-control-label">Yes</span>
-                                        </label>
-                                        <label class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" name="isDeleted" value="false" id="radio2"
-                                                class="custom-control-input" <%if(Product.is_Deleted==false) {%>
-                                            checked
-                                            <% } %>
-                                                ><span class="custom-control-label">No
-                                                </span>
-                                        </label><br>
-                                    </div>
-                                    <input type="hidden" name="id" value="<%= Product._id %>">
-                                    <input type="submit" class="btn-dark" value="Update Product">
-                                </div>
+
+                                    <%}%>
+
+                                        <div class="form-group">
+                                            <label for="inputShort">Short Description</label>
+                                            <input id="inputShort" name="shortDesc" type="text"
+                                                value="<%= Product.short_description %>" class="form-control">
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="exampleFormControlTextarea1">Detailed
+                                                    Description</label>
+
+                                                <textarea class="form-control" name="detailDesc"
+                                                    id="exampleFormControlTextarea1"
+                                                    rows="3"><%=Product.detail_description %></textarea><br>
+                                            </div>
+                                            <label for="inputSmall" class="col-form-label">Stock</label>
+                                            <input id="inputSmall" type="text" name="stock" value="<%= Product.stock %>"
+                                                class="form-control form-control-sm">
+                                            <div class="form-check">
+                                                <label for="radio1" class="col-form-label">Featured</label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isFeatured" value="true"
+                                                        id="radioFeatured1" class="custom-control-input"
+                                                        <%if(Product.is_Featured==true) { %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">Yes</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isFeatured" value="false"
+                                                        id="radioFeatured2" class="custom-control-input"
+                                                        <%if(Product.is_Featured==false) { %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">No</span>
+                                                </label><br>
+                                            </div>
+                                            <div class="form-check">
+                                                <label for="radio2" class="col-form-label">Deleted</label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isDeleted" value="true" id="radioDeleted1"
+                                                        class="custom-control-input" <%if(Product.is_Deleted==true) {
+                                                        %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">Yes</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isDeleted" value="false"
+                                                        id="radioDeleted2" class="custom-control-input"
+                                                        <%if(Product.is_Deleted==false) {%>
+                                                    checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">No
+                                                        </span>
+                                                </label><br>
+                                            </div>
+                                            <input type="hidden" name="id" value="<%= Product._id %>">
+                                            <input type="submit" class="btn-dark" value="Update Product">
+                                        </div>
                             </div>
                         </div>
                     </form>

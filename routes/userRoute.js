@@ -31,5 +31,6 @@ user_route.get('/logout', auth.isAuthenticated, userController.logout);
 
 user_route.get('/product', userController.viewProduct);
 
+user_route.get('/shop', userController.viewAllProducts);
 
 module.exports = user_route;

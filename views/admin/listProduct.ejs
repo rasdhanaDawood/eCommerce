@@ -27,6 +27,7 @@
                                                         <th class="border-0">Rating</th>
                                                         <th class="border-0">Category</th>
                                                         <th class="border-0">Stock</th>
+                                                        <th class="border-0">Featured</th>
                                                         <th class="border-0">Action</th>
                                                     </tr>
                                                     <% if(product.length>0){%>
@@ -65,19 +66,24 @@
                                                                     <%= product[i].stock %>
                                                                 </td>
 
+                                                                <td>
+                                                                    <%= product[i].is_Featured %>
+                                                                </td>
 
 
                                                                 <td>
-                                                                    <a
-                                                                        href="/admin/editProduct?id=<%= product[i]._id %>">
-                                                                        <button class="btn-dark" style="width: 70%;"
-                                                                            type="button">Edit</button>
-                                                                    </a>
-                                                                    <a
-                                                                        href="/admin/deleteProduct?id=<%= product[i]._id %>"><button
-                                                                            class="btn-dark" style="width: 70%;"
-                                                                            type="button">Delete</button>
-                                                                    </a>
+                                                                    <div>
+                                                                        <a
+                                                                            href="/admin/editProduct?id=<%= product[i]._id %>">
+                                                                            <button class="btn btn-dark"
+                                                                                type="button">Edit</button>
+                                                                        </a>
+                                                                        <a
+                                                                            href="/admin/deleteProduct?id=<%= product[i]._id %>"><button
+                                                                                class="btn btn-dark"
+                                                                                type="button">Delete</button>
+                                                                        </a>
+                                                                    </div>
                                                                 </td>
 
                                                             </tr>
@@ -90,16 +96,15 @@
                                                 </table>
                                             </div>
 
-
-
                                         </div>
-                                        <a href="/admin/addProduct">
-                                            <button class=" btn-dark" style="width: 20%;">Add
-                                                Product</button></a><br>
-                                        <input type="hidden" name="id" value="<%= product._id %>">
-
+                                        <div class="text-center pb-2">
+                                            <a href="/admin/addProduct">
+                                                <button class="btn btn-dark" style="width: 20%;">Add
+                                                    Product</button></a><br>
+                                            <input type="hidden" name="id" value="<%= product._id %>">
+                                        </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3">
+                    <div class="col-xl-4 col-lg-4 pt-5">
                         <h5>Filter by</h5>
 
                         <form action="/admin/listProduct" method="get">
@@ -118,22 +123,23 @@
 
                                     <div class="custom-control custom-checkbox">
 
-                                        <input type="checkbox" name="checkbox" class="custom-control-input"
-                                            value="allProducts" id="allProducts">
-                                        <label class="custom-control-label" for="allProducts">
-                                            All Products
-                                        </label>
-                                    </div>
-
-                                    <div class="custom-control custom-checkbox">
-
                                         <input type="checkbox" name="featured" class="custom-control-input" value="true"
                                             id="featured">
                                         <label class="custom-control-label" for="featured">
                                             Featured
                                         </label>
                                     </div>
-                                    <button class=" btn-dark " type="submit">Find products</button>
+
+                                    <div class="custom-control custom-checkbox">
+
+                                        <input type="checkbox" name="checkbox" class="custom-control-input"
+                                            value="allProducts" id="allProducts">
+                                        <label class="custom-control-label" for="allProducts">
+                                            All Products
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-dark" type="submit">Find
+                                        products</button>
                         </form>
                     </div>
                 </div>

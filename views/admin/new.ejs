@@ -1,38 +1,170 @@
-<div class="card-body">
-    <form id="form" data-parsley-validate="" novalidate="">
-        <div class="form-group row">
-            <label for="inputEmail2" class="col-3 col-lg-2 col-form-label text-right">Email</label>
-            <div class="col-9 col-lg-10">
-                <input id="inputEmail2" type="email" required="" data-parsley-type="email" placeholder="Email"
-                    class="form-control">
+// using sharp test code
+// var images = [];
+// var processedImagesPromises = imageFiles.map(async file => {
+// const newFilename = `image_${imageFiles[0]}`;
+// console.log(newFilename)
+// images = req.files[0].path;
+
+// console.log(images)
+// await sharp('chocolate cupcake.jpg').resize(300, 300).toFile(`/img/${newFilename}`)
+
+
+
+
+// });
+
+// var newImage = [];
+// // Process and save each uploaded image
+// for (image in images) {
+// const processedImagesPromises = images.map(async (image) => {
+// const croppedImageBuffer = await sharp(image.buffer)
+// .resize(300, 300)
+// .toBuffer();
+
+// // Save the processed image to your server or cloud storage
+// const imagePath = `/ img / shop / ${
+// Date.now()
+// }${image}`;
+// const absolutePath = path.join(__dirname, 'public', imagePath);
+
+// await sharp(croppedImageBuffer).toFile(absolutePath);
+
+// newImage.push(imagePath)
+
+// });
+
+// try {
+// await Promise.all(processedImagesPromises);
+
+// console.log('Images uploaded successfully');
+// }
+// // end of test code
+
+
+// catch (error) {
+// console.log(error.message)
+// }
+<!-- // }end of sharp test code -->
+
+
+
+<!-- edit product admin side
+
+ <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Edit Product</h5>
+                <div class="card-body">
+                    <form action="/admin/editProduct" method="post" enctype="multipart/form-data">
+                        <div class=" row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="inputText1" class="col-form-label">Product
+                                        Name</label>
+                                    <input id="inputText1" name="name" type="text" value="<%= Product.name %>"
+                                        class="form-control" required>
+                                    <label for="inputText2" class="col-form-label">Price</label>
+                                    <input id="inputText2" name="price" type="text" value="<%= Product.price %>"
+                                        class="form-control" required><br>
+                                    <label for="input-select"> Category</label>
+                                    <select class="form-control" name="category" id="input-select">
+                                        <% for(i=0;i<Category.length;i++){%>
+
+                                            <% if(Category[i]._id==Product.category){ %>
+                                                <option value="<%= Product.category %>">
+                                                    <%= Category.name %>
+                                                </option>
+                                                <% } %>
+                                                    <% } %>
+
+                                                        <% Category.forEach(function(Category){ %>
+                                                            <% if(Category._id!==Product.category){ %>
+                                                                <option value="<%= Category._id %>">
+                                                                    <%= Category.name %>
+                                                                </option>
+
+                                                                <% } %>
+                                                                    <% }) %>
+                                    </select>
+                                </div>
+                                <label for="inputImage">Images</label>
+                                <br>
+
+                                <%for(i=0;i<3;i++){%>
+                                    <div class="col-lg-4">
+                                        <img src="/img/shop/<%=Product.images[i]%>" id="inputImage" alt=""
+                                            style="width:100px; height:auto;">
+                                        <a href="/admin/crop_image?image=<%=Product.images[i]%>">
+                                            <button class="btn btn-dark" id="CropBtn" type="button">Crop
+                                                Image</button></a>
+                                        <input type="file" name="image<%= i+1 %>>" class="form-control">
+                                        <input style="display: none;" type="text" name="image<%= i+1 %>" id=""
+                                            value="<%= Product.images[i] %>">
+                                    </div>
+
+                                    <%}%>
+
+                                        <div class="form-group">
+                                            <label for="inputShort">Short Description</label>
+                                            <input id="inputShort" name="shortDesc" type="text"
+                                                value="<%= Product.short_description %>" class="form-control">
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="exampleFormControlTextarea1">Detailed
+                                                    Description</label>
+
+                                                <textarea class="form-control" name="detailDesc"
+                                                    id="exampleFormControlTextarea1"
+                                                    rows="3"><%=Product.detail_description %></textarea><br>
+                                            </div>
+                                            <label for="inputSmall" class="col-form-label">Stock</label>
+                                            <input id="inputSmall" type="text" name="stock" value="<%= Product.stock %>"
+                                                class="form-control form-control-sm">
+                                            <div class="form-check">
+                                                <label for="radio1" class="col-form-label">Featured</label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isFeatured" value="true"
+                                                        id="radioFeatured1" class="custom-control-input"
+                                                        <%if(Product.is_Featured==true) { %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">Yes</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isFeatured" value="false"
+                                                        id="radioFeatured2" class="custom-control-input"
+                                                        <%if(Product.is_Featured==false) { %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">No</span>
+                                                </label><br>
+                                            </div>
+                                            <div class="form-check">
+                                                <label for="radio2" class="col-form-label">Deleted</label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isDeleted" value="true" id="radioDeleted1"
+                                                        class="custom-control-input" <%if(Product.is_Deleted==true) {
+                                                        %>checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">Yes</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="isDeleted" value="false"
+                                                        id="radioDeleted2" class="custom-control-input"
+                                                        <%if(Product.is_Deleted==false) {%>
+                                                    checked
+                                                    <% } %>
+                                                        ><span class="custom-control-label">No
+                                                        </span>
+                                                </label><br>
+                                            </div>
+                                            <input type="hidden" name="id" value="<%= Product._id %>">
+                                            <input type="submit" class="btn-dark" value="Update Product">
+                                        </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="form-group row">
-            <label for="inputPassword2" class="col-3 col-lg-2 col-form-label text-right">Password</label>
-            <div class="col-9 col-lg-10">
-                <input id="inputPassword2" type="password" required="" placeholder="Password" class="form-control">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputWebSite" class="col-3 col-lg-2 col-form-label text-right">Web Site</label>
-            <div class="col-9 col-lg-10">
-                <input id="inputWebSite" type="url" required="" data-parsley-type="url" placeholder="URL"
-                    class="form-control">
-            </div>
-        </div>
-        <div class="row pt-2 pt-sm-5 mt-1">
-            <div class="col-sm-6 pb-2 pb-sm-4 pb-lg-0 pr-0">
-                <label class="be-checkbox custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"><span class="custom-control-label">Remember
-                        me</span>
-                </label>
-            </div>
-            <div class="col-sm-6 pl-0">
-                <p class="text-right">
-                    <button type="submit" class="btn btn-space btn-primary">Submit</button>
-                    <button class="btn btn-space btn-secondary">Cancel</button>
-                </p>
-            </div>
-        </div>
-    </form>
-</div>
+    </div>
+
+-->

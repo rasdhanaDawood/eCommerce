@@ -33,7 +33,10 @@
                                                     </td>
 
                                                     <td>
-                                                        <%=category[i].status%>
+                                                        <%if(category[i].status==true){%>
+                                                            Available<%}else{%>
+                                                                Not Available
+                                                                <%}%>
                                                     </td>
 
                                                     <td>
@@ -41,12 +44,16 @@
                                                     </td>
 
                                                     <td>
-                                                        <a href="/admin/editCategory?id=<%= category[i]._id %>">
-                                                            <button class="btn-dark" type="button">Edit</button>
-                                                        </a>
-                                                        <a href="/admin/deleteCategory?id=<%= category[i]._id %>"><button
-                                                                class="btn-dark" type="button">Delete</button>
-                                                        </a>
+                                                        <div class="">
+                                                            <a href=" /admin/editCategory?id=<%=category[i]._id %>">
+                                                                <button class="btn btn-dark" type="button">Edit</button>
+                                                            </a>
+
+                                                            <a href="/admin/deleteCategory?id=<%= category[i]._id %>">
+                                                                <button class="btn btn-dark"
+                                                                    type="button">Delete</button>
+                                                            </a>
+                                                        </div>
                                                     </td>
 
                                                 </tr>

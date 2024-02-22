@@ -34,13 +34,18 @@
                                 </div>
                                 <div class=" form-group">
                                     <label for="inputImage" class="col-form-label">Insert Images</label><br>
-                                    <input type="file" accept=".jpg,.jpeg,.png" name="image" alt="insert-image" required
-                                        multiple>
+                                    <input type="file" accept=".jpg,.jpeg,.png,.webp" name="image" id="inputImage"
+                                        alt="insert-image" required multiple>
+                                </div>
+                                <div class="row">
+                                    <div id="previewImages">
+
+                                    </div>
                                 </div>
 
                                 <!-- </div> -->
                                 <div class=" form-group">
-                                    <label for="inputText3">Short Description</label>
+                                    <label for="inputShort">Short Description</label>
                                     <input id="inputShort" name="shortDesc" type="text" placeholder="Short description"
                                         class="form-control" required>
                                 </div>
@@ -57,10 +62,10 @@
                                         required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputDefault" class="col-form-label">Featured</label>
+                                    <label for="" class=" col-form-label">Featured</label>
                                     <label class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" name="isFeatured" value="true"
-                                            class="custom-control-input"><span class="custom-control-label">Yes</span>
+                                            class=" custom-control-input"><span class="custom-control-label">Yes</span>
                                     </label>
                                     <label class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" name="isFeatured" value="false"
@@ -68,20 +73,20 @@
                                     </label>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputDefault" class="col-form-label">Deleted</label>
+                                    <label for="" class="col-form-label">Deleted</label>
                                     <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isDeleted" value="true"
-                                            class="custom-control-input"><span class="custom-control-label">Yes</span>
+                                        <input type="radio" name="isDeleted" value="true" id=""
+                                            class=" custom-control-input"><span class="custom-control-label">Yes</span>
                                     </label>
                                     <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isDeleted" value="false"
-                                            class="custom-control-input"><span class="custom-control-label">No</span>
+                                        <input type="radio" name="isDeleted" value="false" id=""
+                                            class=" custom-control-input"><span class="custom-control-label">No</span>
                                     </label>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="input-select">Rating</label>
-                                    <select class="form-control" name="rating" id="input-select">
+                                    <select class="form-control" name="rating" id="input-rating">
                                         <option>Rating</option>
                                         <option>1</option>
                                         <option>2</option>
@@ -104,5 +109,77 @@
         </div>
     </div>
 
+    <script>
+        // $(document).ready(function () {
+        //     let imgPreview = function (input, imagePlace) {
+        //         if (input.files) {
+        //             let allFiles = input.files.length;
+        //             for (i = 0; i < allFiles; i++) {
+        //                 let reader = new FileReader();
+        //                 const desiredHeight = 100;
+        //                 const desiredWidth = 100;
 
-    <%- include('../partials/adminPlugins.ejs')%>
+        //                 reader.onload = function (event) {
+        //                     $($.parseHTML("<img>"))
+        //                         .attr("src", event.target.result).attr("height", desiredHeight).attr("width", desiredWidth)
+        //                         .appendTo(imagePlace);
+        //                 }
+        //                 reader.readAsDataURL(input.files[i])
+        //             }
+        //         }
+        //     }
+        //     $("#inputImage").on("change", function () {
+        //         imgPreview(this, "div.previewImages");
+        //     });
+
+        // });
+        const WIDTH = 200;
+
+        let input = document.getElementById("inputImage");
+
+        input.addEventListener("change", (event) => {
+            console.log(event)
+            if (input.files) {
+                let allFiles = input.files.length;
+                for (i = 0; i < allFiles; i++) {
+
+                    let image_file = event.target.files[i];
+                    console.log(image_file)
+                    let reader = new FileReader();
+                    reader.readAsDataURL(image_file);
+                    // console.log(reader);
+
+                    reader.onload = (event) => {
+                        let image_url = event.target.result;
+
+
+                        let image = document.createElement("img");
+                        image.src = image_url;
+
+                        image.onload = (e) => {
+
+                            let canvas = document.createElement("canvas");
+                            let ratio = WIDTH / e.target.width;
+                            canvas.width = WIDTH
+                            canvas.height = e.target.height * ratio;
+
+                            const context = canvas.getContext("2d");
+                            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+
+                            let new_image_url = context.canvas.toDataURL("image/jpeg", 90);
+                            // console.log(new_image_url)
+
+                            let new_image = document.createElement("img");
+                            new_image.src = new_image_url;
+                            document.getElementById("previewImages").appendChild(new_image);
+
+                        }
+                    }
+                }
+            }
+        })
+
+    </script>
+
+    <%- include('../partials/adminPlugins.ejs') -%>

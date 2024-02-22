@@ -12,8 +12,11 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="breadcrumb__links">
                             <a href="/home">Home</a>
-                            <a href="/allProducts">Shop</a>
-                            <span>Sweet autumn leaves</span>
+                            <a href="/shop">Shop</a>
+                            <span>
+
+                                <%=product[0].name%>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -28,7 +31,7 @@
                     <div class="col-lg-6">
                         <div class="product__details__img">
                             <div class="product__details__big__img">
-                                <img class="big_img" src="img/shop/details/product-big-1.jpg" alt="">
+                                <img class="big_img" src="img/shop/chocolate cupcake.jpg" alt="">
                             </div>
                             <div class="product__details__thumb">
                                 <div class="pt__item active">
@@ -57,14 +60,26 @@
                     <div class="col-lg-6">
                         <div class="product__details__text">
                             <div class="product__label">Cupcake</div>
-                            <h4>SWEET AUTUMN LEAVES</h4>
-                            <h5>$26.41</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut
-                                labore
-                                et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida</p>
+                            <h4>
+                                <%=product[0].name%>
+                            </h4>
+                            <h5>
+                                <%=product[0].price%>
+                            </h5>
+                            <p>
+                                <%=product[0].short_description%>
+                            </p>
+                            <p class="justify-center">
+                                <%=product[0].detail_description%>
+                            </p>
+
                             <ul>
-                                <li>SKU: <span>17</span></li>
-                                <li>Category: <span>Biscuit cake</span></li>
+                                <li>SKU: <span>
+                                        <%=product[0].stock%>
+                                    </span></li>
+                                <li>Category: <span>
+                                        <%=product[0].category.name%>
+                                    </span></li>
                             </ul>
                             <div class="product__details__option">
                                 <div class="quantity">
@@ -92,52 +107,7 @@
                                 <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Previews(1)</a>
                             </li>
                         </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
-                                <div class="row d-flex justify-content-center">
-                                    <div class="col-lg-8">
-                                        <p>This delectable Strawberry Pie is an extraordinary treat filled with sweet
-                                            and
-                                            tasty chunks of delicious strawberries. Made with the freshest ingredients,
-                                            one
-                                            bite will send you to summertime. Each gift arrives in an elegant gift box
-                                            and
-                                            arrives with a greeting card of your choice that you can personalize online!
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tabs-2" role="tabpanel">
-                                <div class="row d-flex justify-content-center">
-                                    <div class="col-lg-8">
-                                        <p>This delectable Strawberry Pie is an extraordinary treat filled with sweet
-                                            and
-                                            tasty chunks of delicious strawberries. Made with the freshest ingredients,
-                                            one
-                                            bite will send you to summertime. Each gift arrives in an elegant gift box
-                                            and
-                                            arrives with a greeting card of your choice that you can personalize
-                                            online!2
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tabs-3" role="tabpanel">
-                                <div class="row d-flex justify-content-center">
-                                    <div class="col-lg-8">
-                                        <p>This delectable Strawberry Pie is an extraordinary treat filled with sweet
-                                            and
-                                            tasty chunks of delicious strawberries. Made with the freshest ingredients,
-                                            one
-                                            bite will send you to summertime. Each gift arrives in an elegant gift box
-                                            and
-                                            arrives with a greeting card of your choice that you can personalize
-                                            online!3
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

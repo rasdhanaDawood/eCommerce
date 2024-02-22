@@ -395,6 +395,7 @@ h6 {
     color: inherit
 }
 
+
 .h1,
 h1 {
     font-size: 2.5rem
@@ -5825,7 +5826,8 @@ button.close {
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, .2);
     border-radius: .3rem;
-    outline: 0
+    outline: 0;
+    width: fit-content;
 }
 
 .modal-backdrop {
@@ -5873,7 +5875,8 @@ button.close {
     position: relative;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
-    padding: 1rem
+    padding: 1rem;
+    overflow: hidden;
 }
 
 .modal-footer {
