@@ -47,7 +47,7 @@ const verifyLogin = async (req, res) => {
 const dashboard = async (req, res) => {
     try {
         if (req.session.admin) {
-            const productData = await Product.find({}).sort({ rating: -1 });
+            const productData = await Product.find({ is_Deleted: false }).limit(5);
             res.render('dashboard', { product: productData });
         }
     }
@@ -58,7 +58,6 @@ const dashboard = async (req, res) => {
 
 const listProduct = async (req, res) => {
     try {
-        // if (req.session.admin) {
         var productData = await Product.find({ is_Deleted: false }).populate('category');
         const categoryData = await Category.find({})
         if (req.query) {
@@ -84,7 +83,6 @@ const listProduct = async (req, res) => {
             }
         }
         if (productData) {
-
             res.render('listProduct', {
                 product: productData,
                 category: categoryData,
@@ -239,7 +237,9 @@ const editProduct = async (req, res) => {
             res.redirect('/admin/listProduct');
         }
     } catch (error) {
-        console.log(error.message);
+        res.render("error", {
+            message: error.message
+        });
     }
 }
 
@@ -269,15 +269,6 @@ const cropImage = async (req, res) => {
     }
 }
 
-const addCroppedImage = (req, res) => {
-    try {
-        console.log(req.query);
-        console.log(req.body);
-
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 
 const add_subcategory = async (req, res) => {
     try {
@@ -369,6 +360,11 @@ const addCategory = async (req, res) => {
         const toppings = req.body.checkbox;
         if (!name || !availability || !toppings) {
             req.flash("errorMessage", "Please fill all fields");
+            res.redirect("/admin/addCategory")
+        }
+        const checkCategory = await Category.find({ name: name });
+        if (checkCategory) {
+            req.flash("errorMessage", "Category name already exists!!");
             res.redirect("/admin/addCategory")
         }
         var status;
@@ -521,11 +517,9 @@ const editUser = async (req, res) => {
 const logout = async (req, res) => {
     try {
         console.log("logout");
-
         req.session.destroy();
         console.log(req.session);
-        res.redirect("/admin");
-
+        res.redirect("/admin/login");
 
     } catch (error) {
         console.log(error.message)
@@ -544,7 +538,6 @@ module.exports = {
     editProduct,
     deleteProduct,
     cropImage,
-    addCroppedImage,
     add_subcategory,
     create_subcategory,
     delete_subcategory,

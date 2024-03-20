@@ -4,12 +4,12 @@ const cartSchema = new mongoose.Schema({
 
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: true
-    }, // Reference to the user who owns the cart
+    },
     created_at: {
         type: Date,
-        required: true
+        default: Date.now
     },
     cartItems: [{
         product: {
@@ -20,14 +20,10 @@ const cartSchema = new mongoose.Schema({
         quantity: {
             type: Number,
             required: true
-        },
-        subtotal: {
-            type: Number,
-            required: true
         }
     }]
 });
 
-const cart = mongoose.model('cart', cartSchema);
+const cart = mongoose.model('Cart', cartSchema);
 
 module.exports = cart;

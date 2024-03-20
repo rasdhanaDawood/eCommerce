@@ -33,19 +33,19 @@
                                                 <div>
                                                     <ul class="list-group">
                                                         <% for(let i=0;i<subcategory.length;i++){ %>
+                                                            <div>
+                                                                <li class="list-group-item-secondary">
+                                                                    <%=subcategory[i].sub_category %>
 
-                                                            <li class="list-group-item-secondary">
-                                                                <%=subcategory[i].sub_category %>
+                                                                        <a
+                                                                            href="/admin/delete_subcategory?id=<%= subcategory[i]._id %>"><button
+                                                                                class="btn-dark float-right"
+                                                                                style="width: 20%; "
+                                                                                type="button">Delete</button>
+                                                                        </a>
 
-                                                                    <a
-                                                                        href="/admin/delete_subcategory?id=<%= subcategory[i]._id %>"><button
-                                                                            class="btn-dark float-right"
-                                                                            style="width: 20%; "
-                                                                            type="button">Delete</button>
-                                                                    </a>
-
-                                                            </li>
-
+                                                                </li>
+                                                            </div>
                                                             <% } %>
                                                     </ul>
 

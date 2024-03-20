@@ -1,6 +1,7 @@
 <%- include('../partials/head.ejs') %>
     <%- include('../partials/userHeader.ejs') %>
         <!-- Breadcrumb Begin -->
+
         <div class="breadcrumb-option">
             <div class="container">
                 <div class="row">
@@ -25,145 +26,87 @@
             <div class="container">
                 <div class="shop__option">
                     <div class="row">
+
                         <div class="col-lg-7 col-md-7">
                             <div class="shop__option__search">
 
-                                <form action="">
-                                    <div class="col-lg-1">
-                                        <div class="form-group">
-                                            <select class="form-control" name="category" id="input-select">
-                                                <option>Categories</option>
-                                                <% for( let i=0;i<category.length;i++) { %>
-                                                    <option value='<%= category[i]._id%>'>
-                                                        <%= category[i].name%>
-                                                    </option>
-                                                    <% } %>
-                                            </select>
-                                        </div>
-                                    </div>
+                                <form action="#">
+                                    <select class="form-control" name="category" id="category">
+                                        <option>Categories</option>
+                                        <option value="All">All Products</option>
 
+                                        <% for( let i=0;i<category.length;i++) { %>
 
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Search">
-                                        <button type="submit"><i class="fa fa-search"></i></button>
-                                    </div>
+                                            <option value='<%= category[i]._id%>'>
+                                                <%= category[i].name%>
+                                            </option>
+
+                                            <% } %>
+                                    </select>
+
+                                    <input type="text" placeholder="Search" name="name">
+                                    <button type="submit"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
                         </div>
                         <div class="col-lg-5 col-md-5">
                             <div class="shop__option__right">
-                                <select>
-                                    <option value="">Sort</option>
-                                    <option value="">A to Z</option>
-                                    <option value="">1 - 8</option>
-                                    <option value="">Name</option>
+
+
+                                <select name="sort" id="sort">
+
+                                    <option value=" sort">Sort</option>
+                                    <option value="nameAsc">Name:Ascending</option>
+                                    <option value="nameDesc">Name:Descending</option>
+                                    <option value="lowToHigh">Price:Low to High</option>
+                                    <option value="highToLow">Price: High to Low</option>
+                                    <option value="rating">Rating</option>
+                                    <option value="featured">Featured</option>
+
                                 </select>
-                                <a href="#"><i class="fa fa-list"></i></a>
-                                <a href="#"><i class="fa fa-reorder"></i></a>
+
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <% if(product.length>0){%>
-                        <%for(let i=0;i<product.length;i++){ %>
-                            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="products-container">
+                    <div class="row">
+                        <% if(product.length>0){%>
+                            <%for(let i=0;i<product.length;i++){ %>
+                                <div class="col-lg-3 col-md-6 col-sm-6">
 
-                                <div class="product__item">
-                                    <div class="product__item__pic set-bg">
-                                        <img src="/img/shop/<%=product[i].images[0]%>" alt="<%=product[i].name%>"
-                                            style=" height: 100%;width: 100%;">
-                                    </div>
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg">
+                                            <a href="/product?id=<%=product[i]._id %>">
+                                                <img src="/img/shop/<%=product[i].images[0]%>"
+                                                    alt="<%=product[i].name%>" style=" height: 100%;width: 100%;">
+                                        </div>
 
-                                    <div class="product__item__text">
-                                        <h6><a href="/product?id=<%=product[i]._id %>">
+                                        <div class="product__item__text">
+                                            <h6>
                                                 <%=product[i].name%>
-                                            </a>
-                                        </h6>
-                                        <div class="product__item__price">
-                                            ₹<%=product[i].price%>/piece
+                                                    </a>
+                                            </h6>
+                                            <div class="product__item__price">
+                                                ₹<%=product[i].price%>/piece
+                                            </div>
+                                            <div class="cart_add">
+                                                <a href="/cart/<%=product[i]._id%>">Add to cart</a>
+                                            </div>
                                         </div>
-                                        <div class="cart_add">
-                                            <a href="/addToCart">Add to cart</a>
-                                        </div>
+
                                     </div>
 
                                 </div>
+                                <%} } else {%>
+                                    Products Not Found
 
-                            </div>
-                            <%} } else {%>
-                                Products Not Found
+                                    <% } %>
 
-                                <% } %>
-
-
-                                    <div class="col-lg-3 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg" data-setbg="img/shop/product-9.jpg">
-                                                <div class="product__label">
-                                                    <span>Cupcake</span>
-                                                </div>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <h6><a href="#">VEGAN/GLUTEN FREE</a></h6>
-                                                <div class="product__item__price">$98.85</div>
-                                                <div class="cart_add">
-                                                    <a href="#">Add to cart</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg" data-setbg="img/shop/product-10.jpg">
-                                                <div class="product__label">
-                                                    <span>Cupcake</span>
-                                                </div>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <h6><a href="#">SWEET CELTICS</a></h6>
-                                                <div class="product__item__price">$5.77</div>
-                                                <div class="cart_add">
-                                                    <a href="#">Add to cart</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg" data-setbg="img/shop/product-11.jpg">
-                                                <div class="product__label">
-                                                    <span>Cupcake</span>
-                                                </div>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <h6><a href="#">SWEET AUTUMN LEAVES</a></h6>
-                                                <div class="product__item__price">$26.41</div>
-                                                <div class="cart_add">
-                                                    <a href="#">Add to cart</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg" data-setbg="img/shop/product-12.jpg">
-                                                <div class="product__label">
-                                                    <span>Cupcake</span>
-                                                </div>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <h6><a href="#">PALE YELLOW SWEET</a></h6>
-                                                <div class="product__item__price">$22.47</div>
-                                                <div class="cart_add">
-                                                    <a href="#">Add to cart</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                    </div>
                 </div>
             </div>
-            <div class="shop__last__option">
+            <!-- <div class="shop__last__option">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="shop__pagination">
@@ -179,10 +122,94 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             </div>
         </section>
         <!-- Shop Section End -->
+
+        <script>
+
+            $(document).ready(function () {
+                $('#category').change(function () {
+                    const selectedCategory = $(this).val();
+                    console.log(selectedCategory)
+                    fetchFilterProducts(selectedCategory);
+                });
+
+                $('#sort').change(function () {
+                    const selectedSortOption = $(this).val();
+                    console.log(selectedSortOption)
+                    fetchSortProducts(selectedSortOption);
+                });
+            });
+            function fetchFilterProducts(filterOption) {
+
+                // Send the AJAX request
+                $.ajax({
+                    url: '/shop',
+                    type: 'GET',
+                    data: { category: filterOption },
+                    success: function (products) {
+                        displayProducts(products);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching products:', error);
+                    }
+                });
+            }
+
+            function fetchSortProducts(sortOption) {
+
+                // Send the AJAX request
+                $.ajax({
+                    url: '/shop',
+                    type: 'GET',
+                    data: { sort: sortOption },
+                    success: function (products) {
+                        displayProducts(products);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching products:', error);
+                    }
+                });
+            }
+
+            function displayProducts(products) {
+                const productsContainer = $('.products-container');
+                if (products.length === 0) {
+                    console.log('No products received');
+                    return;
+                }
+                productsContainer.empty();
+                productsContainer.css('display', 'flex');
+                productsContainer.css('flex-wrap', 'wrap'); // Optional: Allow wrapping if needed
+
+                // productsContainer.append('<div class="row">');
+
+                // Iterate over products and append each product element
+                products.forEach(product => {
+                    // Append individual product element
+                    productsContainer.append(`
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="product__item">
+                <div class="product__item__pic set-bg">
+                    <img src="/img/shop/${product.images[0]}" alt="${product.name}" style="height: 100%; width: 100%;">
+                </div>
+                <div class="product__item__text">
+                    <h6><a href="/product?id=${product._id}">${product.name}</a></h6>
+                    <div class="product__item__price">₹${product.price}/piece</div>
+                    <div class="cart_add">
+                        <a href="/addToCart">Add to cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+                });
+
+            }
+
+        </script>
         <%- include('../partials/footer.ejs') %>
 
             <%- include('../partials/plugins.ejs') %>

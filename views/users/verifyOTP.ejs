@@ -33,8 +33,8 @@
                                         <div class="form-group pt-2">
                                             <label for="exampleInputEmail1">Email address</label>
                                             <input type="email" class="form-control" id="email"
-                                                aria-describedby="emailHelp" name="email" placeholder="Enter email"
-                                                required>
+                                                aria-describedby="emailHelp" name="email" value="<%= email %>"
+                                                placeholder="<%= email %>" required>
                                             <span class="error" id="email_error"></span>
                                         </div>
                                         <div class="form-group">
@@ -43,14 +43,55 @@
                                                 placeholder="Enter OTP">
                                             <span class="error" id="otp_error"></span><br>
                                         </div>
+                                        <p id="countdown">Time remaining: <span id="timer">5:00</span></p>
+
                                         <div class="form-group text-center pb-2 pt-2">
                                             <button type="submit" class="btn btn-dark text-center pb-2">Proceed</button>
                                         </div>
                                     </form>
+                                    <form action="/resend-otp" method="post">
+                                        <input type="hidden" name="email" value="<%= email %>">
+                                        <button type="submit" class="btn btn-dark text-center pb-2">
+                                            Resend
+                                            OTP </button>
+                                    </form>
+
+
                 </div>
             </div>
         </div>
         <script>
+
+            let countdownTime = 5 * 60; // 5 minutes
+
+            // Function to update the countdown timer
+            function updateCountdown() {
+                const minutes = Math.floor(countdownTime / 60);
+                const seconds = countdownTime % 60;
+
+                // Display the updated time
+                document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                // Check if the countdown has reached zero
+                if (countdownTime === 0) {
+                    // Code to handle expiration after the timer expires
+                    console.log('OTP has expired.');
+                    // Additional logic such as marking the OTP as expired in the database
+                } else {
+                    // Decrement the countdown time
+                    countdownTime--;
+
+                    // Call the function again after 1 second (1000 milliseconds)
+                    setTimeout(updateCountdown, 1000);
+                }
+            }
+
+            // Initial call to start the countdown
+            updateCountdown();
+
+
+
+
             const email = document.getElementById('email');
             const otp = document.getElementById('otp');
 
@@ -63,24 +104,28 @@
                 var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
                 var otp_check = /^[0-9]{6}$/;
 
-                if (email.value === '' || email.value == null) {
+                // if (email.value === '' || email.value == null) {
+                //     e.preventDefault();
+                //     email_error.innerHTML = " Email is required";
+                // } else { email_error.innerHTML = ""; }
+                // if (!email.value.match(email_check)) {
+                //     e.preventDefault();
+                //     email_error.innerHTML = "Please enter valid email";
+                // } else {
+                //     email_error.innerHTML = "";
+                // }
+                if (otp.value === '' || otp.value == null) {
                     e.preventDefault();
-                    email_error.innerHTML = " Email is required";
-                } else { email_error.innerHTML = ""; } if
-                    (!email.value.match(email_check)) {
-                    e.preventDefault();
-                    email_error.innerHTML = "Please enter valid email";
-                } else {
-                    email_error.innerHTML = "";
-                } if (otp.value === '' || otp.value == null) {
-                    e.preventDefault(); otp_error.innerHTML = "OTP is required";
+                    otp_error.innerHTML = "OTP is required";
                 } else {
                     otp_error.innerHTML = "";
                 } if (!otp.value.match(otp_check)) {
-                    e.preventDefault(); otp_error.innerHTML = "Incorrect OTP";
+                    e.preventDefault();
+                    otp_error.innerHTML = "Incorrect OTP";
                 } else {
                     otp_error.innerHTML = "";
                 }
-            }) </script>
+            }) 
+        </script>
     </section>
     <%- include('../partials/plugins.ejs')%>

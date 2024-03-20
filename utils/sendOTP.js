@@ -4,12 +4,15 @@ const User = require('../models/userModel');
 
 const sendOTP = async (req, res, next) => {
     try {
+        console.log(req.body)
         const { email } = req.body;
         const findUser = await User.findOne({ email });
         if (findUser && findUser.verified === true) {
             console.log('User already registered');
+            res.redirect('/login');
         }
         else {
+            const otpUser = await OTP.deleteOne({ email })
             let otp = otpGenerator.generate(6, {
                 upperCaseAlphabets: false,
                 lowerCaseAlphabets: false,

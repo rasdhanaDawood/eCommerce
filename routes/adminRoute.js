@@ -34,7 +34,7 @@ admin_route.get("/delete_subcategory", adminController.delete_subcategory);
 
 admin_route.post('/add_subcategory', adminController.create_subcategory);
 
-admin_route.get("/listProduct", adminController.listProduct);
+admin_route.get("/listProduct", auth.isAuthenticated, adminController.listProduct);
 
 admin_route.get("/viewProduct", adminController.viewProduct);
 
@@ -50,7 +50,7 @@ admin_route.get("/deleteProduct", adminController.deleteProduct);
 
 admin_route.get('/crop_image', adminController.cropImage);
 
-admin_route.post('/crop_image', adminController.addCroppedImage);
+// admin_route.post('/crop_image', adminController.addCroppedImage);
 
 admin_route.get("/editUser", adminController.getUser);
 
@@ -59,6 +59,11 @@ admin_route.get("/updateUser", adminController.editUser);
 admin_route.get("/forgotPassword", auth.isLoggedOut, adminController.forgotPassword);
 
 admin_route.get('/logout', auth.isAuthenticated, adminController.logout);
+
+admin_route.get("/new", async (req, res) => {
+
+    res.render("new");
+});
 
 // admin_route.get("/*", (req, res) => {
 //     req.flash('errormessage', 'Please login First')

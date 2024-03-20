@@ -1,0 +1,170 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <!-- Breadcrumb Begin -->
+        <div class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="breadcrumb__text">
+                            <h2>Shopping cart</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="breadcrumb__links">
+                            <a href="/home">Home</a>
+                            <span>Shopping cart</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Breadcrumb End -->
+
+        <!-- Shopping Cart Section Begin -->
+        <section class="shopping-cart spad">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="shopping__cart__table">
+                            <% if(isEmpty){ %>
+                                <h3>Cart is Empty</h3>
+                                <% } else {%>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="cart-items">
+
+                                                <% cartItems.forEach((cartItem)=> { %>
+
+                                                    <td class="product__cart__item">
+                                                        <div class="product__cart__item__pic">
+
+                                                            <img src="img/shop/<%= cartItem.product.images[0] %>"
+                                                                style="height:80px" alt="">
+                                                        </div>
+
+                                                        <div class="product__cart__item__text">
+                                                            <h6>
+                                                                <%= cartItem.product.name %>
+                                                            </h6>
+
+                                                            <h5>
+                                                                <span class="price">
+                                                                    <%= cartItem.product.price %>
+                                                                </span>
+                                                            </h5>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="quantity__item">
+                                                        <div class="quantity">
+                                                            <div class="pro-qty">
+                                                                <input type="number" class="qty"
+                                                                    value="<%= cartItem.quantity %>"
+                                                                    onchange="calculateSubtotal(this)">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+
+                                                    <td class="cart__price">$ <span class="subtotal">
+                                                            <%= cartItem.product.price * cartItem.quantity %>
+                                                        </span></td>
+
+                                                    <td class="cart__close"><a href="/cart"><button class="btn icon_close" onclick="deleteProduct('<%= cartItem.product._id %>')"
+                                                                type="button"></button></a></td>
+
+                                            </tr>
+                                            <% })} %>
+
+                                        </tbody>
+                                    </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="continue__btn">
+                                    <a href="/shop">Continue Shopping</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="continue__btn update__btn">
+                                    <a href="#"> Update cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="cart__discount">
+                            <h6>Discount codes</h6>
+                            <form action="#">
+                                <input type="text" placeholder="Coupon code">
+                                <button type="submit">Apply</button>
+                            </form>
+                        </div>
+                        <div class="cart__total">
+                            <h6>Cart total</h6>
+                            <ul>
+                                <li>Subtotal <span>$ 169.50</span></li>
+                                <li>Total <span>$ 169.50</span></li>
+                            </ul>
+                            <a href="#" class="primary-btn">Proceed to checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Shopping Cart Section End -->
+        <script>
+
+            document.querySelectorAll('.qty').forEach(input => {
+                input.addEventListener('input', function () {
+                    calculateSubtotal(this);
+                });
+            });
+
+            function calculateSubtotal(input) {
+                const quantity = parseInt(input.value);
+                console.log(quantity);
+
+                const price = parseFloat(input.closest('tr').querySelector('.price').textContent);
+                console.log(price)
+
+                const subtotal = quantity * price;
+                console.log(subtotal)
+
+                input.closest('tr').querySelector('.subtotal').textContent = subtotal.toFixed(2);
+            }
+
+            function deleteProduct(productId) {
+                // Send AJAX request to delete product
+                fetch(`/cart/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to delete product');
+                        }
+                        // Reload the page or update the cart display as needed
+                        location.reload(); // Reload the page after successful deletion
+                    })
+                    .catch(error => {
+                        console.error('Error deleting product:', error);
+                        // Handle error, show error message, etc.
+                    });
+            }
+
+
+        </script>
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

@@ -31,40 +31,28 @@
                     <div class="col-lg-6">
                         <div class="product__details__img">
                             <div class="product__details__big__img">
-                                <img class="big_img" src="img/shop/chocolate cupcake.jpg" alt="">
+                                <img class="big_img" src="img/shop/<%= product[0].images[0] %>" alt="">
                             </div>
                             <div class="product__details__thumb">
-                                <div class="pt__item active">
-                                    <img data-imgbigurl="img/shop/details/product-big-2.jpg"
-                                        src="img/shop/details/product-big-2.jpg" alt="">
-                                </div>
-                                <div class="pt__item">
-                                    <img data-imgbigurl="img/shop/details/product-big-1.jpg"
-                                        src="img/shop/details/product-big-1.jpg" alt="">
-                                </div>
-                                <div class="pt__item">
-                                    <img data-imgbigurl="img/shop/details/product-big-4.jpg"
-                                        src="img/shop/details/product-big-4.jpg" alt="">
-                                </div>
-                                <div class="pt__item">
-                                    <img data-imgbigurl="img/shop/details/product-big-3.jpg"
-                                        src="img/shop/details/product-big-3.jpg" alt="">
-                                </div>
-                                <div class="pt__item">
-                                    <img data-imgbigurl="img/shop/details/product-big-5.jpg"
-                                        src="img/shop/details/product-big-5.jpg" alt="">
-                                </div>
+                                <%for(let i=1;i<3;i++){%>
+                                    <div class="pt__item active">
+                                        <img data-imgbigurl="img/shop/<%= product[0].images[i] %>"
+                                            src="img/shop/<%= product[0].images[i] %>" alt="">
+                                    </div>
+                                    <%}%>
+
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
+
                         <div class="product__details__text">
-                            <div class="product__label">Cupcake</div>
                             <h4>
                                 <%=product[0].name%>
+
                             </h4>
                             <h5>
-                                <%=product[0].price%>
+                                Price: ₹<%=product[0].price%>
                             </h5>
                             <p>
                                 <%=product[0].short_description%>
@@ -74,42 +62,39 @@
                             </p>
 
                             <ul>
-                                <li>SKU: <span>
+                                <li>Stock: <span>
                                         <%=product[0].stock%>
                                     </span></li>
                                 <li>Category: <span>
                                         <%=product[0].category.name%>
                                     </span></li>
                             </ul>
+
+
                             <div class="product__details__option">
-                                <div class="quantity">
-                                    <div class="pro-qty">
-                                        <input type="text" value="2">
-                                    </div>
+                                <div class="row">
+                                    <!-- <div class="quantity">
+                                        <div class="pro-qty">
+                                            <input type="text" name="quantity" id="quantity" value="2" min="1">
+                                        </div>
+                                    </div> -->
+                                    <input type="hidden" name="id" value="<%=product[0]._id%>">
+
+                                    <a href="/cart/<%=product[0]._id%>" <button type="button"
+                                        class="btn primary-btn">Add
+                                        to
+                                        Cart</button></a>
+                                    </form>
+                                    <a href="#" class="heart__btn"><span class="icon_heart_alt"></span></a>
                                 </div>
-                                <a href="#" class="primary-btn">Add to cart</a>
-                                <a href="#" class="heart__btn"><span class="icon_heart_alt"></span></a>
                             </div>
+
+
                         </div>
                     </div>
-                </div>
-                <div class="product__details__tab">
-                    <div class="col-lg-12">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Description</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Additional
-                                    information</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Previews(1)</a>
-                            </li>
-                        </ul>
 
-                    </div>
                 </div>
+
             </div>
         </section>
         <!-- Shop Details Section End -->
@@ -125,105 +110,36 @@
                     </div>
                 </div>
                 <div class="row">
+
                     <div class="related__products__slider owl-carousel">
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-1.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
+                        <%for(let i=0;i<allProducts.length;i++){%>
+                            <div class="col-lg-3">
+                                <a href="/product?id=<%=allProducts[i]._id %>">
+
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg"
+                                            data-setbg="img/shop/<%=allProducts[i].images[0]%>">
+                                            <div class="product__label">
+                                            </div>
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6>
+                                                <%=allProducts[i].name%>
+                                </a>
+                                </h6>
+                                <div class="product__item__price">
+                                    ₹<%=allProducts[i].price%>
                                 </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Dozen Cupcakes</a></h6>
-                                    <div class="product__item__price">$32.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-2.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Cookies and Cream</a></h6>
-                                    <div class="product__item__price">$30.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
+                                <div class="cart_add">
+                                    <a href="#">Add to cart</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-3.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Gluten Free Mini Dozen</a></h6>
-                                    <div class="product__item__price">$31.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-4.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Cookie Dough</a></h6>
-                                    <div class="product__item__price">$25.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-5.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Vanilla Salted Caramel</a></h6>
-                                    <div class="product__item__price">$05.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/shop/product-6.jpg">
-                                    <div class="product__label">
-                                        <span>Cupcake</span>
-                                    </div>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">German Chocolate</a></h6>
-                                    <div class="product__item__price">$14.00</div>
-                                    <div class="cart_add">
-                                        <a href="#">Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
+
+
                 </div>
+                <%}%>
             </div>
         </section>
         <!-- Related Products Section End -->
