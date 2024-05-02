@@ -2,13 +2,17 @@ const User = require("../models/userModel");
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 const SubCategory = require("../models/subCategoryModel");
+const Order = require("../models/ordersModel");
+const { ProductOffer, CategoryOffer, ReferralOffer } = require("../models/offerModel");
+const Sales = require("../models/salesModel");
+
 
 const bcrypt = require("bcrypt");
 
 const loadLogin = async (req, res) => {
     try {
         if (!req.session.admin) {
-            res.render('Signin', {
+            res.render('signin', {
                 errorMessage: req.flash("errorMessage"),
                 successMessage: req.flash("successMessage")
             });
@@ -125,6 +129,11 @@ const addProduct = async (req, res) => {
         const imageFiles = [];
         console.log(req.files);
         console.log(req.body);
+        const productData = await Product.findOne({ name: req.body.productname });
+        if (productData) {
+            req.flash("errorMessage", "Product already exists!!")
+            res.redirect('/admin/listProduct');
+        }
         if (req.files) {
             req.files.map(file => {
                 imageFiles.push(file.filename);
@@ -144,8 +153,9 @@ const addProduct = async (req, res) => {
             category: req.body.category,
             stock: req.body.stock
         });
-        console.log(req.body)
         const createProduct = await product.save();
+        console.log(createProduct);
+
         if (createProduct) {
             req.flash("successMessage", "Product created successfully")
             res.redirect('/admin/listProduct');
@@ -373,7 +383,11 @@ const addCategory = async (req, res) => {
         } else {
             status = false;
         }
-        let categoryData = await Category.findOne({ name });
+
+
+        const categoryData = await Category.findOne({
+            name: { $regex: new RegExp(name, 'i') }
+        });
         if (categoryData) {
             req.flash("successMessage", "Category already saved");
             res.redirect("/admin/addCategory")
@@ -514,6 +528,311 @@ const editUser = async (req, res) => {
     }
 }
 
+const listOrders = async (req, res) => {
+    try {
+        const orderData = await Order.find({}).populate('user').populate('products.product');
+        console.log(orderData);
+        res.render("listOrders", {
+            order: orderData,
+            errorMessage: req.flash('errorMessage'),
+            successMessage: req.flash('successMessage')
+        });
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getUpdateStatusPage = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const orderData = await Order.findOne({ _id: orderId });
+        res.render("updateStatus", {
+            orders: orderData
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const updateStatus = async (req, res) => {
+    try {
+        const { id, status } = req.body;
+        console.log(req.body);
+        const orderData = await Order.findOne({ _id: id });
+        console.log(orderData);
+        if (orderData) {
+            const updateOrder = await Order.findOneAndUpdate({ _id: id }, { $set: { status: status } });
+            console.log(updateOrder);
+            req.flash("successMessage", "Order updated successfully!!");
+            res.redirect("/admin/listOrders");
+        } else {
+            console.log("order not found");
+            req.flash("successMessage", "Order not found!!");
+            res.redirect("/admin/listOrders");
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const listStock = async (req, res) => {
+    try {
+        const productData = await Product.find({ is_Deleted: false });
+        console.log(productData);
+        res.render("listStock", {
+            product: productData,
+            errorMessage: req.flash('errorMessage'),
+            successMessage: req.flash('successMessage')
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getAddStock = async (req, res) => {
+    try {
+        const productData = await Product.find({});
+        console.log(productData);
+        res.render("addStock", {
+            product: productData
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addStock = async (req, res) => {
+    try {
+        const { type, productId, quantity } = req.body;
+        console.log(req.body);
+        const productData = await Product.findOne({ _id: productId });
+        if (productData) {
+            if (type == 'purchase') {
+                const updatedQuantity = parseInt(productData.stock) + parseInt(quantity);
+
+                const updateStock = await Product.findOneAndUpdate({ _id: productId }, { $set: { stock: updatedQuantity } });
+                console.log(updateStock);
+                if (updateStock) {
+                    req.flash("successMessage", "Stock updated Successfully");
+                    res.redirect("/admin/listStock");
+                }
+                else {
+                    req.flash("errorMessage", "Couldnt update stock. Something went wrong!!");
+                    res.redirect("/admin/listStock");
+                }
+            }
+            if (type == 'sale') {
+                if (productData.stock >= quantity) {
+                    const updatedQuantity = productData.quantity - quantity;
+                    const updateStock = await Product.findOneAndUpdate({ _id: productId }, { $set: { stock: updatedQuantity } });
+                    console.log(updateStock);
+                    if (updateStock) {
+                        req.flash("successMessage", "Stock updated Successfully");
+                        res.redirect("/admin/listStock");
+                    }
+                }
+                else {
+                    req.flash("errorMessage", "Sufficient quantity is not in stock!!");
+                    res.redirect("/admin/listStock");
+                }
+            }
+        } else {
+            const newStockData = new Stock({
+                type: type,
+                product: productId,
+                quantity: quantity
+            });
+            const savedData = await newStockData.save();
+            console.log(savedData);
+            if (savedData) {
+                req.flash("successMessage", "Stock added successfully!!")
+                res.redirect("/admin/listStock")
+            } else {
+                req.flash("errorMessage", "Something wrong!!")
+                res.redirect("/admin/listStock")
+            }
+
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const listCoupons = async (req, res) => {
+
+    try {
+        const productOffer = await ProductOffer.find().populate('product');
+        const categoryOffer = await CategoryOffer.find().populate('category');
+        res.render('listCoupons', {
+            successMessage: req.flash('successMessage'),
+            errorMessage: req.flash('errorMessage'),
+            productOffer,
+            categoryOffer
+        });
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+const getAddCategoryCouponPage = async (req, res) => {
+    try {
+        const categoryData = await Category.find();
+        res.render("addCategoryCoupons", {
+            errorMessage: req.flash("errorMessage"),
+            successMessage: req.flash("successMessage"),
+            categories: categoryData
+        });
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getAddProductCouponPage = async (req, res) => {
+    try {
+        const productsData = await Product.find();
+        res.render("addProductCoupons", {
+            errorMessage: req.flash("errorMessage"),
+            successMessage: req.flash("successMessage"),
+            products: productsData
+        });
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addCategoryCoupon = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { code, amount, type, expiresAt, category } = req.body;
+        if (!code || !amount || !type || !expiresAt) {
+            req.flash("errorMessage", "Please fill all fields");
+            res.redirect('/admin/addCategoryCoupons')
+        }
+        const existingCode = await CategoryOffer.findOne({ code: code });
+        if (existingCode) {
+            req.flash("errorMessage", "Code already added!!");
+            res.redirect('/admin/listCoupons')
+        }
+        if (category && type == 'category') {
+            const categoryOffer = new CategoryOffer({
+                code: code,
+                amount: amount,
+                type: type,
+                expiresAt: expiresAt,
+                category: category
+            });
+            const saveData = await categoryOffer.save();
+            if (saveData) {
+                console.log("Data saved successfully");
+                req.flash('successMessage', 'Coupon added successfully!!')
+                res.redirect('/admin/listCoupons')
+
+            } else {
+                console.log("Data not saved");
+                req.flash('errorMessage', 'Coupon not added!!')
+                res.redirect('/admin/addCategoryCoupons')
+
+            }
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addProductCoupon = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { code, amount, type, expiresAt, product } = req.body;
+        if (!code || !amount || !type || !expiresAt) {
+            req.flash("errorMessage", "Please fill all fields");
+            res.redirect('/admin/addProductCoupons')
+        }
+        const existingCode = await ProductOffer.findOne({ code: code });
+        if (existingCode) {
+            req.flash("errorMessage", "Code already added!!");
+            res.redirect('/admin/listCoupons')
+        }
+        if (product && type == 'product') {
+            const productOffer = new ProductOffer({
+                code: code,
+                amount: amount,
+                type: type,
+                expiresAt: expiresAt,
+                product: product
+            });
+            const saveData = await productOffer.save();
+            if (saveData) {
+                console.log("Data saved successfully");
+                req.flash('successMessage', 'Coupon added successfully!!')
+                res.redirect('/admin/listCoupons')
+            }
+            else {
+                console.log("Data not saved");
+                req.flash('errorMessage', 'Coupon not added!!')
+                res.redirect('/admin/addProductCoupons')
+
+            }
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const deleteCategoryCoupon = async (req, res) => {
+    try {
+        console.log(req.query);
+        const categoryId = req.query.id;
+        const categoryData = await CategoryOffer.findOne({ category: categoryId });
+        if (categoryData) {
+            const deleteData = await CategoryOffer.deleteOne({ category: categoryId });
+            if (deleteData) {
+                console.log(`categoryOffer data of ${categoryId} deleted successfully`)
+                req.flash('successMessage', "Offer deleted successfully");
+                res.redirect('/admin/listCoupons')
+            }
+            else {
+                console.log(`categoryOffer data of ${categoryId} not deleted `)
+                req.flash('errorMessage', "Offer not deleted");
+                res.redirect('/admin/listCoupons')
+            }
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const deleteProductCoupon = async (req, res) => {
+    try {
+        console.log(req.query);
+        const productId = req.query.id;
+        const productData = await ProductOffer.findOne({ product: productId });
+        if (productData) {
+            const deleteData = await ProductOffer.deleteOne({ product: productId });
+            if (deleteData) {
+                console.log(`categoryOffer data of ${categoryId} deleted successfully`)
+                req.flash('successMessage', "Offer deleted successfully");
+                res.redirect('/admin/listCoupons')
+            }
+            else {
+                console.log(`categoryOffer data of ${categoryId} not deleted `)
+                req.flash('errorMessage', "Offer not deleted");
+                res.redirect('/admin/listCoupons')
+            }
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
 const logout = async (req, res) => {
     try {
         console.log("logout");
@@ -550,6 +869,19 @@ module.exports = {
     getSubCategory,
     getUser,
     editUser,
+    listOrders,
+    getUpdateStatusPage,
+    updateStatus,
+    listStock,
+    getAddStock,
+    addStock,
+    listCoupons,
+    getAddCategoryCouponPage,
+    addCategoryCoupon,
+    getAddProductCouponPage,
+    addProductCoupon,
+    deleteCategoryCoupon,
+    deleteProductCoupon,
     logout,
     forgotPassword
 }

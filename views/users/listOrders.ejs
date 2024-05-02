@@ -1,0 +1,95 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card">
+                    <h2 class="card-header">Orders</h2>
+                    <br>
+                    <div class="card-body">
+                        <% if (message.length> 0) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <%- message %>
+                            </div>
+                            <% } %>
+
+                                <% if(order.length> 0) { %>
+                                    <table class="table table-striped" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Product Name</th>
+                                                <th>Quantity</th>
+                                                <th>Product Status</th>
+                                                <th>Order Date</th>
+                                                <th>Total Amount</th>
+                                                <th>Type of payment</th>
+                                                <th>Status</th>
+                                                <th>Address</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(const item of order) { %>
+                                                <tr>
+                                                    <td>ID#<%= item._id %>
+                                                    </td>
+                                                    <% if(item.products.length> 0) { %>
+                                                        <td>
+                                                            <% for(const product of item.products) { %>
+
+                                                                <a href="/viewOrder?id=<%=item._id%>">
+                                                                    <%= product.product.name %>
+                                                                </a><br>
+                                                                <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <% for(const product of item.products) { %>
+                                                                <%= product.quantity %><br>
+                                                                    <% } %>
+                                                        </td>
+                                                        <% } %>
+                                                            <td>
+                                                                <% for(const product of item.products){ %>
+                                                                    <% if(product.productStatus==true){%>
+                                                                        Pending
+                                                                        <% }else{%>
+                                                                            Cancelled
+                                                                            <% }%><br>
+
+                                                                                <% } %>
+                                                            </td>
+                                                            <td>
+                                                                <%= (new
+                                                                    Date(item.created_at)).toLocaleDateString('en-US')
+                                                                    %>
+                                                            </td>
+                                                            <td>₹<%= item.totalPrice %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.payment %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.status %>
+                                                            </td>
+                                                            <td>
+                                                                <a href="/updateStatus?id=<%= item._id %>">
+                                                                    <button class="btn-dark"
+                                                                        style="width: auto;">Cancel</button>
+                                                                </a>
+                                                            </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                    <% } else { %>
+                                        <p>No Order Data</p>
+                                        <% } %>
+                                            <br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

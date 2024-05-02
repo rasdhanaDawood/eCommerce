@@ -1,0 +1,38 @@
+<%- include('../partials/adminHeader.ejs')%>
+
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Add Stock Details</h5>
+                <div class="card-body">
+                    <form id="addStockForm" action="/admin/addStock" method="post">
+                        <div>
+                            <label for="type">Type:</label>
+                            <select class="form-control" name="type" id="type">
+                                <option>Type</option>
+                                <option value="sale">Sale</option>
+                                <option value="purchase">Purchase</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="product">Product:</label>
+                            <select class="form-control" name="productId" id="product">
+                                <option>Products</option>
+                                <% for( let i=0;i < product.length;i++) { %>
+                                    <option value='<%= product[i]._id%>'>
+                                        <%= product[i].name%>
+                                    </option>
+                                    <% } %>
+                            </select>
+
+                        </div>
+                        <div>
+                            <label for=" quantity">Quantity:</label>
+                            <input class="form-control" type="number" id="quantity" name="quantity" min="1" required>
+                        </div><br>
+                        <button class="btn btn-dark" type="submit">update Stock</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>

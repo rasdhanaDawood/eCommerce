@@ -32,10 +32,19 @@ app.use(flash());
 app.use(nocache());
 app.use(logger("dev"));
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static('public', {
+    // Set the Content-Type header for JavaScript files
+    setHeaders: (res, path, stat) => {
+        if (path.endsWith('.js')) {
+            res.set('Content-Type', 'application/javascript');
+        }
+    }
+}));
+
+// app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: true }));
 
 const userRoute = require("./routes/userRoute");
@@ -44,10 +53,10 @@ app.use('/', userRoute);
 const adminRoute = require("./routes/adminRoute");
 app.use('/admin', adminRoute);
 
-// const populateCart = require('./middleware/populateCartCount');
-// app.use(populateCart);
+const salesRoute = require("./routes/salesRoute")
+app.use('/sales', salesRoute);
 
-const port = 3000
+const port = 3000;
 app.listen(port, () => {
     console.log(`Server is running on ${port}`);
 })

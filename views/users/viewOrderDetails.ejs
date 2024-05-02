@@ -1,0 +1,199 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <style>
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .pending {
+                color: red;
+            }
+
+            .delivered {
+                color: green;
+            }
+
+            .order-details {
+                margin-bottom: 20px;
+            }
+
+            .order-details h2 {
+                margin-bottom: 10px;
+            }
+
+            .order-details table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .order-details th,
+            .order-details td {
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .order-details th {
+                background-color: #f2f2f2;
+            }
+
+            .order-details tr:hover {
+                background-color: #f9f9f9;
+            }
+        </style>
+
+        <div class="container">
+            <br><br>
+            <% if(order){ %>
+                <h1>Order Details</h1>
+                <!-- Order ID and Shipping Address -->
+                <% if (errorMessage.length> 0) { %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <%- errorMessage %>
+                    </div>
+                    <% } %>
+                        <% if (successMessage.length> 0) { %>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <%- successMessage %>
+
+                            </div>
+                            <% } %>
+                                <div class="order-details">
+                                    <h2>Order Information</h2><br>
+                                    <p><strong>Order ID:</strong> ID#<%=order._id%>
+                                    </p>
+                                    <p><strong>Shipping Address:</strong>
+                                        <%=order.user.firstName%>
+                                            <%=order.user.lastName%><br>
+                                                <%=order.address.address%><br>
+                                                    <%=order.address.city%>, <%=order.address.state%>, Pin:
+                                                            <%=order.address.zip%>
+                                    </p>
+                                    <p><strong>Order Status: </strong>
+                                        <%if (order.status=='pending' ){ %>
+                                            <div class="pending">
+                                                <%=order.status%>
+                                            </div>
+                                            <% }else{ %>
+                                                <%if (order.status=='delivered' ){ %>
+                                                    <div class="delivered">
+                                                        <%=order.status%>
+                                                    </div>
+                                                    <% }else{ %>
+                                                        <%= order.status %>
+                                                            <% }} %>
+                                    </p>
+                                    <p><strong>Type of payment:</strong>
+                                        <%= order.payment %>
+                                    </p>
+                                    <p><strong>Order Date & Time: </strong>
+                                    <div>
+                                        <%= (new Date(order.created_at)).toLocaleDateString('en-US') %>
+
+                                    </div>
+                                </div>
+                                <!-- Order Details -->
+                                <div class="order-details">
+                                    <h2>Order Items</h2>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(let i=0; i < order.products.length; i++){ %>
+                                                <tr>
+
+                                                        <%if(order.products[i].productStatus==true){%>
+
+                                                            <td>
+                                                                <%= order.products[i].product.name %>
+                                                            </td>
+                                                            <td>
+                                                                <%= order.products[i].quantity %>
+                                                            </td>
+                                                            <td>
+                                                                ₹<%= order.products[i].product.price *
+                                                                    order.products[i].quantity %>
+                                                            </td>
+
+                                                            <td>
+                                                                <form action="/cancelProduct" method="post">
+                                                                    <input type="hidden" name="productId"
+                                                                        value="<%= order.products[i].product._id %>">
+                                                                    <input type="hidden" name="orderId"
+                                                                        value="<%=order._id%>">
+                                                                    <input type="submit" class="btn btn-dark"
+                                                                        name="cancelBtn" value="Cancel">
+                                                                </form>
+                                                            </td>
+                                                            <%}%>
+                                                                <br>
+                                                </tr>
+                                                <% } %>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><strong>
+                                                                Grand Total</strong>
+                                                        </td>
+                                                        <td>
+                                                            <strong>
+                                                                <% let sum=0 %>
+                                                                    <% for(let i=0; i < order.products.length; i++){ %>
+                                                                        <% sum+=order.products[i].product.price *
+                                                                            order.products[i].quantity %>
+                                                                            <% } %>
+                                                                                ₹<%= sum %>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><strong>
+                                                                Discount</strong>
+                                                        </td>
+                                                        <td>
+                                                            <strong>
+                                                                <% sum-=order.totalPrice %>
+                                                                    ₹<%= sum.toFixed(2) %>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><strong>
+                                                                Total</strong>
+                                                        </td>
+                                                        <td>
+                                                            <strong>
+                                                                ₹<%= order.totalPrice %>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div>
+                                    <form action="/cancelAllProducts" method="post">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <input type="submit" class="btn btn-dark" name="cancellAllBtn"
+                                            value="Cancel  All">
+                                    </form>
+                                </div>
+
+                                <% } else{ %>
+                                    <div>
+                                        <h3>No Orders</h3>
+                                        <% } %>
+                                    </div>
+        </div>
+
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

@@ -1,0 +1,103 @@
+<%- include('../partials/head.ejs') %>
+    <style>
+        .valid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 80%;
+            color: #28a745;
+        }
+
+        .invalid {
+            color: #dc3545;
+        }
+    </style>
+
+    <div class="card">
+        <div class="col-xl-6">
+            <div class="card-header">Add New Address</div>
+            <div class="card-body">
+                <form action="/addNewAddress" id="form" method="post" class="needs-validation" novalidate>
+                    <div class="form-row">
+                        <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-6">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="address" placeholder="Address"
+                                        name="address" aria-describedby="inputGroupPrepend" required>
+                                </div>
+                            </div>
+                            <span id="addressError" class="invalid">
+                            </span>
+
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" name="city" id="city" placeholder="City"
+                                    required>
+
+                            </div> <span id="cityError" class="invalid">
+                            </span>
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" class="form-control" id="state" name="state" placeholder="State"
+                                    required>
+
+                            </div> <span id="stateError" class="invalid">
+                            </span>
+                            <div class="form-group">
+                                <label for="zip">Zip</label>
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="Zip" required>
+
+                            </div> <span id="zipError" class="invalid">
+                            </span>
+                            <div class="form-group">
+                                <button class="btn btn-dark" id="submitBtn" type="submit">Add address</button>
+
+                                <!-- <a href="/userAccount" type="button" class="btn primary-btn">Add address</a> -->
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var address = document.getElementById('address').value;
+        var city = document.getElementById('city').value;
+        var state = document.getElementById('state').value;
+        var zip = document.getElementById('zip').value;
+
+        var form = document.getElementById('form');
+
+        var addressError = document.getElementById('addressError');
+        var stateError = document.getElementById('stateError');
+        var cityError = document.getElementById('cityError');
+        var zipError = document.getElementById('zipError');
+
+
+        form.addEventListener('submit', function (event) {
+
+            if (address === '' || address == null) {
+                event.preventDefault();
+                addressError.innerHTML = "Please provide a valid address.";
+            }
+            if (!city) {
+                event.preventDefault();
+                cityError.innerHTML = "Please provide a valid city.";
+
+            }
+            if (!state) {
+                event.preventDefault();
+                stateError.innerHTML = "Please provide a valid state.";
+
+            }
+            if (!zip) {
+                event.preventDefault();
+                zipError.innerHTML = "Please provide a valid zip.";
+
+            }
+        });
+    </script>
+    <%- include('../partials/footer.ejs') %>
+
+        <%- include('../partials/plugins.ejs') %>

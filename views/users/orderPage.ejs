@@ -1,0 +1,215 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <style>
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .pending {
+                color: red;
+            }
+
+            .delivered {
+                color: green;
+            }
+
+            .order-details {
+                margin-bottom: 20px;
+            }
+
+            .order-details h2 {
+                margin-bottom: 10px;
+            }
+
+            .order-details table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .order-details th,
+            .order-details td {
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .order-details th {
+                background-color: #f2f2f2;
+            }
+
+            .order-details tr:hover {
+                background-color: #f9f9f9;
+            }
+
+            #card-element {
+                padding: 0.75rem 1rem;
+                border: 1px solid#ccd0d2;
+                border-radius: 4px;
+                margin-bottom: 1rem;
+                background-color: #e6ebf1;
+            }
+
+            #submit-button {
+                background-color: #22a45d;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                width: 100%;
+                font-size: 16px;
+            }
+
+            #submit-button:hover {
+                background-color: #1f8a4b;
+            }
+
+            #card-errors {
+                color: #fa755a;
+                margin-top: 1rem;
+            }
+        </style>
+
+        <div class="container">
+            <br><br>
+            <% if(order){ %>
+                <h1>Order Details</h1>
+                <!-- Order ID and Shipping Address -->
+                <% if (message.length> 0) { %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <%- message %>
+                    </div>
+                    <% } %>
+                        <div class="order-details">
+                            <h2>Order Information</h2><br>
+                            <p><strong>Order ID:</strong> ID#<%=order._id%>
+                            </p>
+                            <p><strong>Shipping Address:</strong>
+                                <%=order.user.firstName%>
+                                    <%=order.user.lastName%><br>
+                                        <%=order.address.address%><br>
+                                            <%=order.address.city%>, <%=order.address.state%>, Pin:
+                                                    <%=order.address.zip%>
+                            </p>
+                            <p><strong>Order Status: </strong>
+                                <%if (order.status=='pending' ){ %>
+                                    <div class="pending">
+                                        <%=order.status%>
+                                    </div>
+                                    <% }else{ %>
+                                        <%if (order.status=='delivered' ){ %>
+                                            <div class="delivered">
+                                                <%=order.status%>
+                                            </div>
+                                            <% }else{ %>
+                                                <%= order.status %>
+                                                    <% }} %>
+                            </p>
+
+                            <p><strong>Order Date: </strong>
+                            <div>
+                                <%= (new Date(order.created_at)).toLocaleDateString('en-US') %>
+
+                            </div>
+                        </div>
+                        <!-- Order Details -->
+                        <div class="order-details">
+                            <h2>Order Items</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(let i=0; i < order.products.length; i++){ %>
+                                        <tr>
+                                            <td>
+                                                <%= order.products[i].product.name %>
+                                            </td>
+                                            <td>
+                                                <%= order.products[i].quantity %>
+                                            </td>
+                                            <td>
+                                                ₹<%= order.products[i].product.price * order.products[i].quantity %>
+                                            </td>
+
+                                        </tr>
+                                        <% } %>
+                                            <tr>
+                                                <td></td>
+                                                <td><strong>
+                                                        Grand Total</strong>
+                                                </td>
+                                                <td>
+                                                    <strong>
+                                                        <% let sum=0 %>
+                                                            <% for(let i=0; i < order.products.length; i++){ %>
+                                                                <% sum+=order.products[i].product.price *
+                                                                    order.products[i].quantity %>
+                                                                    <% } %>
+                                                                        ₹<%= sum %>
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><strong>
+                                                        Discount</strong>
+                                                </td>
+                                                <td>
+                                                    <strong>
+                                                        <% sum-=order.totalPrice %>
+                                                            ₹<%= sum.toFixed(2) %>
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td><strong>
+                                                        Total</strong>
+                                                </td>
+                                                <td>
+                                                    <strong>
+                                                        ₹<%= order.totalPrice.toFixed(2) %>
+                                                    </strong>
+                                                </td>
+                                            </tr>
+
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="row">
+                            <div>
+                                <form action="/cashOnDelivery" method="post">
+                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                    <input type="submit" class="btn btn-dark" name="cashOnDelivery"
+                                        value="Cash on delivery">
+                                </form>
+                            </div>
+                            <div>
+                                <form action="/onlinePayment" method="post" id="payment-form">
+                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                    <input type="hidden" name="amount" value="<%= order.totalPrice %>">
+                                    <input type="hidden" name="discount" value="<%= sum %>">
+                                    <button class="btn-dark btn submit-button">Pay Online
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <% } else{ %>
+                            <div>
+                                <h3>No Orders</h3>
+                                <% } %>
+                            </div>
+        </div>
+
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

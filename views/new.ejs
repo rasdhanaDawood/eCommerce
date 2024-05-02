@@ -1,0 +1,53 @@
+<tr class="cart-items">
+
+<td class=" product__cart__item">
+    <div class="product__cart__item__pic">
+
+        <img src="img/shop/<%= item.product.images[0] %>" style="height:80px" alt="">
+    </div>
+
+    <div class="product__cart__item__text">
+        <h6>
+            <%= item.product.name %>
+        </h6>
+
+        <h5>
+            <span class="price">
+                ₹<%= item.product.price %>
+            </span>
+        </h5>
+
+    </div>
+    <% if (item.product.stock<=0) { %>
+        <span class="error">Out of
+            stock!!</span>
+        <% }else{ %>
+            <% if (item.product.stock < 6) { %>
+                <span class="error">Only
+                    <%=item.product.stock%>
+                        left!!
+                </span>
+                <% }} %>
+
+</td>
+
+<td class="quantity__item">
+    <div class="quantity">
+        <button class="btn dec" data-product-id="<%= item.product._id %>">-</button>
+        <input type="number" class="qty" value="<%= item.quantity %>" name="quantity"
+            id="<%= item.product._id %>" data-product-id="<%= item.product._id %>" min="1"
+            max="20">
+        <button class="btn inc" data-product-id="<%= item.product._id %>">+</button>
+
+    </div>
+</td>
+
+<td class=" cart__price"><span class="subtotal">
+        ₹<%= item.product.price * item.quantity %>
+    </span></td>
+
+<td class="cart__close"><a href="/deleteItem?productId=<%= item.product._id %>"><button
+            class="btn icon_close" type="button"></button></a>
+</td>
+
+</tr>

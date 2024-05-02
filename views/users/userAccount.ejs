@@ -1,79 +1,119 @@
-<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-    <div class="card">
-        <h5 class="card-header">Bootstrap Validation Form</h5>
-        <div class="card-body">
-            <form action="/user" method="post" class="needs-validation" novalidate>
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                        <label for="validationCustom01">First name</label>
-                        <input type="text" class="form-control" id="validationCustom01" placeholder="First name"
-                            value="Mark" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                        <label for="validationCustom02">Last name</label>
-                        <input type="text" class="form-control" id="validationCustom02" placeholder="Last name"
-                            value="Otto" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                    </div>
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                        <label for="validationCustomUsername">Username</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupPrepend">@</span>
-                            </div>
-                            <input type="text" class="form-control" id="validationCustomUsername" placeholder="Username"
-                                aria-describedby="inputGroupPrepend" required>
+<%- include('../partials/head.ejs') %>
+    <style>
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 80%;
+            color: #dc3545;
+        }
+    </style>
+
+
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <h5 class="card-header">User Details</h5>
+            <div class="card-body">
+                <form action="/userAccount" method="post" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            <label for="firstName">First name</label>
+                            <input type=" text" class="form-control" name="firstName" id="firstName"
+                                placeholder="First name" value="<%=user[0].firstName%>" required>
                             <div class="invalid-feedback">
-                                Please choose a username.
+                                Please add first name.
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            <label for="lastName">Last name</label>
+                            <input type="text" class="form-control" name="lastName" id="lastName"
+                                placeholder="Last name" value="<%=user[0].lastName%>" required>
+                            <div class="invalid-feedback">
+                                Please add last name.
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                        <label for="validationCustom03">City</label>
-                        <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
-                        <div class="invalid-feedback">
-                            Please provide a valid city.
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                        <label for="validationCustom04">State</label>
-                        <input type="text" class="form-control" id="validationCustom04" placeholder="State" required>
-                        <div class="invalid-feedback">
-                            Please provide a valid state.
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                        <label for="validationCustom05">Zip</label>
-                        <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
-                        <div class="invalid-feedback">
-                            Please provide a valid zip.
-                        </div>
-                    </div>
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-                                <label class="form-check-label" for="invalidCheck">
-                                    Agree to terms and conditions
-                                </label>
-                                <div class="invalid-feedback">
-                                    You must agree before submitting.
+
+                    <% for(let i=0;i<user[0].address.length;i++){ %>
+
+                        <div class="form-row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                <label for="address<%= i+1 %>">Address <%= i+1 %></label>
+                                <div class="input-group">
+
+                                    <input type="text" class="form-control" id="address<%= i+1 %>" placeholder="Address"
+                                        name="address" value="<%=user[0].address[i].address%>"
+                                        aria-describedby="inputGroupPrepend" required>
+                                    <div class="invalid-feedback">
+                                        Please provide valid address.
+                                    </div>
                                 </div>
                             </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="city<%= i+1 %>">City</label>
+                                <input type="text" class="form-control" name="city" id="city<%= i+1 %>"
+                                    value="<%=user[0].address[i].city%>" placeholder="City" required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid city.
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="state<%= i+1 %>">State</label>
+                                <input type="text" class="form-control" id="state<%= i+1 %>" name="state"
+                                    placeholder="State" value="<%=user[0].address[i].state%>" required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid state.
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="zip<%= i+1 %>">Zip</label>
+                                <input type="text" class="form-control" id="zip<%= i+1 %>" name="zip" placeholder="Zip"
+                                    value="<%=user[0].address[i].zip%>" required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid zip.
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <a href="/deleteAddress?address=<%= user[0].address[i]._id %>"><button
+                                        class="btn btn-dark" type="button">Delete</button></a>
+                            </div>
+                            <br><br>
+                            <input type="hidden" name="id" value="<%= user[0].address[i]._id %>">
+
+                            <% } %>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                    <button class="btn primary-btn" type="submit">Add details</button>
+
+                                    <!-- <a href="/userAccount" type="button" class="btn primary-btn">Add address</a> -->
+                                </div>
                         </div>
-                    </div>
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                        <button class="btn btn-primary" type="submit">Submit form</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.needs-validation');
+
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Validate each input field
+                    form.querySelectorAll('.form-control').forEach(function (input) {
+                        if (!input.checkValidity()) {
+                            input.classList.add('is-invalid');
+                        } else {
+                            input.classList.remove('is-invalid');
+                            input.classList.add('is-valid');
+                        }
+                    });
+                }
+                form.classList.add('was-validated');
+            });
+        });
+    </script>
+    <%- include('../partials/plugins.ejs') %>

@@ -1,0 +1,80 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <h1>My Wishlist</h1>
+        <br><br>
+        <div>
+            <div>
+                <%if(wishlistItems.length>0){%>
+                    <table style="width: 50%">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class="product">
+                            <% wishlistItems.forEach((item)=> { %>
+                                <tr class="cart-items">
+
+                                    <td class=" product__cart__item">
+                                        <div class="product__cart__item__pic">
+
+                                            <img src="img/shop/<%= item.product.images[0] %>" style="height:80px"
+                                                alt="">
+                                        </div>
+
+                                        <div class="product__cart__item__text">
+                                            <h6>
+                                                <%= item.product.name %>
+                                            </h6>
+
+                                            <h5>
+                                                <% if (item.product.stock<=0) { %>
+                                                    <span class="error">Out of
+                                                        stock!!</span>
+                                                    <% }else{ %>
+                                                        <% if (item.product.stock < 6) { %>
+                                                            <span class="error">Only
+                                                                <%=item.product.stock%>
+                                                                    left!!
+                                                            </span>
+                                                            <% }else{ %>
+                                                                <span class="price">
+                                                                    ₹<%= item.product.price %>
+                                                                </span>
+                                                                <% }} %>
+                                            </h5>
+                                        </div>
+                                    </td>
+                                    <td class="quantity__item">
+                                        <div class="quantity">
+                                            <%= item.quantity %>
+                                        </div>
+                                    </td>
+
+                                    <td class=" cart__price"><span class="subtotal">
+                                            ₹<%= item.product.price * item.quantity %>
+                                        </span></td>
+
+                                    <td class="cart__close"><a
+                                            href="/deleteItem?productId=<%= item.product._id %>"><button
+                                                class="btn icon_close" type="button"></button></a>
+                                    </td>
+
+                                </tr>
+                                <% }) %>
+
+                        </tbody>
+                    </table>
+                    <%}else{%>
+
+                        <h3>Wishlist is empty!!</h3>
+                        <%}%>
+            </div>
+
+        </div>
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

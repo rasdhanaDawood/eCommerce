@@ -1,0 +1,67 @@
+<%- include('../partials/adminHeader.ejs') -%>
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="card center">
+                <h5 class="card-header">Add Coupon</h5>
+                <div class="card-body">
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                </div>
+                                <% } %>
+
+                                    <form action="/admin/addProductCoupons" method="post">
+                                        <div class="form-group">
+                                            <label for="code" class="col-form-label">Coupon Code:</label><br>
+                                            <input type="text" class="form-control" id="code" name="code"
+                                                required><br><br>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="amount" class="col-form-label">Discount in
+                                                Percentage:</label><br>
+                                            <input type="number" class="form-control" id="amount" name="amount" min="0"
+                                                step="any" required><br><br>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="type" class="col-form-label">Discount Type:</label><br>
+                                            <select id="type" name="type" class="form-control" required>
+                                                <option value="product">Product</option>
+                                                <option value="category">Category</option>
+                                                <option value="referral">Referral</option>
+                                            </select><br><br>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="expiresAt" class="col-form-label">Expiration Date:</label><br>
+                                            <input type="date" id="expiresAt" class="form-control"
+                                                name="expiresAt"><br><br>
+                                        </div>
+
+                                        <label for="product" class="col-form-label">Product Offer:</label><br>
+                                        <select id="product" class="form-control" name="product">
+                                            <option value="">Select product</option>
+                                            <% for( let i=0;i<products.length;i++) { %>
+                                                <option value='<%= products[i]._id%>'>
+                                                    <%= products[i].name%>
+                                                </option>
+                                                <% } %>
+                                                    <!-- Add more products as needed -->
+                                        </select><br><br>
+                                        <!-- <div class="form-group col-xl-3">
+                                            <button id="btn-submit" type="submit"
+                                                class="btn btn-dark btn-ml btn-block">Add
+                                                Category</button>
+                                        </div> -->
+                                        <input type="submit" class="btn-dark" value="Submit">
+                                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/adminPlugins.ejs') -%>

@@ -70,24 +70,40 @@
                                     </span></li>
                             </ul>
 
+                            <% if(product[0].stock==0) { %>
+                                <p style="color: red;">Out of stock!!</p>
 
-                            <div class="product__details__option">
-                                <div class="row">
-                                    <!-- <div class="quantity">
+                                <% } %>
+                                    <% if(product[0].stock <=5 && product[0].stock> 0) { %>
+                                        <p style="color: red;">Only <%= product[0].stock %> items left!!</p>
+
+                                        <% } %>
+                                            <div class="product__details__option">
+                                                <div class="row">
+                                                    <!-- <div class="quantity">
                                         <div class="pro-qty">
                                             <input type="text" name="quantity" id="quantity" value="2" min="1">
                                         </div>
                                     </div> -->
-                                    <input type="hidden" name="id" value="<%=product[0]._id%>">
+                                                    <input type="hidden" name="id" value="<%=product[0]._id%>">
+                                                    <% if(product[0].stock==0) { %>
+                                                        <a href="/cart/<%= product[0]._id %>"
+                                                            class="btn primary-btn disabled">
+                                                            Add to Cart
+                                                        </a>
 
-                                    <a href="/cart/<%=product[0]._id%>" <button type="button"
-                                        class="btn primary-btn">Add
-                                        to
-                                        Cart</button></a>
-                                    </form>
-                                    <a href="#" class="heart__btn"><span class="icon_heart_alt"></span></a>
-                                </div>
-                            </div>
+                                                        <% } else { %>
+                                                            <a href="/cart/<%= product[0]._id %>"
+                                                                class="btn primary-btn">
+                                                                Add to Cart
+                                                            </a>
+                                                            <% } %>
+                                                                </form>
+                                                                <a href="/addToWishlist?id=<%= product[0]._id %>"
+                                                                    class="heart__btn"><span
+                                                                        class="icon_heart_alt"></span></a>
+                                                </div>
+                                            </div>
 
 
                         </div>

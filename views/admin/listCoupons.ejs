@@ -1,4 +1,143 @@
 <%- include('../partials/adminHeader.ejs') -%>
-    <h1>user Table</h1>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h2 class="card-header">Coupons</h2>
+                <br>
+                <div class="card-body">
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
+                        <% } %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
+                                </div>
+                                <% } %>
+                                    <h3>Product Offers</h3>
+                                    <table style="width: 100%">
 
+                                        <tr style="height: 55%">
+                                            <th>Code</th>
+                                            <th>Amount(%)</th>
+                                            <th>Type</th>
+                                            <th>Product</th>
+                                            <th>Expiry Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        <% if(productOffer.length>0){
+
+                                            for(let i=0;i < productOffer.length;i++){ %>
+
+                                                <tr>
+                                                    <td>
+                                                        <%= productOffer[i].code %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= productOffer[i].amount %>
+
+                                                    </td>
+
+                                                    <td>
+                                                        <%= productOffer[i].type %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= productOffer[i].product.name %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= (new
+                                                            Date(productOffer[i].expiresAt)).toLocaleDateString('en-US')
+                                                            %>
+
+                                                    </td>
+
+                                                    <td>
+                                                        <%= productOffer[i].active %>
+                                                    </td>
+
+                                                    <td class="cart__close"><a
+                                                            href="/admin/deleteProductCoupon?id=<%=productOffer[i]._id%>"><button
+                                                                class="btn icon_close" type="button">X</button></a>
+                                                    </td>
+
+                                                </tr>
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="10">Product coupons Not Found
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                    </table>
+                                    <br><br>
+                                    <a href="/admin/addProductCoupons">
+                                        <button class=" btn-dark" style="width: 20%;">Add
+                                            Product Coupon</button></a><br>
+                                    <h3>Category Offers</h3>
+                                    <table style="width: 100%">
+
+                                        <tr style="height: 55%">
+                                            <th>Code</th>
+                                            <th>Amount(%)</th>
+                                            <th>Type</th>
+                                            <th>Product</th>
+                                            <th>Expiry Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        <% if(categoryOffer.length>0){
+
+                                            for(let i=0;i < categoryOffer.length;i++){ %>
+
+                                                <tr>
+                                                    <td>
+                                                        <%= categoryOffer[i].code %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= categoryOffer[i].amount %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= categoryOffer[i].type %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= categoryOffer[i].category.name %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= (new
+                                                            Date(categoryOffer[i].expiresAt)).toLocaleDateString('en-US')
+                                                            %>
+
+                                                    </td>
+
+                                                    <td>
+                                                        <%= categoryOffer[i].active %>
+                                                    </td>
+
+                                                    <td class="cart__close"><a
+                                                            href="/admin/deleteCategoryCoupon?id=<%=categoryOffer[i]._id%>"><button
+                                                                class="btn icon_close" type="button">X</button></a>
+                                                    </td>
+
+                                                </tr>
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="10">Category coupons Not Found
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                    </table>
+                </div>
+                <a href="/admin/addCategoryCoupons">
+                    <button class=" btn-dark" style="width: 20%;">Add
+                        Category Coupon</button></a><br>
+
+            </div>
+        </div>
+    </div>
     <%- include('../partials/adminPlugins.ejs') -%>

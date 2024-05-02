@@ -1,6 +1,25 @@
 <%- include('../partials/head.ejs') %>
     <%- include('../partials/userHeader.ejs') %>
         <!-- Breadcrumb Begin -->
+        <style>
+            .error {
+                color: red;
+                font-size: 14px;
+            }
+
+            .qty {
+                font-size: 16px;
+                width: 40px;
+                cursor: pointer;
+                font-weight: 500;
+                border: none;
+            }
+
+            .cart-items.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        </style>
         <div class="breadcrumb-option">
             <div class="container">
                 <div class="row">
@@ -25,122 +44,248 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8">
-                        <div class="shopping__cart__table">
-                            <% if(isEmpty){ %>
-                                <h3>Cart is Empty</h3>
-                                <% } else {%>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Quantity</th>
-                                                <th>Total</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="cart-items">
-
-                                                <% cartItems.forEach((cartItem)=> { %>
-
-                                                    <td class="product__cart__item">
-                                                        <div class="product__cart__item__pic">
-
-                                                            <img src="img/shop/<%= cartItem.product.images[0] %>"
-                                                                style="height:80px" alt="">
-                                                        </div>
-
-                                                        <div class="product__cart__item__text">
-                                                            <h6>
-                                                                <%= cartItem.product.name %>
-                                                            </h6>
-
-                                                            <h5>
-                                                                <span class="price">
-                                                                    <%= cartItem.product.price %>
-                                                                </span>
-                                                            </h5>
-                                                        </div>
-                                                    </td>
-
-                                                    <td class="quantity__item">
-                                                        <div class="quantity">
-                                                            <div class="pro-qty">
-                                                                <input type="number" class="qty"
-                                                                    value="<%= cartItem.quantity %>"
-                                                                    onchange="calculateSubtotal(this)">
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-
-                                                    <td class="cart__price">$ <span class="subtotal">
-                                                            <%= cartItem.product.price * cartItem.quantity %>
-                                                        </span></td>
-
-                                                    <td class="cart__close"><a href="/cart"><button class="btn icon_close" onclick="deleteProduct('<%= cartItem.product._id %>')"
-                                                                type="button"></button></a></td>
-
-                                            </tr>
-                                            <% })} %>
-
-                                        </tbody>
-                                    </table>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="continue__btn">
-                                    <a href="/shop">Continue Shopping</a>
-                                </div>
+                        <% if (message.length> 0) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <%- message %>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="continue__btn update__btn">
-                                    <a href="#"> Update cart</a>
-                                </div>
+                            <% } %>
+                                <form id="updateCartForm" action="/cart" method="post">
+
+                                    <div class="shopping__cart__table">
+                                        <% if(isEmpty){ %>
+                                            <h3>Cart is Empty</h3>
+                                            <% } else {%>
+
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Product</th>
+                                                            <th>Quantity</th>
+                                                            <th>Total</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="product">
+                                                        <% var total=0; %>
+                                                            <% cartItems.forEach((cartItem)=> { %>
+                                                                    <tr class="cart-items"
+                                                                        data-product-id="<%= cartItem.product._id %>">
+
+
+                                                                        <td class="product__cart__item">
+                                                                            <div class="product__cart__item__pic">
+
+                                                                                <img src="img/shop/<%= cartItem.product.images[0] %>"
+                                                                                    style="height:80px" alt="">
+                                                                            </div>
+
+                                                                            <div class="product__cart__item__text">
+                                                                                <h6>
+                                                                                    <%= cartItem.product.name %>
+                                                                                </h6>
+
+                                                                                <h5>
+                                                                                    <span class="price">
+                                                                                        ₹<%= cartItem.product.price %>
+                                                                                    </span>
+                                                                                </h5>
+
+                                                                            </div>
+                                                                            <% if (cartItem.product.stock<=0) { %>
+                                                                                <span class="error">Out of
+                                                                                    stock!!</span>
+                                                                                <% }else{ %>
+                                                                                    <% if (cartItem.product.stock < 6) {
+                                                                                        %>
+                                                                                        <span class="error">Only
+                                                                                            <%=cartItem.product.stock%>
+                                                                                                left!!
+                                                                                        </span>
+                                                                                        <% }} %>
+
+                                                                        </td>
+
+                                                                        <td class="quantity__item">
+                                                                            <div class="quantity">
+                                                                                <button class="btn dec"
+                                                                                    data-product-id="<%= cartItem.product._id %>">-</button>
+                                                                                <input type="number" class="qty"
+                                                                                    value="<%= cartItem.quantity %>"
+                                                                                    name="quantity_<%= cartItem.product._id %>"
+                                                                                    id="<%= cartItem.product._id %>"
+                                                                                    data-product-id="<%= cartItem.product._id %>"
+                                                                                    min="1" max="20">
+                                                                                <button class="btn inc"
+                                                                                    data-product-id="<%= cartItem.product._id %>">+</button>
+
+                                                                            </div>
+                                                                        </td>
+
+                                                                        <td class=" cart__price"><span class="subtotal">
+                                                                                ₹<%= cartItem.product.price *
+                                                                                    cartItem.quantity %>
+                                                                            </span></td>
+
+                                                                        <td class="cart__close"><a href="/cart"><button
+                                                                                    class="btn icon_close"
+                                                                                    onclick="deleteProduct('<%= cartItem.product._id %>')"
+                                                                                    type="button"></button></a>
+                                                                        </td>
+
+                                                                    </tr>
+
+
+                                                                    <% total +=cartItem.product.price *
+                                                                        cartItem.quantity; %>
+                                                                        <!-- <input type="hidden" name="cartItemId" value="<%= cartItem._id %>"> -->
+                                                                        <% })} %>
+
+                                                    </tbody>
+                                                </table>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <div class="continue__btn">
+                                                <a href="/shop">Continue Shopping</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <div class="continue__btn update__btn">
+                                                <button class="btn primary-btn" type="submit">Update cart</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                    </div>
+                    <% if(!isEmpty){ %>
+                        <div class="col-lg-4">
+
+                            <div class="cart__total">
+                                <h6>Cart total</h6>
+                                <ul>
+
+                                    <li>Subtotal <span class="total" id="sub">₹ <%= total %></span></li>
+                                    <li>Total <span id="total">₹ <%= total %></span></li>
+                                </ul>
+                                <a href="/checkout" class="btn primary-btn">Proceed to checkout</a>
+
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="cart__discount">
-                            <h6>Discount codes</h6>
-                            <form action="#">
-                                <input type="text" placeholder="Coupon code">
-                                <button type="submit">Apply</button>
-                            </form>
-                        </div>
-                        <div class="cart__total">
-                            <h6>Cart total</h6>
-                            <ul>
-                                <li>Subtotal <span>$ 169.50</span></li>
-                                <li>Total <span>$ 169.50</span></li>
-                            </ul>
-                            <a href="#" class="primary-btn">Proceed to checkout</a>
-                        </div>
-                    </div>
+                        <% } %>
                 </div>
             </div>
         </section>
         <!-- Shopping Cart Section End -->
         <script>
 
-            document.querySelectorAll('.qty').forEach(input => {
-                input.addEventListener('input', function () {
-                    calculateSubtotal(this);
+            document.addEventListener('DOMContentLoaded', function () {
+                // Add event listeners to decrease buttons
+                document.querySelectorAll('.dec').forEach(function (decreaseButton) {
+                    decreaseButton.addEventListener('click', function (event) {
+                        event.preventDefault(); // Prevent default form submission behavior
+                        console.log("dec button click event");
+                        const productId = this.dataset.productId;
+                        const inputField = document.querySelector('.qty[data-product-id="' + productId + '"]');
+                        let quantity = parseInt(inputField.value);
+                        console.log("before dec" + quantity);
+                        if (quantity > 1) {
+                            quantity--;
+                            console.log("after dec" + quantity);
+                            inputField.value = quantity;
+                            updateSubtotal(productId);
+                        }
+                    });
                 });
+
+                // Add event listeners to increase buttons
+                document.querySelectorAll('.inc').forEach(function (increaseButton) {
+                    increaseButton.addEventListener('click', function (event) {
+                        event.preventDefault(); // Prevent default form submission behavior
+                        console.log("inc button click event");
+                        const productId = this.dataset.productId;
+                        const inputField = document.querySelector('.qty[data-product-id="' + productId + '"]');
+                        let quantity = parseInt(inputField.value);
+                        console.log("before inc" + quantity);
+                        if (quantity < 20) {
+                            quantity++;
+                            console.log("after inc" + quantity);
+                            inputField.value = quantity;
+                            updateSubtotal(productId);
+                        }
+                    });
+                });
+
+                // Function to update subtotal for a product
+                function updateSubtotal(productId) {
+                    const inputField = document.querySelector('.qty[data-product-id="' + productId + '"]');
+                    const quantity = parseInt(inputField.value);
+                    const productRow = inputField.closest('.cart-items');
+                    const price = parseFloat(productRow.querySelector('.price').textContent.replace('₹', ''));
+                    const subtotalElement = productRow.querySelector('.subtotal');
+                    const subtotal = price * quantity;
+                    subtotalElement.textContent = '₹' + subtotal.toFixed(2);
+                    updateTotal();
+                }
+
+                // Function to update total for all products
+                function updateTotal() {
+                    let total = 0;
+                    document.querySelectorAll('.subtotal').forEach(function (subtotalElement) {
+                        total += parseFloat(subtotalElement.textContent.replace('₹', ''));
+                    });
+                    document.getElementById('total').textContent = '₹' + total.toFixed(2);
+                    document.getElementById('sub').textContent = '₹' + total.toFixed(2);
+                }
             });
 
-            function calculateSubtotal(input) {
-                const quantity = parseInt(input.value);
-                console.log(quantity);
 
-                const price = parseFloat(input.closest('tr').querySelector('.price').textContent);
-                console.log(price)
+            // document.getElementById('updateCartForm').addEventListener('submit', function (event) {
+            //     event.preventDefault(); // Prevent default form submission behavior
 
-                const subtotal = quantity * price;
-                console.log(subtotal)
+            //     const formData = new FormData(this);
+            //     const data = {};
 
-                input.closest('tr').querySelector('.subtotal').textContent = subtotal.toFixed(2);
+            //     // Convert form data to object
+            //     for (const [key, value] of formData.entries()) {
+            //         data[key] = value;
+            //     }
+            //     console.log(data);
+
+            //     fetch('/cart', {
+            //         method: 'PUT',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            // });
+
+
+            function isProductInStock() {
+                const productElements = document.querySelectorAll(".cart-items");
+
+                productElements.forEach(productElement => {
+                    const productId = productElement.dataset.productId;
+
+                    const stockElement = productElement.querySelector(".stock");
+
+                    const stock = parseInt(stockElement.value);
+
+                    if (stock == '0') {
+                        productElement.classList.add('disabled');
+                        // Optionally, hide the quantity input
+                        const quantityInput = productElement.querySelector('.quantity__item input');
+
+                        if (quantityInput) {
+                            quantityInput.disabled = true;
+                        }
+                    }
+                })
             }
+            isProductInStock();
 
             function deleteProduct(productId) {
                 // Send AJAX request to delete product
@@ -155,7 +300,9 @@
                             throw new Error('Failed to delete product');
                         }
                         // Reload the page or update the cart display as needed
+
                         location.reload(); // Reload the page after successful deletion
+                        console.log('deletion successfull')
                     })
                     .catch(error => {
                         console.error('Error deleting product:', error);

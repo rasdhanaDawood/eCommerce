@@ -24,13 +24,13 @@
                                 <div class="header__top__right__cart">
 
                                     <% if(user){%>
-                                        <a href=" /userAccount" style="color: black;" class="signin">
+                                        <a href=" /userProfile" style="color: black;" class="signin">
                                             <b>
                                                 <%=user.firstName %>
                                             </b>
                                         </a>
-                                        <a href="/logout" class="logout signin"><img src="img/icon/signout.svg"
-                                                alt=""></a>
+                                        <a href="/logout" id="logoutLink" class="logout signin"><img
+                                                src="img/icon/signout.svg" alt=""></a>
 
                                         <% } else { %>
                                             <a href="/login" class="signin">Sign in</a>

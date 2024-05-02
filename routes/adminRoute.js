@@ -50,7 +50,31 @@ admin_route.get("/deleteProduct", adminController.deleteProduct);
 
 admin_route.get('/crop_image', adminController.cropImage);
 
-// admin_route.post('/crop_image', adminController.addCroppedImage);
+admin_route.get("/listOrders", auth.isAuthenticated, adminController.listOrders);
+
+admin_route.get("/updateStatus", auth.isAuthenticated, adminController.getUpdateStatusPage);
+
+admin_route.post("/updateStatus", auth.isAuthenticated, adminController.updateStatus);
+
+admin_route.get("/listStock", auth.isAuthenticated, adminController.listStock);
+
+admin_route.get("/addStock", auth.isAuthenticated, adminController.getAddStock);
+
+admin_route.post("/addStock", auth.isAuthenticated, adminController.addStock);
+
+admin_route.get("/listCoupons", adminController.listCoupons);
+
+admin_route.get("/addCategoryCoupons", adminController.getAddCategoryCouponPage);
+
+admin_route.post("/addCategoryCoupons", adminController.addCategoryCoupon);
+
+admin_route.get("/addProductCoupons", adminController.getAddProductCouponPage);
+
+admin_route.post("/addProductCoupons", adminController.addProductCoupon);
+
+admin_route.get('/deleteProductCoupon', adminController.deleteProductCoupon);
+
+admin_route.get('/deleteCategoryCoupon', adminController.deleteCategoryCoupon);
 
 admin_route.get("/editUser", adminController.getUser);
 

@@ -1,6 +1,8 @@
 
+const User = require("../models/userModel");
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
+    console.log(req.session.user);
     if (req.session && req.session.user) {
         next();
     } else {
@@ -10,11 +12,15 @@ const isAuthenticated = (req, res, next) => {
 }
 
 const isLoggedOut = (req, res, next) => {
+    console.log(req.session.user);
+
     if (req.session && req.session.user) {
         res.redirect("/home");
     } else {
         next();
+
     }
+
 }
 
 

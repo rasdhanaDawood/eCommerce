@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const wishlistSchema = new mongoose.Schema({
 
     user: {
-        type: mongoose.Schema.types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
@@ -16,22 +16,13 @@ const wishlistSchema = new mongoose.Schema({
         quantity: {
             type: Number,
             required: true
-        },
-        added_at: {
-            type: Date,
-            required: true
-
-        },
+        }
     }],
     created_at: {
         type: Date,
-        required: true
-    },
-    updated_at: {
-        type: Date,
-        required: true
+        required: true,
+        default: Date.now,
     }
-
 });
 
 const wishlist = mongoose.model('Wishlist', wishlistSchema);

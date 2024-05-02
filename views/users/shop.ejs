@@ -1,7 +1,12 @@
 <%- include('../partials/head.ejs') %>
     <%- include('../partials/userHeader.ejs') %>
         <!-- Breadcrumb Begin -->
-
+        <style>
+            .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        </style>
         <div class="breadcrumb-option">
             <div class="container">
                 <div class="row">
@@ -90,9 +95,17 @@
                                             <div class="product__item__price">
                                                 ₹<%=product[i].price%>/piece
                                             </div>
-                                            <div class="cart_add">
-                                                <a href="/cart/<%=product[i]._id%>">Add to cart</a>
-                                            </div>
+                                            <%if(product[i].stock<=0){%>
+                                                <div class="cart_add">
+                                                    <a href="#">
+                                                        Out of stock
+                                                    </a>
+                                                </div>
+                                                <%}else{%>
+                                                    <div class=" cart_add">
+                                                        <a href=" /cart/<%=product[i]._id%>">Add to cart</a>
+                                                    </div>
+                                                    <%}%>
                                         </div>
 
                                     </div>

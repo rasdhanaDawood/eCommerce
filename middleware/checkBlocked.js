@@ -4,7 +4,6 @@ const User = require("../models/userModel");
 const isBlocked = async (req, res, next) => {
     if (req.session.user) {
 
-        console.log(req.session.user)
         const userId = req.session.user;
         try {
             const user = await User.findById(userId);
@@ -16,9 +15,10 @@ const isBlocked = async (req, res, next) => {
             }
 
             if (user.blocked) {
-                console.log("User is blocked");
-                req.session.destroy();
+                console.log("You dont have access to this page!!");
+                req.flash("errorMessage", "You dont have access to this page!!")
                 res.redirect("/login");
+                req.session.destroy();
 
             }
             next();
