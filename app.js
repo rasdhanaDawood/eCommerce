@@ -47,14 +47,15 @@ app.use(express.static('public', {
 // app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/docs', express.static(path.join(__dirname, 'docs')))
 const userRoute = require("./routes/userRoute");
 app.use('/', userRoute);
 
 const adminRoute = require("./routes/adminRoute");
 app.use('/admin', adminRoute);
 
-const salesRoute = require("./routes/salesRoute")
-app.use('/sales', salesRoute);
+const productRoute = require("./routes/productRoute")
+app.use('/', productRoute);
 
 const port = 3000;
 app.listen(port, () => {

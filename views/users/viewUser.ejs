@@ -75,6 +75,12 @@
                             <div class="header__top__right">
                                 <div class="header__top__right__links">
 
+                                    <a href="/wallet"><img src="img/icon/wallet.png" style="height: 30px; width:auto;"
+                                            alt="">
+                                    </a>
+                                </div>
+                                <div class="header__top__right__links">
+
                                     <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
                                 </div>
 
@@ -134,7 +140,11 @@
                                 <p>
                                     <%= user[0].phone %>
                                 </p>
-                                <%for(let i=0;i<user[0].address.length;i++){%>
+                                <label for="wallet">Wallet amount:</label>
+                                <p>
+                                    <%= user[0].wallet %>
+                                </p>
+                                <%for(let i=0;i< user[0].address.length;i++){%>
                                     <label for="address">Address <%=i+1%>:</label>
                                     <p>
                                         <%= user[0].address[i].address %>,

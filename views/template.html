@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+</head>
+
+<body>
+    <% if(products.productList.length>0){ %>
+
+        <div class="order-details">
+            <h2>Items</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Sub Total</th>
+                        <th>Grand Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(let i=0; i < products.productList.length; i++){ %>
+                        <tr>
+                            <td>
+                                <%= products.productList[i].name %>
+                            </td>
+                            <td>
+                                <%= products.productList[i].quantity %>
+                            </td>
+                            <td>
+                                ₹<%= products.productList[i].price %>
+                            </td>
+                            <td>
+                                <%= products.productList[i].total %>
+
+                            </td>
+
+                            <% } %>
+
+                                <td>
+                                    <%= products.subTotal %>
+
+                                </td>
+
+                                <td>
+                                    <%= products.gtotal %>
+
+                                </td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        <% } %>
+</body>
+
+</html>

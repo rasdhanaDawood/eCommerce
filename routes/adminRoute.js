@@ -72,13 +72,25 @@ admin_route.get("/addProductCoupons", adminController.getAddProductCouponPage);
 
 admin_route.post("/addProductCoupons", adminController.addProductCoupon);
 
+admin_route.get("/addReferralCoupons", adminController.getAddReferralCouponPage);
+
+admin_route.post("/addReferralCoupons", adminController.addReferralCoupon);
+
 admin_route.get('/deleteProductCoupon', adminController.deleteProductCoupon);
 
 admin_route.get('/deleteCategoryCoupon', adminController.deleteCategoryCoupon);
 
+admin_route.get('/deleteReferralCoupon', adminController.deleteReferralCoupon);
+
+admin_route.get('/salesReport', adminController.displaySalesReport);
+
 admin_route.get("/editUser", adminController.getUser);
 
 admin_route.get("/updateUser", adminController.editUser);
+
+admin_route.get('/viewChart', adminController.chartData);
+
+admin_route.get('/exportSalesExcel', adminController.exportDataExcel);
 
 admin_route.get("/forgotPassword", auth.isLoggedOut, adminController.forgotPassword);
 

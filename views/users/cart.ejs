@@ -44,12 +44,14 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8">
-                        <% if (message.length> 0) { %>
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <%- message %>
-                            </div>
-                            <% } %>
-                                <form id="updateCartForm" action="/cart" method="post">
+                        <form id="updateCartForm" action="/cart" method="post">
+
+
+                            <% if (message.length> 0) { %>
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <%- message %>
+                                </div>
+                                <% } %>
 
                                     <div class="shopping__cart__table">
                                         <% if(isEmpty){ %>
@@ -68,77 +70,76 @@
                                                     <tbody class="product">
                                                         <% var total=0; %>
                                                             <% cartItems.forEach((cartItem)=> { %>
-                                                                    <tr class="cart-items"
-                                                                        data-product-id="<%= cartItem.product._id %>">
+                                                                <tr class="cart-items"
+                                                                    data-product-id="<%= cartItem.product._id %>">
 
 
-                                                                        <td class="product__cart__item">
-                                                                            <div class="product__cart__item__pic">
+                                                                    <td class="product__cart__item">
+                                                                        <div class="product__cart__item__pic">
 
-                                                                                <img src="img/shop/<%= cartItem.product.images[0] %>"
-                                                                                    style="height:80px" alt="">
-                                                                            </div>
+                                                                            <img src="img/shop/<%= cartItem.product.images[0] %>"
+                                                                                style="height:80px" alt="">
+                                                                        </div>
 
-                                                                            <div class="product__cart__item__text">
-                                                                                <h6>
-                                                                                    <%= cartItem.product.name %>
-                                                                                </h6>
+                                                                        <div class="product__cart__item__text">
+                                                                            <h6>
+                                                                                <%= cartItem.product.name %>
+                                                                            </h6>
 
-                                                                                <h5>
-                                                                                    <span class="price">
-                                                                                        ₹<%= cartItem.product.price %>
+                                                                            <h5>
+                                                                                <span class="price">
+                                                                                    ₹<%= cartItem.product.price %>
+                                                                                </span>
+                                                                            </h5>
+
+                                                                        </div>
+                                                                        <% if (cartItem.product.stock<=0) { %>
+                                                                            <span class="error">Out of
+                                                                                stock!!</span>
+                                                                            <% }else{ %>
+                                                                                <% if (cartItem.product.stock < 6) { %>
+                                                                                    <span class="error">Only
+                                                                                        <%=cartItem.product.stock%>
+                                                                                            left!!
                                                                                     </span>
-                                                                                </h5>
+                                                                                    <% }} %>
 
-                                                                            </div>
-                                                                            <% if (cartItem.product.stock<=0) { %>
-                                                                                <span class="error">Out of
-                                                                                    stock!!</span>
-                                                                                <% }else{ %>
-                                                                                    <% if (cartItem.product.stock < 6) {
-                                                                                        %>
-                                                                                        <span class="error">Only
-                                                                                            <%=cartItem.product.stock%>
-                                                                                                left!!
-                                                                                        </span>
-                                                                                        <% }} %>
+                                                                    </td>
 
-                                                                        </td>
+                                                                    <td class="quantity__item">
+                                                                        <div class="quantity">
+                                                                            <button class="btn dec"
+                                                                                data-product-id="<%= cartItem.product._id %>">-</button>
+                                                                            <input type="number" class="qty"
+                                                                                value="<%= cartItem.quantity %>"
+                                                                                name="quantity_<%= cartItem.product._id %>"
+                                                                                id="<%= cartItem.product._id %>"
+                                                                                data-product-id="<%= cartItem.product._id %>"
+                                                                                min="1" max="20">
+                                                                            <button class="btn inc"
+                                                                                data-product-id="<%= cartItem.product._id %>">+</button>
 
-                                                                        <td class="quantity__item">
-                                                                            <div class="quantity">
-                                                                                <button class="btn dec"
-                                                                                    data-product-id="<%= cartItem.product._id %>">-</button>
-                                                                                <input type="number" class="qty"
-                                                                                    value="<%= cartItem.quantity %>"
-                                                                                    name="quantity_<%= cartItem.product._id %>"
-                                                                                    id="<%= cartItem.product._id %>"
-                                                                                    data-product-id="<%= cartItem.product._id %>"
-                                                                                    min="1" max="20">
-                                                                                <button class="btn inc"
-                                                                                    data-product-id="<%= cartItem.product._id %>">+</button>
+                                                                        </div>
+                                                                    </td>
 
-                                                                            </div>
-                                                                        </td>
+                                                                    <td class=" cart__price"><span class="subtotal">
+                                                                            ₹<%= cartItem.product.price *
+                                                                                cartItem.quantity %>
+                                                                        </span></td>
 
-                                                                        <td class=" cart__price"><span class="subtotal">
-                                                                                ₹<%= cartItem.product.price *
-                                                                                    cartItem.quantity %>
-                                                                            </span></td>
+                                                                    <td class="cart__close"><a href="/cart"><button
+                                                                                class="btn icon_close"
+                                                                                onclick="deleteProduct('<%= cartItem.product._id %>')"
+                                                                                type="button"></button></a>
+                                                                    </td>
 
-                                                                        <td class="cart__close"><a href="/cart"><button
-                                                                                    class="btn icon_close"
-                                                                                    onclick="deleteProduct('<%= cartItem.product._id %>')"
-                                                                                    type="button"></button></a>
-                                                                        </td>
-
-                                                                    </tr>
+                                                                </tr>
 
 
-                                                                    <% total +=cartItem.product.price *
-                                                                        cartItem.quantity; %>
-                                                                        <!-- <input type="hidden" name="cartItemId" value="<%= cartItem._id %>"> -->
-                                                                        <% })} %>
+                                                                <% total +=cartItem.product.price * cartItem.quantity;
+                                                                    %>
+                                                                    <!-- <input type="hidden" name="cartItemId" value="<%= cartItem._id %>"> -->
+                                                                    <% })} %>
 
                                                     </tbody>
                                                 </table>
@@ -150,14 +151,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-6 col-md-6 col-sm-6">
-                                            <div class="continue__btn update__btn">
-                                                <button class="btn primary-btn" type="submit">Update cart</button>
-                                            </div>
-                                        </div>
+
                                     </div>
 
-                                </form>
+
 
                     </div>
                     <% if(!isEmpty){ %>
@@ -170,11 +167,15 @@
                                     <li>Subtotal <span class="total" id="sub">₹ <%= total %></span></li>
                                     <li>Total <span id="total">₹ <%= total %></span></li>
                                 </ul>
-                                <a href="/checkout" class="btn primary-btn">Proceed to checkout</a>
-
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="continue__btn update__btn">
+                                        <button class="btn primary-btn" type="submit">Proceed</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <% } %>
+                            </form>
                 </div>
             </div>
         </section>
@@ -182,7 +183,6 @@
         <script>
 
             document.addEventListener('DOMContentLoaded', function () {
-                // Add event listeners to decrease buttons
                 document.querySelectorAll('.dec').forEach(function (decreaseButton) {
                     decreaseButton.addEventListener('click', function (event) {
                         event.preventDefault(); // Prevent default form submission behavior
@@ -200,7 +200,6 @@
                     });
                 });
 
-                // Add event listeners to increase buttons
                 document.querySelectorAll('.inc').forEach(function (increaseButton) {
                     increaseButton.addEventListener('click', function (event) {
                         event.preventDefault(); // Prevent default form submission behavior
@@ -218,7 +217,6 @@
                     });
                 });
 
-                // Function to update subtotal for a product
                 function updateSubtotal(productId) {
                     const inputField = document.querySelector('.qty[data-product-id="' + productId + '"]');
                     const quantity = parseInt(inputField.value);
@@ -230,7 +228,6 @@
                     updateTotal();
                 }
 
-                // Function to update total for all products
                 function updateTotal() {
                     let total = 0;
                     document.querySelectorAll('.subtotal').forEach(function (subtotalElement) {
@@ -240,29 +237,6 @@
                     document.getElementById('sub').textContent = '₹' + total.toFixed(2);
                 }
             });
-
-
-            // document.getElementById('updateCartForm').addEventListener('submit', function (event) {
-            //     event.preventDefault(); // Prevent default form submission behavior
-
-            //     const formData = new FormData(this);
-            //     const data = {};
-
-            //     // Convert form data to object
-            //     for (const [key, value] of formData.entries()) {
-            //         data[key] = value;
-            //     }
-            //     console.log(data);
-
-            //     fetch('/cart', {
-            //         method: 'PUT',
-            //         headers: {
-            //             'Content-Type': 'application/json'
-            //         },
-            //         body: JSON.stringify(data)
-            //     })
-            // });
-
 
             function isProductInStock() {
                 const productElements = document.querySelectorAll(".cart-items");
@@ -288,7 +262,6 @@
             isProductInStock();
 
             function deleteProduct(productId) {
-                // Send AJAX request to delete product
                 fetch(`/cart/${productId}`, {
                     method: 'DELETE',
                     headers: {
@@ -299,14 +272,11 @@
                         if (!response.ok) {
                             throw new Error('Failed to delete product');
                         }
-                        // Reload the page or update the cart display as needed
-
-                        location.reload(); // Reload the page after successful deletion
+                        location.reload();
                         console.log('deletion successfull')
                     })
                     .catch(error => {
                         console.error('Error deleting product:', error);
-                        // Handle error, show error message, etc.
                     });
             }
 

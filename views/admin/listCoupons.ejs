@@ -56,7 +56,11 @@
                                                     </td>
 
                                                     <td>
-                                                        <%= productOffer[i].active %>
+                                                        <%if(productOffer[i].active==true){ %>
+                                                            Active
+                                                            <%}else{%>
+                                                                Expired
+                                                                <%}%>
                                                     </td>
 
                                                     <td class="cart__close"><a
@@ -75,7 +79,7 @@
                                     <br><br>
                                     <a href="/admin/addProductCoupons">
                                         <button class=" btn-dark" style="width: 20%;">Add
-                                            Product Coupon</button></a><br>
+                                            Product Coupon</button></a><br><br>
                                     <h3>Category Offers</h3>
                                     <table style="width: 100%">
 
@@ -116,7 +120,11 @@
                                                     </td>
 
                                                     <td>
-                                                        <%= categoryOffer[i].active %>
+                                                        <%if(categoryOffer[i].active==true){ %>
+                                                            Active
+                                                            <%}else{%>
+                                                                Expired
+                                                                <%}%>
                                                     </td>
 
                                                     <td class="cart__close"><a
@@ -131,11 +139,69 @@
                                                         </td>
                                                     </tr>
                                                     <% } %>
-                                    </table>
+                                    </table><br>
+                                    <a href="/admin/addCategoryCoupons">
+                                        <button class=" btn-dark" style="width: 20%;">Add
+                                            Category Coupon</button></a><br><br>
+                                    <h3>Referral Coupon</h3><br>
+                                    <table style="width: 100%">
+
+                                        <tr style="height: 55%">
+                                            <th>Code</th>
+                                            <th>Amount(%)</th>
+                                            <th>Type</th>
+                                            <th>Expiry Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        <% if(referralOffer.length>0){
+
+                                            for(let i=0;i < referralOffer.length;i++){ %>
+
+                                                <tr>
+                                                    <td>
+                                                        <%= referralOffer[i].code %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= referralOffer[i].amount %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= referralOffer[i].type %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%= (new
+                                                            Date(referralOffer[i].expiresAt)).toLocaleDateString('en-US')
+                                                            %>
+                                                    </td>
+
+                                                    <td>
+                                                        <%if(referralOffer[i].active==true){ %>
+                                                            Active
+                                                            <%}else{%>
+                                                                Expired
+                                                                <%}%>
+                                                    </td>
+
+                                                    <td class="cart__close"><a
+                                                            href="/admin/deleteReferralCoupon?id=<%=referralOffer[i]._id%>"><button
+                                                                class="btn icon_close" type="button">X</button></a>
+                                                    </td>
+
+                                                </tr>
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="10">Referral coupons Not Found
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                    </table><br>
+                                    <a href="/admin/addReferralCoupons">
+                                        <button class=" btn-dark" style="width: 20%;">Add
+                                            Referral Coupon</button></a><br>
                 </div>
-                <a href="/admin/addCategoryCoupons">
-                    <button class=" btn-dark" style="width: 20%;">Add
-                        Category Coupon</button></a><br>
+
 
             </div>
         </div>

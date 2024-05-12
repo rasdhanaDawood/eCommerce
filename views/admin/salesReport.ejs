@@ -1,0 +1,136 @@
+<%- include('../partials/adminHeader.ejs') -%>
+
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <select id="filter">
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+    </select>
+
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h2 class="card-header">Orders</h2>
+                <br>
+                <div class="card-body">
+
+                    <% if(order.length>0){ %>
+                        <table class="table table-striped" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>Customer Name</th>
+                                    <th>Order Date</th>
+                                    <th>Products Purchased</th>
+                                    <th>Quantity</th>
+                                    <th>Total Amount</th>
+                                    <th>Type of payment</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i=0;i < order.length;i++){%>
+                                    <tr>
+                                        <td>
+                                            <%= i+1 %>
+                                        </td>
+                                        <td>
+                                            <%= order[i].user.firstName %>
+                                                <%= order[i].user.lastName %>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <%= (new Date(order[i].created_at)).toLocaleDateString('en-US') %>
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <% for(const product of order[i].products){ %>
+
+                                                <%= product.product.name%>
+                                                    <br>
+                                                    <% } %>
+                                        </td>
+                                        <td>
+                                            <% for(const product of order[i].products){ %>
+
+                                                <%= product.quantity%>
+                                                    <br>
+                                                    <% } %>
+                                        </td>
+
+                                        <td>
+                                            ₹<%= order[i].totalPrice %>
+                                        </td>
+                                        <td>
+                                            <%= order[i].payment %>
+                                        </td>
+                                        <td>
+                                            <%= order[i].status %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+
+                            </tbody>
+                        </table>
+                        <% }else{ %>
+                            <p>No Sales Data</p>
+                            <% } %>
+                                <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/admin/exportSalesExcel">View in Excel</a>
+    <a href="/admin/exportSalesPDF">View in PDF</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+        let myChart;
+
+        const updateChart = async (filter) => {
+            try {
+                const response = await axios.get(`/viewChart?filter=${filter}`);
+                const data = response.data;
+                myChart.data.labels = data.labels;
+                myChart.data.datasets[0].data = data.values;
+                myChart.update();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        document.getElementById('filter').addEventListener('change', (event) => {
+            updateChart(event.target.value);
+        });
+        updateChart('weekly');
+    </script>
+    <%- include('../partials/adminPlugins.ejs') -%>

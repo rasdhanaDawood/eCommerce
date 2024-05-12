@@ -1,14 +1,28 @@
 <%- include('../partials/head.ejs') %>
     <%- include('../partials/userHeader.ejs') %>
+        <style>
+            .container-box {
+                max-width: 50%;
+                margin: 50px auto;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+
         <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <h3>Your order is processing! Thank you!</h3>
-                    <a href="/home" type="button" class="btn btn-dark">Return to Home page</a>
+            <div class="container-box">
+
+                <div class="col-lg-12 col-md-12 center">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Your order is processing! Thank you!</h4><br>
+                            <a href="/download" type="button" class="btn btn-dark">Download invoice in PDF</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+            <%- include('../partials/footer.ejs') %>
 
-        <%- include('../partials/footer.ejs') %>
-
-            <%- include('../partials/plugins.ejs') %>
+                <%- include('../partials/plugins.ejs') %>

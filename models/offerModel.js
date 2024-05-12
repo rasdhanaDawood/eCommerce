@@ -43,5 +43,6 @@ const ReferralOffer = mongoose.model('ReferralOffer', offerSchema);
 
 module.exports = {
     ProductOffer,
-    CategoryOffer
+    CategoryOffer,
+    ReferralOffer
 };

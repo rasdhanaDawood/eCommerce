@@ -1,12 +1,11 @@
 const express = require('express');
 const user_route = express();
 
-
-
 user_route.set('view engine', 'ejs');
 user_route.set("views", "./views/users");
 
 user_route.use(express.static('public'));
+
 
 const auth = require('../middleware/auth');
 
@@ -14,7 +13,6 @@ const userCheck = require('../middleware/checkBlocked');
 
 const userController = require("../controllers/userController");
 const sendOTP = require('../utils/sendOTP');
-
 
 user_route.get('/register', auth.isLoggedOut, userController.loadRegister);
 
@@ -59,13 +57,9 @@ user_route.get("/deleteAddress", userController.deleteAddress);
 
 user_route.get('/logout', auth.isAuthenticated, userController.logout);
 
-user_route.get('/product', userCheck.isBlocked, userController.viewProduct);
-
-user_route.get('/shop/search', userCheck.isBlocked, userController.searchProduct);
 
 user_route.post('/product', userCheck.isBlocked, userController.addToCart);
 
-user_route.get('/shop', auth.isAuthenticated, userCheck.isBlocked, userController.viewAllProducts);
 
 user_route.get('/cart/:productId', userCheck.isBlocked, userController.addToCart);
 
@@ -79,11 +73,13 @@ user_route.get('/checkout', userController.proceedCheckout)
 
 user_route.post('/checkout', userController.placeOrder)
 
+user_route.get('/orderPage', userController.viewOrder)
+
 user_route.post('/cashOnDelivery', userController.cashOnDelivery)
 
 user_route.post('/onlinePayment', userController.onlinePayment)
 
-// user_route.post('/paymentIntent', userController.paymentIntent)
+user_route.get('/download', userController.generatePdf)
 
 user_route.get('/viewOrder', userController.viewOrderDetails)
 
@@ -101,7 +97,7 @@ user_route.get('/addToWishlist', userController.addToWishlist)
 
 user_route.get('/deleteItem', userController.deleteWishlistItem)
 
-user_route.post('/clearWishlist', userController.deleteAllWishlist)
+user_route.get('/clearWishlist', userController.deleteAllWishlist)
 
 user_route.get('/listOrders', userController.listOrders)
 

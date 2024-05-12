@@ -5,7 +5,7 @@ const SubCategory = require("../models/subCategoryModel");
 const Order = require("../models/ordersModel");
 const { ProductOffer, CategoryOffer, ReferralOffer } = require("../models/offerModel");
 const Sales = require("../models/salesModel");
-
+const excelJS = require('exceljs')
 
 const bcrypt = require("bcrypt");
 
@@ -51,7 +51,7 @@ const verifyLogin = async (req, res) => {
 const dashboard = async (req, res) => {
     try {
         if (req.session.admin) {
-            const productData = await Product.find({ is_Deleted: false }).limit(5);
+            const productData = await Product.find({ is_Deleted: false }).sort({ rating: -1 }).limit(10);
             res.render('dashboard', { product: productData });
         }
     }
@@ -547,6 +547,12 @@ const getUpdateStatusPage = async (req, res) => {
     try {
         const orderId = req.query.id;
         const orderData = await Order.findOne({ _id: orderId });
+        //  const productsWithFalseStatus = await Order.aggregate([
+        //     { $match: { _id: mongoose.Types.ObjectId(orderId) } }, // Match the order by its ID
+        //     { $unwind: '$products' }, // Unwind the products array
+        //     { $match: { 'products.status': false } }, // Match products with status as false
+        //     { $project: { _id: 0, product: '$products' } } // Project only the product fields
+        // ]);
         res.render("updateStatus", {
             orders: orderData
         })
@@ -666,17 +672,38 @@ const listCoupons = async (req, res) => {
     try {
         const productOffer = await ProductOffer.find().populate('product');
         const categoryOffer = await CategoryOffer.find().populate('category');
+        const referralOffer = await ReferralOffer.find();
+        for (item of referralOffer) {
+            console.log(item.expiresAt);
+            if (item.expiresAt <= Date.now()) {
+                const updateData = await ReferralOffer.updateOne({ _id: item._id }, { $set: { active: false } });
+            }
+        }
+
+        for (item of categoryOffer) {
+            if (item.expiresAt <= Date.now()) {
+                const updateData = await CategoryOffer.updateOne({ _id: item._id }, { $set: { active: false } });
+            }
+        }
+        for (item of productOffer) {
+            console.log(item.expiresAt);
+            if (item.expiresAt <= Date.now()) {
+                const updateData = await ProductOffer.updateOne({ _id: item._id }, { $set: { active: false } });
+            }
+        }
         res.render('listCoupons', {
             successMessage: req.flash('successMessage'),
             errorMessage: req.flash('errorMessage'),
             productOffer,
-            categoryOffer
+            categoryOffer,
+            referralOffer
         });
     }
     catch (error) {
         console.log(error.message);
     }
 }
+
 const getAddCategoryCouponPage = async (req, res) => {
     try {
         const categoryData = await Category.find();
@@ -698,6 +725,18 @@ const getAddProductCouponPage = async (req, res) => {
             errorMessage: req.flash("errorMessage"),
             successMessage: req.flash("successMessage"),
             products: productsData
+        });
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getAddReferralCouponPage = async (req, res) => {
+    try {
+        res.render("addReferralCoupon", {
+            errorMessage: req.flash("errorMessage"),
+            successMessage: req.flash("successMessage")
         });
     }
     catch (error) {
@@ -785,6 +824,42 @@ const addProductCoupon = async (req, res) => {
     }
 }
 
+const addReferralCoupon = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { code, amount, type, expiresAt } = req.body;
+        if (!code || !amount || !type || !expiresAt) {
+            req.flash("errorMessage", "Please fill all fields");
+            res.redirect('/admin/addProductCoupons')
+        }
+        const existingCode = await ReferralOffer.findOne({ code: code });
+        if (existingCode) {
+            req.flash("errorMessage", "Code already added!!");
+            res.redirect('/admin/listCoupons')
+        }
+        const referralOffer = new ReferralOffer({
+            code: code,
+            amount: amount,
+            type: type,
+            expiresAt: expiresAt
+        });
+        const saveData = await referralOffer.save();
+        if (saveData) {
+            console.log("Data saved successfully");
+            req.flash('successMessage', 'Coupon added successfully!!')
+            res.redirect('/admin/listCoupons')
+        }
+        else {
+            console.log("Data not saved");
+            req.flash('errorMessage', 'Coupon not added!!')
+            res.redirect('/admin/addProductCoupons')
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
 const deleteCategoryCoupon = async (req, res) => {
     try {
         console.log(req.query);
@@ -833,6 +908,162 @@ const deleteProductCoupon = async (req, res) => {
     }
 }
 
+const deleteReferralCoupon = async (req, res) => {
+    try {
+        console.log(req.query);
+        const referralId = req.query.id;
+        const referralData = await ReferralOffer.findOne({ _id: referralId });
+        if (referralData) {
+            const deleteData = await ReferralOffer.deleteOne({ _id: referralId });
+            if (deleteData) {
+                console.log(`referralOffer data of ${referralId} deleted successfully`)
+                req.flash('successMessage', "Offer deleted successfully");
+                res.redirect('/admin/listCoupons')
+            }
+            else {
+                console.log(`referralOffer data of ${referralId} not deleted `)
+                req.flash('errorMessage', "Offer not deleted");
+                res.redirect('/admin/listCoupons')
+            }
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const displaySalesReport = async (req, res) => {
+    try {
+        const ordersData = await Order.find({ status: 'Delivered' }).populate('products.product').populate('user');
+        res.render('salesReport', {
+            order: ordersData
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const chartData = async (req, res) => {
+    try {
+        const filter = req.query.filter;
+        let data;
+        const sales = await Order.find({ status: 'Delivered' });
+
+
+        if (filter === 'weekly') {
+
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            console.log(startOfWeek)
+            startOfWeek.setDate(startOfWeek.getDate() - today.getDay());
+            startOfWeek.setHours(0, 0, 0, 0);
+            console.log(startOfWeek)
+
+            const endOfWeek = new Date(today);
+            console.log(endOfWeek)
+            endOfWeek.setDate(startOfWeek.getDate() + 7);
+            endOfWeek.setHours(23, 59, 59, 999);
+            console.log(endOfWeek)
+            const weeklySales = await Order.find({ created_at: { $gte: startOfWeek, $lt: endOfWeek } });
+            console.log(weeklySales)
+            data = {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                values: [10, 20, 15, 25]
+            };
+        } else if (filter === 'monthly') {
+
+            const today = new Date();
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            startOfMonth.setHours(0, 0, 0, 0);
+            console.log(startOfMonth)
+            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            endOfMonth.setHours(23, 59, 59, 999);
+            console.log(endOfMonth)
+            const monthlySales = await Order.find({
+                createdAt: { $gte: startOfMonth, $lt: endOfMonth }
+            });
+            console.log(monthlySales)
+            data = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                values: [30, 25, 40, 35]
+            };
+        }
+        else if (filter === 'yearly') {
+
+            const today = new Date();
+            const startOfYear = new Date(today.getFullYear(), 0, 1);
+            startOfYear.setHours(0, 0, 0, 0);
+            console.log(startOfYear)
+            const endOfYear = new Date(today.getFullYear(), 12, 0);
+            endOfYear.setHours(23, 59, 59, 999);
+            console.log(endOfYear)
+            const yearlySales = await YourModel.find({
+                createdAt: { $gte: startOfYear, $lt: endOfYear }
+            });
+            console.log(yearlySales)
+            data = {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                values: [30, 25, 40, 35, 25]
+            };
+        }
+        res.json(data);
+    }
+
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+const exportDataExcel = async (req, res) => {
+    try {
+        const workbook = new excelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
+        worksheet.columns = [
+            { header: 'S No', key: 's_no' },
+            { header: 'Customer name', key: 'customerName' },
+            { header: 'Product', key: 'productName' },
+            { header: 'Quantity', key: 'quantity' },
+            { header: 'Order Date', key: 'createdAt' },
+            { header: 'Status', key: 'status' },
+        ];
+
+        let counter = 1;
+        const salesData = await Order.find({ status: 'Delivered' }).populate('products.product').populate('user');
+        salesData.forEach((sale) => {
+            sale.products.forEach((product) => {
+                worksheet.addRow({
+                    s_no: counter,
+                    customerName: `${sale.user.firstName} ${sale.user.lastName}`,
+                    productName: product.product.name,
+                    quantity: product.quantity,
+                    createdAt: sale.created_at,
+                    status: sale.status
+                });
+                counter++;
+            });
+        });
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+        });
+
+        res.setHeader(
+            "Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader("Content-Disposition", "attachment;filename=sales.xlsx");
+
+        return workbook.xlsx.write(res).then(() => {
+            res.status(200);
+        });
+
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
 const logout = async (req, res) => {
     try {
         console.log("logout");
@@ -880,8 +1111,14 @@ module.exports = {
     addCategoryCoupon,
     getAddProductCouponPage,
     addProductCoupon,
+    getAddReferralCouponPage,
+    addReferralCoupon,
     deleteCategoryCoupon,
     deleteProductCoupon,
+    deleteReferralCoupon,
+    displaySalesReport,
+    chartData,
+    exportDataExcel,
     logout,
     forgotPassword
 }
