@@ -17,7 +17,7 @@ const viewProduct = async (req, res) => {
                 allProducts: allProductsData
             });
         } else {
-            res.redirect('/shop');
+            return res.redirect('/shop');
         }
     } catch (error) {
         console.log(error.message);
@@ -48,8 +48,6 @@ const viewAllProducts = async (req, res) => {
                     break;
                 case 'highToLow': productData = await Product.find({ is_Deleted: false }).sort({ price: -1 });
                     break;
-                case 'rating': productData = await Product.find({ is_Deleted: false }).sort({ rating: -1 });
-                    break;
                 case 'featured': productData = await Product.find({ is_Deleted: false, is_Featured: true }).sort({ name: 1 });
                     break;
                 default: console.log("Something happened");
@@ -66,6 +64,7 @@ const viewAllProducts = async (req, res) => {
         } else {
             res.render('shop', {
                 user: userId,
+                message: req.flash('message'),
                 category: categoryData,
                 product: productData
             })
@@ -95,6 +94,7 @@ const searchProduct = async (req, res) => {
         if (productData) {
             console.log("found" + productData);
             res.render('shop', {
+                message: req.flash('message'),
                 user: userData,
                 category: categoryData,
                 product: productData

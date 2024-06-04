@@ -1,169 +1,180 @@
 <%- include('../partials/head.ejs') %>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
 
-        .container {
-            max-width: 100%;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+  .container {
+    max-width: 100%;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
 
-        .profile-info {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-        }
+  .profile-info {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+  }
 
-        .profile-info label {
-            font-weight: bold;
-        }
+  .profile-info label {
+    font-weight: bold;
+  }
 
-        .profile-info p {
-            margin: 5px 0;
-        }
+  .profile-info p {
+    margin: 5px 0;
+  }
 
-        .profile-picture {
-            text-align: center;
-        }
+  .profile-picture {
+    text-align: center;
+  }
 
-        .profile-picture img {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #ccc;
-        }
+  .profile-picture img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ccc;
+  }
 
-        .btn-edit-profile {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
+  .btn-edit-profile {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+  }
 
-        }
+  .btn-edit-profile:hover {
+    background-color: #0056b3;
+  }
+</style>
+<div class="container">
+  <div class="header__top">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="header__top__inner">
+          <div class="header__top__left">
+            <a href="/home"><img src="img/logo.png" alt="" /></a>
+          </div>
+          <div class="row float-right">
+            <div class="header__top__right">
+              <div class="header__top__right__links">
+                <a href="/wallet"
+                  ><img
+                    src="img/icon/wallet.png"
+                    style="height: 30px; width: auto"
+                    alt=""
+                  />
+                </a>
+              </div>
+              <div class="header__top__right__links">
+                <a href="/wishlist"><img src="img/icon/heart.png" alt="" /></a>
+              </div>
 
-        .btn-edit-profile:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <div class="container">
-        <div class="header__top">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="header__top__inner">
-                        <div class=" header__top__left ">
-                            <a href="/home"><img src="img/logo.png" alt=""></a>
-                        </div>
-                        <div class="row float-right">
-                            <div class="header__top__right">
-                                <div class="header__top__right__links">
+              <div class="header__top__right__cart">
+                <a href="/cart"
+                  ><img src="img/icon/cart.png" alt="" />
+                  <span> <%= cartItemCount %> </span></a
+                >
+              </div>
 
-                                    <a href="/wallet"><img src="img/icon/wallet.png" style="height: 30px; width:auto;"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="header__top__right__links">
+              <div class="header__top__right__cart">
+                <% if(user){%>
 
-                                    <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
-                                </div>
+                <a href="/logout" id="logoutLink" class="logout signin"
+                  ><img src="img/icon/signout.svg" alt=""
+                /></a>
 
-                                <div class="header__top__right__cart">
-                                    <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>
-                                            <%= cartItemCount %>
-                                        </span></a>
-                                </div>
-
-                                <div class="header__top__right__cart">
-
-                                    <% if(user){%>
-
-                                        <a href="/logout" id="logoutLink" class="logout signin"><img
-                                                src="img/icon/signout.svg" alt=""></a>
-
-                                        <% } else { %>
-                                            <a href="/login" class="signin">Sign in</a>
-                                            <% } %>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <% } else { %>
+                <a href="/login" class="signin">Sign in</a>
+                <% } %>
+              </div>
             </div>
-            <div class="canvas__open"><i class="fa fa-bars"></i></div>
-            <div class="row">
-                <div class="col-lg-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    <div class="row">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-8 col-md-8 center">
+        <h1>User Profile</h1>
+        <br />
+        <% if (message.length> 0) { %>
+        <div
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+        >
+          <%- message %>
+        </div>
+        <% } %>
 
-                <div class="col-lg-6 col-md-8 center">
-
-                    <h1>User Profile</h1>
-                    <% if (message.length> 0) { %>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <%- message %>
-
-                        </div>
-                        <% } %>
-
-                            <div class=" profile-info">
-                                <div class="profile-picture">
-                                    <img src="profile-pic.jpg" alt="Profile Picture">
-                                </div>
-                                <label for="firstName">First Name:</label>
-                                <p>
-                                    <%= user[0].firstName %>
-                                </p>
-                                <label for="lastName">Last Name:</label>
-                                <p>
-                                    <%= user[0].lastName %>
-                                </p>
-                                <label for="email">Email:</label>
-                                <p>
-                                    <%= user[0].email %>
-                                </p>
-                                <label for="phone">Phone:</label>
-                                <p>
-                                    <%= user[0].phone %>
-                                </p>
-                                <label for="wallet">Wallet amount:</label>
-                                <p>
-                                    <%= user[0].wallet %>
-                                </p>
-                                <%for(let i=0;i< user[0].address.length;i++){%>
-                                    <label for="address">Address <%=i+1%>:</label>
-                                    <p>
-                                        <%= user[0].address[i].address %>,
-                                            <%= user[0].address[i].city %>,
-                                                <%= user[0].address[i].state %>,
-                                                    <%= user[0].address[i].zip %>
-                                    </p>
-                                    <%}%>
-                                        <a href="/addNewAddress" class="btn btn-dark" type="button">Add Address</a>
-                                        <a href="/listOrders">My Orders</a>
-                            </div>
-                            <a href=" /userAccount" class="btn primary-btn">Edit Profile</a>
-                            <a href="/forget-password" class="btn primary-btn">Reset Password</a>
-                            <a href="/change-password">Change Password</a>
-
-                </div>
+        <div class="profile-info">
+          <div class="profile-picture">
+            <img src="/img/icon/profile-pic.jpg" alt="Profile Picture" />
+          </div>
+          <br /><br />
+          <div class="row">
+            <div class="col-lg-6">
+              <label for="firstName">Name:</label>
+              <p><%= user[0].firstName %> <%= user[0].lastName %></p>
+              <label for="email">Email:</label>
+              <p><%= user[0].email %></p>
+              <label for="phone">Phone:</label>
+              <p><%= user[0].phone %></p>
+            </div>
+            <div class="col-lg-6">
+              <label for="wallet">Wallet amount:</label>
+              <p>₹ <%= user[0].wallet.toFixed(2) %></p>
+              <%for(let i=0;i< user[0].address.length;i++){%>
+              <label for="address">Address <%=i+1%>:</label>
+              <p>
+                <%= user[0].address[i].address %>, <%= user[0].address[i].city
+                %>, <%= user[0].address[i].state %>, <%= user[0].address[i].zip
+                %>
+              </p>
+              <br />
+              <%}%>
             </div>
         </div>
+            <div class="d-flex justify-content-center">
+              <a href="/addNewAddress" class="btn btn-dark" type="button"
+                >Add Address</a
+              >
+              <a href="/listOrders" class="btn btn-dark ml-2" type="button"
+                >My Orders</a
+              >
+            </div>
+          </div>
+          <div class="row d-flex justify-content-center">
+            <a href=" /userAccount" class="btn primary-btn ml-2"
+              >Edit Profile</a
+            >
+            <a href="/forget-password" class="btn primary-btn ml-2"
+              >Reset Password</a
+            >
+            <a href="/change-password" class="btn primary-btn ml-2"
+              >Change Password</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <%- include('../partials/footer.ejs') %>
-
-        <%- include('../partials/plugins.ejs') %>
+  </div>
+  <%- include('../partials/footer.ejs') %> <%-
+  include('../partials/plugins.ejs') %>
+</div>

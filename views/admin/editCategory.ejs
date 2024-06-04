@@ -11,10 +11,10 @@
                                 <label for="inputText3" class="col-form-label">Category
                                     Name</label>
                                 <input id="inputText3" name="name" type="text" value="<%= category.name %>"
-                                    class="form-control" required>
-                                <label for="inputText3" class="col-form-label"><b>Toppings</b> </label>
+                                    class="form-control" required> <br>
                                 <div class="row">
                                     <div class="col-lg-6">
+                                        <label for="inputText3" class="col-form-label"><b>Toppings</b> </label>
 
                                         <%let k=0; for(var i=0;i<subcategory.length;i++){ %>
                                             <% for(var j=0;j<category.toppings.length;j++){k++;%>
@@ -33,34 +33,44 @@
                                                 </div>
                                                 <%}%>
 
+
+
+                                                    <br>
+                                                    <a href="/admin/add_subcategory"><button type="button"
+                                                            class="btn-dark">Add
+                                                            more toppings</button></a>
+                                                    <br><br>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label for="inputText3" class="col-form-label"><b>Availability</b> </label>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" value="true" name="status"
+                                                id="flexRadioDefault1" <%if(category.status==true) { %>checked <% } %>>
+                                                <label class="form-check-label" for="flexRadioDefault1">
+                                                    Available
+                                                </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" value="false" name="status"
+                                                id="flexRadioDefault2" <% if(category.status==false) { %>checked <% } %>
+                                                >
+                                                <label class="form-check-label" for="flexRadioDefault2">
+                                                    Not Available
+                                                </label>
+
+                                                <br><br>
+
+                                        </div>
                                     </div>
                                 </div>
-                                <br>
-                                <a href="/admin/add_subcategory"><button type="button" class="btn-dark">Add
-                                        more toppings</button></a>
-                                <br><br>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="true" name="status"
-                                        id="flexRadioDefault1" <%if(category.status==true) { %>checked <% } %>>
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            Available
-                                        </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" value="false" name="status"
-                                        id="flexRadioDefault2" <% if(category.status==false) { %>checked <% } %>
-                                        >
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                            Not Available
-                                        </label>
-
-                                        <br><br>
-                                        <input type="hidden" name="id" value="<%= category._id %>">
-                                        <input type="submit" class="btn-dark" value="Update Category">
-
+                                <div class="d-flex justify-content-center">
+                                    <input type="hidden" name="id" value="<%= category._id %>">
+                                    <input type="submit" class="btn-dark" value="Update Category">
                                 </div>
                             </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

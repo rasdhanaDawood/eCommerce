@@ -1,206 +1,317 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
-    <link href="/vendor/fonts/circular-std/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="/libs/css/style.css">
-    <link rel="stylesheet" href="/vendor/fonts/fontawesome/css/fontawesome-all.css">
-    <link rel="stylesheet" href="/vendor/cropper/dist/cropper.min.css">
-    <link rel="stylesheet" href="/vendor/vector-map/jqvmap.css">
-    <link rel="stylesheet" href="/vendor/jvectormap/jquery-jvectormap-2.0.2.css">
-    <link rel="stylesheet" href="/vendor/fonts/flag-icon-css/flag-icon.min.css">
-
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <link href="/vendor/fonts/circular-std/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/libs/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="/vendor/fonts/fontawesome/css/fontawesome-all.css"
+    />
+    <link rel="stylesheet" href="/vendor/cropper/dist/cropper.min.css" />
+    <link rel="stylesheet" href="/vendor/vector-map/jqvmap.css" />
+    <link
+      rel="stylesheet"
+      href="/vendor/jvectormap/jquery-jvectormap-2.0.2.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/vendor/fonts/flag-icon-css/flag-icon.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-
     <title>Cupcake</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- ============================================================== -->
     <!-- main wrapper -->
     <!-- ============================================================== -->
     <div class="dashboard-main-wrapper">
-        <!-- ============================================================== -->
-        <!-- navbar -->
-        <!-- ============================================================== -->
-        <div class="dashboard-header">
-            <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                <img class="logo-img" src="/img/logo.png" alt="logo">
+      <!-- ============================================================== -->
+      <!-- navbar -->
+      <!-- ============================================================== -->
+      <div class="dashboard-header">
+        <nav class="navbar navbar-expand-lg bg-white fixed-top">
+          <img class="logo-img" src="/img/logo.png" alt="logo" />
 
-                <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto navbar-right-top">
-
-                        <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span
-                                    class="indicator"></span></a>
-                            <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                <li>
-                                    <div class="notification-title"> Notification</div>
-                                    <div class="notification-list">
-                                        <div class="list-group">
-                                            <a href="#" class="list-group-item list-group-item-action active">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img
-                                                            src="/images/avatar-2.jpg" alt=""
-                                                            class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span
-                                                            class="notification-list-user-name">Jithin
-                                                            Jose</span>accepted
-                                                        your invitation to join the team.
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img
-                                                            src="/images/avatar-3.jpg" alt=""
-                                                            class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span
-                                                            class="notification-list-user-name">John Manuel</span>is
-                                                        now following you
-                                                        <div class="notification-date">2 days ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img
-                                                            src="/images/avatar-4.jpg" alt=""
-                                                            class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span
-                                                            class="notification-list-user-name">Monaan Pechi</span> is
-                                                        watching your main repository
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img
-                                                            src="/images/avatar-5.jpg" alt=""
-                                                            class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span
-                                                            class="notification-list-user-name">Jessica
-                                                            Caruso</span>accepted your invitation to join the team.
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="list-footer"> <a href="#">View all notifications</a></div>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
-                                    src="/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></a>
-                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown"
-                                aria-labelledby="navbarDropdownMenuLink2">
-                                <div class="nav-user-info">
-                                    <h5 class="mb-0 text-white nav-user-name">Admin</h5>
-                                    <span class="status"></span><span class="ml-2">Available</span>
-                                </div>
-                                <a class="dropdown-item" href="/adminAccount"><i
-                                        class="fas fa-user mr-2"></i>Account</a>
-                                <a class="dropdown-item" href="/admin/logout"><i
-                                        class="fas fa-power-off mr-2"></i>Logout</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto navbar-right-top">
+              <li class="nav-item dropdown notification">
+                <a
+                  class="nav-link nav-icons"
+                  href="#"
+                  id="navbarDropdownMenuLink1"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  ><i class="fas fa-fw fa-bell"></i>
+                  <span class="indicator"></span
+                ></a>
+                <ul
+                  class="dropdown-menu dropdown-menu-right notification-dropdown"
+                >
+                  <li>
+                    <div class="notification-title">Notification</div>
+                    <div class="notification-list">
+                      <div class="list-group">
+                        <a
+                          href="#"
+                          class="list-group-item list-group-item-action active"
+                        >
+                          <div class="notification-info">
+                            <div class="notification-list-user-img">
+                              <img
+                                src="/img"
+                                alt=""
+                                class="user-avatar-md rounded-circle"
+                              />
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <!-- ============================================================== -->
-        <!-- end navbar -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- left sidebar -->
-        <!-- ============================================================== -->
-        <div class="nav-left-sidebar sidebar-dark">
-            <div class="menu-list">
-                <nav class="navbar navbar-expand-lg navbar-light">
-                    <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav flex-column">
-                            <li class="nav-divider">
-                                Menu
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link " href="/admin/dashboard" aria-expanded=" false"
-                                    data-target="#submenu-1" aria-controls="submenu-1"><i
-                                        class="fa fa-fw fa-user-circle"></i>Dashboard <span
-                                        class="badge badge-success">6</span></a>
-
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="/admin/editUser" aria-expanded="false"
-                                    data-target="#submenu-2" aria-controls="submenu-2"><i
-                                        class="fa fa-users"></i>Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="/admin/listProduct" aria-expanded="false"
-                                    data-target="#submenu-3" aria-controls="submenu-3"><i
-                                        class=" fas fa-th"></i>Products</a>
-
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/listCategory" aria-expanded="false"
-                                    data-target="#submenu-3" aria-controls="submenu-3"><i
-                                        class=" fas fa-list-ul"></i>Categories</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/listCoupons" aria-expanded="false"
-                                    data-target="#submenu-3" aria-controls="submenu-3"><i
-                                        class=" fas fa-tags"></i>Coupons</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/salesReport" aria-expanded="false"
-                                    data-target="#submenu-6" aria-controls="submenu-6"><i
-                                        class="fas fa-fw fa-file"></i>Sales Report</a>
-
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/listOrders" aria-expanded="false"
-                                    data-target="#submenu-3" aria-controls="submenu-3"><i
-                                        class=" fas fa-list-ul"></i>Orders</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link " href="/admin/listStock" aria-expanded="false"
-                                    data-target="#submenu-3" aria-controls="submenu-3"><i
-                                        class=" fas fa-th"></i>Stock</a>
-
-                            </li>
-                        </ul>
+                            <div class="notification-list-user-block">
+                              <span class="notification-list-user-name"
+                                >Jithin Jose</span
+                              >accepted your invitation to join the team.
+                              <div class="notification-date">2 min ago</div>
+                            </div>
+                          </div>
+                        </a>
+                        <a
+                          href="#"
+                          class="list-group-item list-group-item-action"
+                        >
+                          <div class="notification-info">
+                            <div class="notification-list-user-img">
+                              <img
+                                src="/images/avatar-3.jpg"
+                                alt=""
+                                class="user-avatar-md rounded-circle"
+                              />
+                            </div>
+                            <div class="notification-list-user-block">
+                              <span class="notification-list-user-name"
+                                >John Manuel</span
+                              >is now following you
+                              <div class="notification-date">2 days ago</div>
+                            </div>
+                          </div>
+                        </a>
+                        <a
+                          href="#"
+                          class="list-group-item list-group-item-action"
+                        >
+                          <div class="notification-info">
+                            <div class="notification-list-user-img">
+                              <img
+                                src="/images/avatar-4.jpg"
+                                alt=""
+                                class="user-avatar-md rounded-circle"
+                              />
+                            </div>
+                            <div class="notification-list-user-block">
+                              <span class="notification-list-user-name"
+                                >Monaan Pechi</span
+                              >
+                              is watching your main repository
+                              <div class="notification-date">2 min ago</div>
+                            </div>
+                          </div>
+                        </a>
+                        <a
+                          href="#"
+                          class="list-group-item list-group-item-action"
+                        >
+                          <div class="notification-info">
+                            <div class="notification-list-user-img">
+                              <img
+                                src="/images/avatar-5.jpg"
+                                alt=""
+                                class="user-avatar-md rounded-circle"
+                              />
+                            </div>
+                            <div class="notification-list-user-block">
+                              <span class="notification-list-user-name"
+                                >Jessica Caruso</span
+                              >accepted your invitation to join the team.
+                              <div class="notification-date">2 min ago</div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
                     </div>
-                </nav>
-            </div>
-        </div>
+                  </li>
+                  <li>
+                    <div class="list-footer">
+                      <a href="#">View all notifications</a>
+                    </div>
+                  </li>
+                </ul>
+              </li>
 
-        <div class="dashboard-wrapper">
-            <div class="container-fluid  dashboard-content">
+              <li class="nav-item dropdown nav-user">
+                <a
+                  class="nav-link nav-user-img"
+                  href="#"
+                  id="navbarDropdownMenuLink2"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  ><img
+                    src="/images/avatar-1.jpg"
+                    alt=""
+                    class="user-avatar-md rounded-circle"
+                /></a>
+                <div
+                  class="dropdown-menu dropdown-menu-right nav-user-dropdown"
+                  aria-labelledby="navbarDropdownMenuLink2"
+                >
+                  <div class="nav-user-info">
+                    <h5 class="mb-0 text-white nav-user-name">Admin</h5>
+                    <span class="status"></span
+                    ><span class="ml-2">Available</span>
+                  </div>
+                  <a class="dropdown-item" href="/adminAccount"
+                    ><i class="fas fa-user mr-2"></i>Account</a
+                  >
+                  <a class="dropdown-item" href="/admin/logout"
+                    ><i class="fas fa-power-off mr-2"></i>Logout</a
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <!-- ============================================================== -->
+      <!-- end navbar -->
+      <!-- ============================================================== -->
+      <!-- ============================================================== -->
+      <!-- left sidebar -->
+      <!-- ============================================================== -->
+      <div class="nav-left-sidebar sidebar-dark">
+        <div class="menu-list">
+          <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav flex-column">
+                <li class="nav-divider">Menu</li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/dashboard"
+                    aria-expanded=" false"
+                    data-target="#submenu-1"
+                    aria-controls="submenu-1"
+                    ><i class="fa fa-fw fa-user-circle"></i>Dashboard
+                    <span class="badge badge-success">6</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/editUser"
+                    aria-expanded="false"
+                    data-target="#submenu-2"
+                    aria-controls="submenu-2"
+                    ><i class="fa fa-users"></i>Users</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/listProduct"
+                    aria-expanded="false"
+                    data-target="#submenu-3"
+                    aria-controls="submenu-3"
+                    ><i class="fas fa-th"></i>Products</a
+                  >
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/listCategory"
+                    aria-expanded="false"
+                    data-target="#submenu-3"
+                    aria-controls="submenu-3"
+                    ><i class="fas fa-list-ul"></i>Categories</a
+                  >
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/listCoupons"
+                    aria-expanded="false"
+                    data-target="#submenu-3"
+                    aria-controls="submenu-3"
+                    ><i class="fas fa-tags"></i>Coupons</a
+                  >
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/salesReport"
+                    aria-expanded="false"
+                    data-target="#submenu-6"
+                    aria-controls="submenu-6"
+                    ><i class="fas fa-fw fa-file"></i>Sales Report</a
+                  >
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/listOrders"
+                    aria-expanded="false"
+                    data-target="#submenu-3"
+                    aria-controls="submenu-3"
+                    ><i class="fas fa-list-ul"></i>Orders</a
+                  >
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="/admin/listStock"
+                    aria-expanded="false"
+                    data-target="#submenu-3"
+                    aria-controls="submenu-3"
+                    ><i class="fas fa-th"></i>Stock</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="dashboard-wrapper">
+        <div class="container-fluid dashboard-content">
+    
+  </body>
+</html>

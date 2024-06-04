@@ -1,13 +1,65 @@
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 const User = require("../models/userModel");
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 const SubCategory = require("../models/subCategoryModel");
 const Order = require("../models/ordersModel");
 const { ProductOffer, CategoryOffer, ReferralOffer } = require("../models/offerModel");
-const Sales = require("../models/salesModel");
+
 const excelJS = require('exceljs')
+const PDFDocument = require('pdfkit');
 
 const bcrypt = require("bcrypt");
+
+const randomstring = require("randomstring");
+const nodemailer = require("nodemailer");
+
+const securePassword = async (password) => {
+    try {
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        return passwordHash;
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+const sendResetPasswordmail = async (name, email, token) => {
+    try {
+        let passwordTransporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            secure: false,
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        let mailOptions = await passwordTransporter.sendMail({
+            from: process.env.MAIL_USER,
+            to: email,
+            subject: "Reset Password",
+            html: `<p> Hi, ${name}, <a href="http://127.0.0.1:3000/admin/reset-Password?token=${token}"> Please  click here to reset your password</a> `
+        });
+
+        passwordTransporter.sendMail(mailOptions, function (error, info) {
+
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log("mail sent for password reset:", info.response);
+            }
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 const loadLogin = async (req, res) => {
     try {
@@ -32,16 +84,16 @@ const verifyLogin = async (req, res) => {
             if (passwordMatch && userData.is_admin === true) {
                 req.session.admin = userData._id;
 
-                res.redirect('/admin/dashboard');
+                return res.redirect('/admin/dashboard');
             }
             else {
                 req.flash('errorMessage', 'Incorrect Email/password');
-                res.redirect('/admin/login');
+                return res.redirect('/admin/login');
             }
         }
         else {
             req.flash('errorMessage', 'Please register or create an account')
-            res.redirect('/admin/login');
+            return res.redirect('/admin/login');
         }
     } catch (error) {
         console.log(error.message);
@@ -50,10 +102,43 @@ const verifyLogin = async (req, res) => {
 
 const dashboard = async (req, res) => {
     try {
-        if (req.session.admin) {
-            const productData = await Product.find({ is_Deleted: false }).sort({ rating: -1 }).limit(10);
-            res.render('dashboard', { product: productData });
-        }
+        const usersCount = await User.find({}).count();
+        console.log(usersCount);
+        const ordersCount = await Order.find({}).count();
+        console.log(ordersCount);
+        const revenue = await Order.aggregate([
+            { $match: { status: 'Delivered' } },
+            { $group: { _id: '$id', total: { $sum: '$totalPrice' } } }
+        ])
+        console.log(revenue[0].total);
+        total = revenue[0].total;
+        const topSellingProducts = await Order.aggregate([
+            { $unwind: "$products" },
+            {
+                $group: {
+                    _id: "$products.product",
+                    totalQuantity: { $sum: "$products.quantity" }
+                }
+            },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails"
+                }
+            },
+            { $unwind: "$productDetails" }
+        ]);
+
+        res.render('dashboard', {
+            product: topSellingProducts,
+            userCount: usersCount,
+            orderCount: ordersCount,
+            revenue: total
+        });
     }
     catch (error) {
         console.log(error.message);
@@ -64,39 +149,49 @@ const listProduct = async (req, res) => {
     try {
         var productData = await Product.find({ is_Deleted: false }).populate('category');
         const categoryData = await Category.find({})
+        console.log(req.query);
         if (req.query) {
-            console.log(req.query);
             let category = req.query.category;
-            let featured = req.query.featured;
 
-            console.log(`Categories selected: ${category}`)
-            if (category) {
-                if (featured) {
-                    productData = await Product.find({ category: category, is_Featured: true, is_Deleted: false }).populate('category');
-                    console.log(productData)
-                } else {
-                    productData = await Product.find({ category: category, is_Deleted: false }).populate('category');
-                    console.log(productData)
-                }
-            } else if (featured == 'true') {
-                productData = await Product.find({ is_Featured: true, is_Deleted: false }).populate('category');
-                console.log(productData)
-            } else {
+            if (category === 'all' || category == undefined) {
                 productData = await Product.find({ is_Deleted: false }).populate('category');
                 console.log(productData)
             }
+            else if (category == 'featured') {
+                productData = await Product.find({ is_Featured: true, is_Deleted: false }).populate('category');
+                console.log(productData)
+            }
+            else if (category) {
+                const categoryId = new mongoose.Types.ObjectId(category);
+                for (const item of categoryData) {
+                    if (item._id.equals(categoryId)) {
+                        productData = await Product.find({ category: categoryId, is_Deleted: false }).populate('category');
+                        console.log(productData);
+                    }
+                }
+            }
+            else {
+                console.log("Error")
+                req.flash("errorMessage", "Category data not found")
+                return res.redirect('/admin/dashboard');
+            }
         }
+
         if (productData) {
-            res.render('listProduct', {
-                product: productData,
-                category: categoryData,
-                errorMessage: req.flash("errorMessage"),
-                successMessage: req.flash("successMessage")
-            })
+            if (req.xhr) {
+                res.json(productData);
+            } else {
+                res.render('listProduct', {
+                    product: productData,
+                    category: categoryData,
+                    errorMessage: req.flash("errorMessage"),
+                    successMessage: req.flash("successMessage")
+                })
+            }
         }
         else {
             req.flash("errorMessage", "Product data not found")
-            res.redirect('/admin/listproduct');
+            return res.redirect('/admin/listproduct');
         }
     } catch (error) {
         console.log(error.message);
@@ -118,7 +213,10 @@ const viewProduct = async (req, res) => {
 const getProduct = async (req, res) => {
     try {
         const categoryData = await Category.find({});
-        res.render('addProduct', { category: categoryData });
+        res.render('addProduct', {
+            category: categoryData,
+            errorMessage: req.flash('errorMessage')
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -129,10 +227,15 @@ const addProduct = async (req, res) => {
         const imageFiles = [];
         console.log(req.files);
         console.log(req.body);
+        const { productname, price, category, shortDesc, detailDesc, stock, is_Featured, is_Deleted } = req.body;
+        if (!productname || !price || !category || !shortDesc || !detailDesc || !is_Featured || !is_Deleted || !stock) {
+            req.flash("errorMessage", "Fields should not be empty!!")
+            return res.redirect('/admin/addProduct');
+        }
         const productData = await Product.findOne({ name: req.body.productname });
         if (productData) {
             req.flash("errorMessage", "Product already exists!!")
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
         if (req.files) {
             req.files.map(file => {
@@ -140,31 +243,30 @@ const addProduct = async (req, res) => {
             });
         }
         console.log(imageFiles)
-
         const product = new Product({
-            name: req.body.productname,
-            price: req.body.price,
+            name: productname,
+            price: price,
             images: imageFiles,
-            short_description: req.body.shortDesc,
-            detail_description: req.body.detailDesc,
-            is_Featured: req.body.isFeatured,
-            is_Deleted: req.body.isDeleted,
-            rating: req.body.rating,
-            category: req.body.category,
-            stock: req.body.stock
+            short_description: shortDesc,
+            detail_description: detailDesc,
+            is_Featured: is_Featured,
+            is_Deleted: is_Deleted,
+            category: category,
+            stock: stock
         });
         const createProduct = await product.save();
         console.log(createProduct);
 
         if (createProduct) {
             req.flash("successMessage", "Product created successfully")
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
         else {
             req.flash("errorMessage", "Something went wrong")
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
     }
+
     catch (error) {
         console.log(error.message);
     }
@@ -179,12 +281,13 @@ const getEditProduct = async (req, res) => {
             const categoryData = await Category.find({});
             res.render('editProduct', {
                 Product: productData,
-                Category: categoryData
+                Category: categoryData,
+                errorMessage: req.flash('errorMessage')
             })
         }
         else {
             req.flash("errorMessage", "Something went wrong")
-            res.redirect("/admin/listProduct");
+            return res.redirect("/admin/listProduct");
         }
     } catch (error) {
         console.log(error.message);
@@ -200,6 +303,11 @@ const editProduct = async (req, res) => {
         console.log(req.body);
         let images = [];
         console.log(req.files)
+        const { name, price, category, shortDesc, detailDesc, stock, isFeatured, isDeleted } = req.body;
+        if (!name || !price || !category || !shortDesc || !detailDesc || !isFeatured || !isDeleted || !stock) {
+            req.flash("errorMessage", "Fields should not be empty!!")
+            return res.redirect(`/admin/editProduct?id=${id}`);
+        }
         if (!req.files.image1) {
             images.push(req.body.image1);
         } else {
@@ -232,7 +340,6 @@ const editProduct = async (req, res) => {
                 detail_description: req.body.detailDesc,
                 is_Featured: req.body.isFeatured,
                 is_Deleted: req.body.isDeleted,
-                rating: req.body.rating,
                 category: req.body.category,
                 stock: req.body.stock
             }
@@ -240,11 +347,11 @@ const editProduct = async (req, res) => {
         if (productData) {
             console.log("Update successfull");
             req.flash("successMessage", "Product updated successfully!!");
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
         else {
             req.flash("errorMessage", "Something went wrong!!updation failed!")
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
     } catch (error) {
         res.render("error", {
@@ -260,25 +367,38 @@ const deleteProduct = async (req, res) => {
         if (productData) {
             const deleteProduct = await Product.findByIdAndUpdate({ _id: id }, { $set: { is_Deleted: true } });
             req.flash("successMessage", "Product deleted successfully!!")
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         } else {
             req.flash("errorMessage", "Something went wrong!!");
-            res.redirect('/admin/listProduct');
+            return res.redirect('/admin/listProduct');
         }
     } catch (error) {
         console.log(error.message)
     }
 }
-const cropImage = async (req, res) => {
+const cropImage = (req, res) => {
     try {
         const img = req.query.image;
-        console.log(img);
         res.render('cropImage', { image: img });
     } catch (error) {
         console.log(error.message);
+        res.status(500).send('Error rendering crop image page.');
     }
-}
+};
 
+const saveImage = (req, res) => {
+    try {
+        if (req.files && req.files.image1) {
+            console.log(req.files.image1);
+            res.status(200).send('Cropped image uploaded successfully.');
+        } else {
+            res.status(400).send('No image uploaded.');
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Error saving cropped image.');
+    }
+};
 
 const add_subcategory = async (req, res) => {
     try {
@@ -303,11 +423,11 @@ const create_subcategory = async (req, res) => {
             const subCatData = await sub_Category.save();
             console.log(subCatData);
             req.flash("successMessage", "Sub Category added!!");
-            res.redirect('/admin/add_subcategory');
+            return res.redirect('/admin/add_subcategory');
             console.log("subcategory saved successfully")
         } else {
             req.flash("errorMessage", "Sub Category not added!!");
-            res.redirect('/admin/add_subcategory');
+            return res.redirect('/admin/add_subcategory');
         }
     } catch (error) {
         res.status(400).send({ success: false, msg: error.message });
@@ -321,7 +441,7 @@ const delete_subcategory = async (req, res) => {
         if (subcategoryData) {
             const deleteSubcategory = await SubCategory.deleteOne({ _id: id });
             console.log("sub category deleted")
-            res.redirect('/admin/add_subcategory');
+            return res.redirect('/admin/add_subcategory');
         } else {
             console.log("sub category not deleted")
         }
@@ -342,7 +462,7 @@ const listCategory = async (req, res) => {
         }
         else {
             req.flash("errorMessage", "Category data not found")
-            res.redirect('/admin/listCategory');
+            return res.redirect('/admin/listCategory');
         }
     } catch (error) {
         console.log(error.message);
@@ -370,12 +490,12 @@ const addCategory = async (req, res) => {
         const toppings = req.body.checkbox;
         if (!name || !availability || !toppings) {
             req.flash("errorMessage", "Please fill all fields");
-            res.redirect("/admin/addCategory")
+            return res.redirect("/admin/addCategory")
         }
-        const checkCategory = await Category.find({ name: name });
+        const checkCategory = await Category.findOne({ name: name });
         if (checkCategory) {
             req.flash("errorMessage", "Category name already exists!!");
-            res.redirect("/admin/addCategory")
+            return res.redirect("/admin/addCategory")
         }
         var status;
         if (availability === 'Available') {
@@ -390,7 +510,7 @@ const addCategory = async (req, res) => {
         });
         if (categoryData) {
             req.flash("successMessage", "Category already saved");
-            res.redirect("/admin/addCategory")
+            return res.redirect("/admin/addCategory")
         }
         else {
             const category = new Category({
@@ -402,11 +522,11 @@ const addCategory = async (req, res) => {
             if (createCategory) {
                 console.log("category saved successfully", createCategory);
                 req.flash("successMessage", "Category saved successfully")
-                res.redirect("/admin/listCategory")
+                return res.redirect("/admin/listCategory")
             }
             else {
                 req.flash("errorMessage", "Category not saved. Something happened ")
-                res.redirect("/admin/addCategory")
+                return res.redirect("/admin/addCategory")
             }
         }
     }
@@ -415,9 +535,11 @@ const addCategory = async (req, res) => {
     }
 }
 
-const forgotPassword = async (req, res) => {
+const getForgetPassword = async (req, res) => {
     try {
-        res.render('forgotPassword');
+        res.render('forgotPassword', {
+            message: req.flash('message')
+        });
 
     }
     catch (error) {
@@ -425,12 +547,80 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+const forgetPassword = async (req, res) => {
+
+    try {
+        const { email } = req.body;
+        const userData = await User.findOne({ email, is_admin: true })
+        if (!userData) {
+            console.log("User not an admin");
+            req.flash("message", "User not an admin!!");
+            return res.redirect('/admin/forgetPassword');
+        }
+        else {
+
+            const token = randomstring.generate();
+            const data = await User.updateOne({ email: email }, { $set: { token: token } });
+            sendResetPasswordmail(userData.firstName, userData.email, token);
+            console.log("check your mails");
+            req.flash("message", "Please check your mail for the password reset link!!");
+            return res.redirect('/admin/forgetPassword');
+        }
+    }
+    catch (error) {
+        console.log(error.message)
+    }
+}
+
+const getResetPassword = async (req, res) => {
+    try {
+        const token = req.query.token;
+        console.log(token)
+
+        res.render("resetPassword", {
+            message: req.flash('message'),
+            token: token
+        });
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+const resetPassword = async (req, res) => {
+    try {
+        const token = req.body.token;
+        const tokenData = await User.findOne({ token: token });
+
+        if (tokenData) {
+            const password = req.body.password;
+            const newPassword = await securePassword(password);
+            await User.findByIdAndUpdate(tokenData._id, { $set: { password: newPassword, token: "" } }, { new: true });
+
+            console.log("Password updated successfully");
+            req.flash('successMessage', "Password updated successfully!!");
+            return res.redirect("/admin/login");
+            // req.session.destroy();
+            // res.render('signin', { successMessage: 'success' })
+        } else {
+            console.log("Link expired");
+            req.flash('errorMessage', "Link expired!! Please try again!!");
+            return res.redirect("/admin/login");
+            // res.render('signin', { errorMessage: 'fail' })
+
+        }
+    } catch (error) {
+        console.log(error.message);
+        req.flash('message', "An error occurred! Please try again.");
+        return res.redirect("/admin/reset-Password");
+    }
+};
+
 const editCategory = async (req, res) => {
     try {
         const categoryData = await Category.findByIdAndUpdate({ _id: req.body.id }, { $set: { name: req.body.name, status: req.body.status, toppings: req.body.checkbox } });
         if (categoryData) {
             req.flash("successMessage", "Category updated Successfully")
-            res.redirect('/admin/listCategory');
+            return res.redirect('/admin/listCategory');
 
         }
         else {
@@ -456,7 +646,7 @@ const getEditCategory = async (req, res) => {
         }
         else {
             req.flash("errorMessage", "Category not found")
-            res.redirect('listCategory')
+            return res.redirect('listCategory')
         }
     } catch (error) {
         console.log(error.message);
@@ -469,7 +659,7 @@ const deleteCategory = async (req, res) => {
         const id = req.query.id;
         await Category.deleteOne({ _id: id });
         req.flash("successMessage", "Deleted Successfully");
-        res.redirect('/admin/listCategory');
+        return res.redirect('/admin/listCategory');
     } catch (error) {
         console.log(error.message);
     }
@@ -512,11 +702,11 @@ const editUser = async (req, res) => {
             console.log(userData.blocked);
             if (userData.blocked === true) {
                 req.flash('successMessage', userData.firstName + ' ' + userData.lastName + ' is blocked successfully');
-                res.redirect('/admin/editUser');
+                return res.redirect('/admin/editUser');
             } else {
 
                 req.flash('successMessage', userData.firstName + ' ' + userData.lastName + ' is unblocked successfully');
-                res.redirect('/admin/editUser');
+                return res.redirect('/admin/editUser');
             }
         }
         else {
@@ -530,8 +720,7 @@ const editUser = async (req, res) => {
 
 const listOrders = async (req, res) => {
     try {
-        const orderData = await Order.find({}).populate('user').populate('products.product');
-        console.log(orderData);
+        const orderData = await Order.find({}).sort({ created_at: -1 }).populate('user').populate('products.product');
         res.render("listOrders", {
             order: orderData,
             errorMessage: req.flash('errorMessage'),
@@ -547,12 +736,6 @@ const getUpdateStatusPage = async (req, res) => {
     try {
         const orderId = req.query.id;
         const orderData = await Order.findOne({ _id: orderId });
-        //  const productsWithFalseStatus = await Order.aggregate([
-        //     { $match: { _id: mongoose.Types.ObjectId(orderId) } }, // Match the order by its ID
-        //     { $unwind: '$products' }, // Unwind the products array
-        //     { $match: { 'products.status': false } }, // Match products with status as false
-        //     { $project: { _id: 0, product: '$products' } } // Project only the product fields
-        // ]);
         res.render("updateStatus", {
             orders: orderData
         })
@@ -570,12 +753,19 @@ const updateStatus = async (req, res) => {
         if (orderData) {
             const updateOrder = await Order.findOneAndUpdate({ _id: id }, { $set: { status: status } });
             console.log(updateOrder);
+            if (status == 'Cancelled') {
+                for (const product of orderData.products) {
+
+                    const productStatus = await Order.findOneAndUpdate({ _id: id }, { $set: { 'product.$.productStatus': false } });
+                    console.log(productStatus);
+                }
+            }
             req.flash("successMessage", "Order updated successfully!!");
-            res.redirect("/admin/listOrders");
+            return res.redirect("/admin/listOrders");
         } else {
             console.log("order not found");
             req.flash("successMessage", "Order not found!!");
-            res.redirect("/admin/listOrders");
+            return res.redirect("/admin/listOrders");
         }
 
     } catch (error) {
@@ -622,26 +812,26 @@ const addStock = async (req, res) => {
                 console.log(updateStock);
                 if (updateStock) {
                     req.flash("successMessage", "Stock updated Successfully");
-                    res.redirect("/admin/listStock");
+                    return res.redirect("/admin/listStock");
                 }
                 else {
                     req.flash("errorMessage", "Couldnt update stock. Something went wrong!!");
-                    res.redirect("/admin/listStock");
+                    return res.redirect("/admin/listStock");
                 }
             }
             if (type == 'sale') {
                 if (productData.stock >= quantity) {
-                    const updatedQuantity = productData.quantity - quantity;
+                    const updatedQuantity = parseInt(productData.stock) - parseInt(quantity);
                     const updateStock = await Product.findOneAndUpdate({ _id: productId }, { $set: { stock: updatedQuantity } });
                     console.log(updateStock);
                     if (updateStock) {
                         req.flash("successMessage", "Stock updated Successfully");
-                        res.redirect("/admin/listStock");
+                        return res.redirect("/admin/listStock");
                     }
                 }
                 else {
                     req.flash("errorMessage", "Sufficient quantity is not in stock!!");
-                    res.redirect("/admin/listStock");
+                    return res.redirect("/admin/listStock");
                 }
             }
         } else {
@@ -654,10 +844,10 @@ const addStock = async (req, res) => {
             console.log(savedData);
             if (savedData) {
                 req.flash("successMessage", "Stock added successfully!!")
-                res.redirect("/admin/listStock")
+                return res.redirect("/admin/listStock")
             } else {
                 req.flash("errorMessage", "Something wrong!!")
-                res.redirect("/admin/listStock")
+                return res.redirect("/admin/listStock")
             }
 
         }
@@ -720,7 +910,7 @@ const getAddCategoryCouponPage = async (req, res) => {
 
 const getAddProductCouponPage = async (req, res) => {
     try {
-        const productsData = await Product.find();
+        const productsData = await Product.find({ is_Deleted: false });
         res.render("addProductCoupons", {
             errorMessage: req.flash("errorMessage"),
             successMessage: req.flash("successMessage"),
@@ -747,17 +937,18 @@ const getAddReferralCouponPage = async (req, res) => {
 const addCategoryCoupon = async (req, res) => {
     try {
         console.log(req.body);
-        const { code, amount, type, expiresAt, category } = req.body;
-        if (!code || !amount || !type || !expiresAt) {
+        const { code, amount, expiresAt, category } = req.body;
+        const type = 'category';
+        if (!code || !amount || !expiresAt) {
             req.flash("errorMessage", "Please fill all fields");
-            res.redirect('/admin/addCategoryCoupons')
+            return res.redirect('/admin/addCategoryCoupons')
         }
         const existingCode = await CategoryOffer.findOne({ code: code });
         if (existingCode) {
             req.flash("errorMessage", "Code already added!!");
-            res.redirect('/admin/listCoupons')
+            return res.redirect('/admin/listCoupons')
         }
-        if (category && type == 'category') {
+        if (category) {
             const categoryOffer = new CategoryOffer({
                 code: code,
                 amount: amount,
@@ -769,12 +960,12 @@ const addCategoryCoupon = async (req, res) => {
             if (saveData) {
                 console.log("Data saved successfully");
                 req.flash('successMessage', 'Coupon added successfully!!')
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
 
             } else {
                 console.log("Data not saved");
                 req.flash('errorMessage', 'Coupon not added!!')
-                res.redirect('/admin/addCategoryCoupons')
+                return res.redirect('/admin/addCategoryCoupons')
 
             }
         }
@@ -787,17 +978,18 @@ const addCategoryCoupon = async (req, res) => {
 const addProductCoupon = async (req, res) => {
     try {
         console.log(req.body);
-        const { code, amount, type, expiresAt, product } = req.body;
-        if (!code || !amount || !type || !expiresAt) {
+        const { code, amount, expiresAt, product } = req.body;
+        const type = 'product'
+        if (!code || !amount || !expiresAt) {
             req.flash("errorMessage", "Please fill all fields");
-            res.redirect('/admin/addProductCoupons')
+            return res.redirect('/admin/addProductCoupons')
         }
         const existingCode = await ProductOffer.findOne({ code: code });
         if (existingCode) {
             req.flash("errorMessage", "Code already added!!");
-            res.redirect('/admin/listCoupons')
+            return res.redirect('/admin/listCoupons')
         }
-        if (product && type == 'product') {
+        if (product) {
             const productOffer = new ProductOffer({
                 code: code,
                 amount: amount,
@@ -809,14 +1001,18 @@ const addProductCoupon = async (req, res) => {
             if (saveData) {
                 console.log("Data saved successfully");
                 req.flash('successMessage', 'Coupon added successfully!!')
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
             else {
                 console.log("Data not saved");
                 req.flash('errorMessage', 'Coupon not added!!')
-                res.redirect('/admin/addProductCoupons')
+                return res.redirect('/admin/addProductCoupons')
 
             }
+        }
+        else {
+            req.flash('errorMessage', 'Product not found!!')
+            return res.redirect('/admin/addProductCoupons')
         }
     }
     catch (error) {
@@ -827,15 +1023,16 @@ const addProductCoupon = async (req, res) => {
 const addReferralCoupon = async (req, res) => {
     try {
         console.log(req.body);
-        const { code, amount, type, expiresAt } = req.body;
-        if (!code || !amount || !type || !expiresAt) {
+        const { code, amount, expiresAt } = req.body;
+        const type = 'referral';
+        if (!code || !amount || !expiresAt) {
             req.flash("errorMessage", "Please fill all fields");
-            res.redirect('/admin/addProductCoupons')
+            return res.redirect('/admin/addProductCoupons')
         }
         const existingCode = await ReferralOffer.findOne({ code: code });
         if (existingCode) {
             req.flash("errorMessage", "Code already added!!");
-            res.redirect('/admin/listCoupons')
+            return res.redirect('/admin/listCoupons')
         }
         const referralOffer = new ReferralOffer({
             code: code,
@@ -847,12 +1044,12 @@ const addReferralCoupon = async (req, res) => {
         if (saveData) {
             console.log("Data saved successfully");
             req.flash('successMessage', 'Coupon added successfully!!')
-            res.redirect('/admin/listCoupons')
+            return res.redirect('/admin/listCoupons')
         }
         else {
             console.log("Data not saved");
             req.flash('errorMessage', 'Coupon not added!!')
-            res.redirect('/admin/addProductCoupons')
+            return res.redirect('/admin/addProductCoupons')
         }
     }
     catch (error) {
@@ -864,18 +1061,18 @@ const deleteCategoryCoupon = async (req, res) => {
     try {
         console.log(req.query);
         const categoryId = req.query.id;
-        const categoryData = await CategoryOffer.findOne({ category: categoryId });
+        const categoryData = await CategoryOffer.findOne({ _id: categoryId });
         if (categoryData) {
-            const deleteData = await CategoryOffer.deleteOne({ category: categoryId });
+            const deleteData = await CategoryOffer.deleteOne({ _id: categoryId });
             if (deleteData) {
                 console.log(`categoryOffer data of ${categoryId} deleted successfully`)
                 req.flash('successMessage', "Offer deleted successfully");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
             else {
                 console.log(`categoryOffer data of ${categoryId} not deleted `)
                 req.flash('errorMessage', "Offer not deleted");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
         }
     }
@@ -887,20 +1084,24 @@ const deleteCategoryCoupon = async (req, res) => {
 const deleteProductCoupon = async (req, res) => {
     try {
         console.log(req.query);
-        const productId = req.query.id;
-        const productData = await ProductOffer.findOne({ product: productId });
-        if (productData) {
-            const deleteData = await ProductOffer.deleteOne({ product: productId });
+        const couponId = req.query.id;
+        const productCouponData = await ProductOffer.findOne({ _id: couponId });
+        if (productCouponData) {
+            const deleteData = await ProductOffer.deleteOne({ _id: couponId });
             if (deleteData) {
-                console.log(`categoryOffer data of ${categoryId} deleted successfully`)
+                console.log(`categoryOffer data of ${couponId} deleted successfully`)
                 req.flash('successMessage', "Offer deleted successfully");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
             else {
-                console.log(`categoryOffer data of ${categoryId} not deleted `)
+                console.log(`categoryOffer data of ${couponId} not deleted `)
                 req.flash('errorMessage', "Offer not deleted");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
+        }
+        else {
+            req.flash('errorMessage', "Product not found");
+            return res.redirect('/admin/listCoupons')
         }
     }
     catch (error) {
@@ -918,12 +1119,12 @@ const deleteReferralCoupon = async (req, res) => {
             if (deleteData) {
                 console.log(`referralOffer data of ${referralId} deleted successfully`)
                 req.flash('successMessage', "Offer deleted successfully");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
             else {
                 console.log(`referralOffer data of ${referralId} not deleted `)
                 req.flash('errorMessage', "Offer not deleted");
-                res.redirect('/admin/listCoupons')
+                return res.redirect('/admin/listCoupons')
             }
         }
     }
@@ -932,129 +1133,266 @@ const deleteReferralCoupon = async (req, res) => {
     }
 }
 
-
 const displaySalesReport = async (req, res) => {
     try {
-        const ordersData = await Order.find({ status: 'Delivered' }).populate('products.product').populate('user');
+        const { startDate, endDate } = req.body;
+        console.log(startDate, endDate)
+
+        // Add date range to filter if both dates are provided
+        if (startDate && endDate) {
+            filter.created_at = { $gte: new Date(startDate), $lt: new Date(endDate) };
+        }
+
+        // Fetch orders based on filter
+        const ordersData = await Order.find({ status: 'Delivered' }).sort({ created_at: -1 }).populate('products.product').populate('user');
+
+        // Render sales report with orders and dates
         res.render('salesReport', {
-            order: ordersData
+            order: ordersData,
+            startDate,
+            endDate,
+            errorMessage: req.flash('errorMessage')
         });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+
+const postSalesReport = async (req, res) => {
+    try {
+        var ordersData;
+        const { startDate, endDate } = req.body;
+        if (!startDate || !endDate) {
+            ordersData = await Order.find({
+                status: 'Delivered'
+            }).sort({ created_at: -1 }).populate('products.product').populate('user');
+        }
+        else {
+            ordersData = await Order.find({
+                status: 'Delivered',
+                created_at: { $gte: new Date(startDate), $lt: new Date(endDate) }
+            }).sort({ created_at: -1 }).populate('products.product').populate('user');
+        }
+        if (req.body.show || !req.body.excel && !req.body.pdf) {
+            return res.render('salesReport', {
+                order: ordersData,
+                startDate,
+                endDate,
+                errorMessage: req.flash('errorMessage')
+            });
+        }
+
+        if (req.body.excel) {
+            const workbook = new excelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Sales Report');
+
+            worksheet.columns = [
+                { header: 'S No', key: 's_no', width: 10 },
+                { header: 'Customer name', key: 'customerName', width: 30 },
+                { header: 'Product', key: 'productName', width: 30 },
+                { header: 'Quantity', key: 'quantity', width: 10 },
+                { header: 'Unit Price', key: 'price', width: 15 },
+                { header: 'Discount', key: 'discount', width: 15 },
+                { header: 'Total', key: 'total', width: 15 },
+                { header: 'Order Date', key: 'createdAt', width: 20 },
+                { header: 'Status', key: 'status', width: 15 }
+            ];
+
+            let counter = 1;
+
+            ordersData.forEach(order => {
+                let productTotal = 0;
+                order.products.forEach(item => {
+                    productTotal += item.product.price * item.quantity;
+                });
+
+                const discount = productTotal - order.totalPrice;
+                const totalPrice = order.totalPrice;
+
+                order.products.forEach((product, index) => {
+                    worksheet.addRow({
+                        s_no: index === 0 ? counter : '',
+                        customerName: `${order.user.firstName} ${order.user.lastName}`,
+                        productName: product.product.name,
+                        quantity: product.quantity,
+                        price: product.product.price * product.quantity,
+                        discount: index === 0 ? discount : '',
+                        total: index === 0 ? totalPrice : '',
+                        createdAt: index === 0 ? new Date(order.created_at).toLocaleDateString() : '',
+                        status: index === 0 ? order.status : ''
+                    });
+                });
+
+                counter++;
+            });
+
+            worksheet.getRow(1).eachCell(cell => {
+                cell.font = { bold: true };
+            });
+
+            res.setHeader(
+                "Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader("Content-Disposition", "attachment;filename=sales.xlsx");
+
+            return workbook.xlsx.write(res).then(() => {
+                res.status(200).end();
+            });
+        }
+
+        if (req.body.pdf) {
+            const doc = new PDFDocument({ margin: 50 });
+            const fileName = 'sales_report.pdf';
+            res.setHeader('Content-disposition', 'attachment;filename="' + fileName + '"');
+            res.setHeader('Content-type', 'application/pdf');
+
+            doc.pipe(res);
+            doc.fontSize(20).text('Sales Report', { align: 'center' });
+            doc.moveDown(2);
+            let y = 100;
+
+            doc.font('Helvetica-Bold')
+                .fontSize(12)
+                .text('S No', 30, y, { width: 40, align: 'left' })
+                .text('Customer Name', 70, y, { width: 100, align: 'left' })
+                .text('Order Date', 170, y, { width: 100, align: 'left' })
+                .text('Product', 250, y, { width: 100, align: 'left' })
+                .text('Quantity', 310, y, { width: 70, align: 'right' })
+                .text('Unit Price', 380, y, { width: 70, align: 'right' })
+                .text('Discount', 460, y, { width: 70, align: 'right' })
+                .text('Total', 510, y, { width: 70, align: 'right' });
+
+            doc.moveDown(1);
+
+            let serialNo = 1;
+            let total = 0;
+
+            ordersData.forEach(order => {
+                const date = new Date(order.created_at).toLocaleDateString();
+                const discount = order.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0) - order.totalPrice;
+                total += order.totalPrice;
+                let y = doc.y;
+
+                order.products.forEach((product, index) => {
+                    doc.font('Helvetica')
+                        .fontSize(10)
+                        .text(product.product.name, 250, y, { width: 100, align: 'left' })
+                        .text(product.quantity, 310, y, { width: 70, align: 'right' })
+                        .text(product.product.price.toFixed(2), 380, y, { width: 70, align: 'right' });
+
+                    if (index === 0) {
+                        doc.text(serialNo, 30, y, { width: 40, align: 'left' })
+                            .text(`${order.user.firstName} ${order.user.lastName}`, 70, y, { width: 100, align: 'left' })
+                            .text(date, 170, y, { width: 100, align: 'left' })
+                            .text(discount.toFixed(2), 460, y, { width: 70, align: 'right' })
+                            .text(order.totalPrice.toFixed(2), 510, y, { width: 70, align: 'right' });
+                    }
+
+                    y += 20;
+                });
+
+                doc.moveTo(30, y)
+                    .lineTo(590, y)
+                    .strokeColor('#aaaaaa')
+                    .lineWidth(1)
+                    .stroke();
+
+                doc.moveDown(1.5);
+
+                serialNo++;
+            });
+
+            doc.font('Helvetica-Bold')
+                .fontSize(12)
+                .text('Total', 380, doc.y, { width: 40, align: 'right' })
+                .text(total.toFixed(2), 550, doc.y - 10, { width: 40, align: 'left' });
+
+            doc.end();
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+
+const yearlySales = async (req, res) => {
+    try {
+        const startYear = 2020;
+        const endYear = 2024;
+
+        const startDate = new Date(startYear, 0, 1);
+        const endDate = new Date(endYear + 1, 0, 1);
+        const yearlySalesData = await Order.aggregate([
+            { $match: { status: 'Delivered', created_at: { $gte: startDate, $lt: endDate } } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$created_at" }
+                    },
+                    totalSales: { $sum: "$totalPrice" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1 } }
+        ]);
+        console.log(yearlySalesData)
+        res.json(yearlySalesData)
     } catch (error) {
         console.log(error.message);
     }
 }
 
-const chartData = async (req, res) => {
+const monthlySales = async (req, res) => {
     try {
-        const filter = req.query.filter;
-        let data;
-        const sales = await Order.find({ status: 'Delivered' });
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const startDate = new Date(currentYear, 0, 1);
+        const monthlySalesData = await Order.aggregate([
+            { $match: { status: 'Delivered', created_at: { $gte: startDate } } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$created_at" },
+                        month: { $month: "$created_at" }
+                    },
+                    totalSales: { $sum: "$totalPrice" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } }
+        ]);
+        console.log(monthlySalesData)
+        res.json(monthlySalesData)
 
-
-        if (filter === 'weekly') {
-
-            const today = new Date();
-            const startOfWeek = new Date(today);
-            console.log(startOfWeek)
-            startOfWeek.setDate(startOfWeek.getDate() - today.getDay());
-            startOfWeek.setHours(0, 0, 0, 0);
-            console.log(startOfWeek)
-
-            const endOfWeek = new Date(today);
-            console.log(endOfWeek)
-            endOfWeek.setDate(startOfWeek.getDate() + 7);
-            endOfWeek.setHours(23, 59, 59, 999);
-            console.log(endOfWeek)
-            const weeklySales = await Order.find({ created_at: { $gte: startOfWeek, $lt: endOfWeek } });
-            console.log(weeklySales)
-            data = {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                values: [10, 20, 15, 25]
-            };
-        } else if (filter === 'monthly') {
-
-            const today = new Date();
-            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            startOfMonth.setHours(0, 0, 0, 0);
-            console.log(startOfMonth)
-            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            endOfMonth.setHours(23, 59, 59, 999);
-            console.log(endOfMonth)
-            const monthlySales = await Order.find({
-                createdAt: { $gte: startOfMonth, $lt: endOfMonth }
-            });
-            console.log(monthlySales)
-            data = {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-                values: [30, 25, 40, 35]
-            };
-        }
-        else if (filter === 'yearly') {
-
-            const today = new Date();
-            const startOfYear = new Date(today.getFullYear(), 0, 1);
-            startOfYear.setHours(0, 0, 0, 0);
-            console.log(startOfYear)
-            const endOfYear = new Date(today.getFullYear(), 12, 0);
-            endOfYear.setHours(23, 59, 59, 999);
-            console.log(endOfYear)
-            const yearlySales = await YourModel.find({
-                createdAt: { $gte: startOfYear, $lt: endOfYear }
-            });
-            console.log(yearlySales)
-            data = {
-                labels: ['2020', '2021', '2022', '2023', '2024'],
-                values: [30, 25, 40, 35, 25]
-            };
-        }
-        res.json(data);
-    }
-
-    catch (error) {
+    } catch (error) {
         console.log(error.message);
     }
 }
 
-const exportDataExcel = async (req, res) => {
+const weeklySales = async (req, res) => {
     try {
-        const workbook = new excelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Sales Report');
-        worksheet.columns = [
-            { header: 'S No', key: 's_no' },
-            { header: 'Customer name', key: 'customerName' },
-            { header: 'Product', key: 'productName' },
-            { header: 'Quantity', key: 'quantity' },
-            { header: 'Order Date', key: 'createdAt' },
-            { header: 'Status', key: 'status' },
-        ];
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const startDate = new Date(currentYear, 0, 1);
 
-        let counter = 1;
-        const salesData = await Order.find({ status: 'Delivered' }).populate('products.product').populate('user');
-        salesData.forEach((sale) => {
-            sale.products.forEach((product) => {
-                worksheet.addRow({
-                    s_no: counter,
-                    customerName: `${sale.user.firstName} ${sale.user.lastName}`,
-                    productName: product.product.name,
-                    quantity: product.quantity,
-                    createdAt: sale.created_at,
-                    status: sale.status
-                });
-                counter++;
-            });
-        });
-        worksheet.getRow(1).eachCell((cell) => {
-            cell.font = { bold: true };
-        });
+        const weeklySalesData = await Order.aggregate([
+            { $match: { status: 'Delivered', created_at: { $gte: startDate } } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$created_at" },
+                        week: { $isoWeek: "$created_at" }
+                    },
+                    totalSales: { $sum: "$totalPrice" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.week": 1 } }
+        ]);
 
-        res.setHeader(
-            "Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
-        res.setHeader("Content-Disposition", "attachment;filename=sales.xlsx");
-
-        return workbook.xlsx.write(res).then(() => {
-            res.status(200);
-        });
+        console.log(weeklySalesData);
+        res.json(weeklySalesData);
 
     }
     catch (error) {
@@ -1062,6 +1400,34 @@ const exportDataExcel = async (req, res) => {
     }
 }
 
+const dailySales = async (req, res) => {
+    try {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const startDate = new Date(currentYear, 0, 1);
+
+        const dailySalesData = await Order.aggregate([
+            { $match: { status: 'Delivered', created_at: { $gte: startDate } } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$created_at" },
+                        month: { $month: "$created_at" },
+                        day: { $dayOfMonth: "$created_at" }
+                    },
+                    totalSales: { $sum: "$totalPrice" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ]);
+        console.log(dailySalesData)
+        res.json(dailySalesData)
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 const logout = async (req, res) => {
@@ -1069,7 +1435,7 @@ const logout = async (req, res) => {
         console.log("logout");
         req.session.destroy();
         console.log(req.session);
-        res.redirect("/admin/login");
+        return res.redirect("/admin/login");
 
     } catch (error) {
         console.log(error.message)
@@ -1079,6 +1445,10 @@ const logout = async (req, res) => {
 module.exports = {
     loadLogin,
     verifyLogin,
+    getForgetPassword,
+    forgetPassword,
+    resetPassword,
+    getResetPassword,
     dashboard,
     listProduct,
     viewProduct,
@@ -1088,6 +1458,7 @@ module.exports = {
     editProduct,
     deleteProduct,
     cropImage,
+    saveImage,
     add_subcategory,
     create_subcategory,
     delete_subcategory,
@@ -1117,8 +1488,10 @@ module.exports = {
     deleteProductCoupon,
     deleteReferralCoupon,
     displaySalesReport,
-    chartData,
-    exportDataExcel,
-    logout,
-    forgotPassword
+    postSalesReport,
+    yearlySales,
+    monthlySales,
+    weeklySales,
+    dailySales,
+    logout
 }

@@ -62,11 +62,7 @@
     </div>
 
     <script>
-        var address = document.getElementById('address').value;
-        var city = document.getElementById('city').value;
-        var state = document.getElementById('state').value;
-        var zip = document.getElementById('zip').value;
-
+       
         var form = document.getElementById('form');
 
         var addressError = document.getElementById('addressError');
@@ -76,6 +72,17 @@
 
 
         form.addEventListener('submit', function (event) {
+
+        var address = document.getElementById('address').value;
+        var city = document.getElementById('city').value;
+        var state = document.getElementById('state').value;
+        var zip = document.getElementById('zip').value;
+
+
+            console.log(address);
+            console.log(city);
+            console.log(state);
+            console.log(zip);
 
             if (address === '' || address == null) {
                 event.preventDefault();

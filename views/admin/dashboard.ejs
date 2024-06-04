@@ -1,8 +1,5 @@
 <%- include('../partials/adminHeader.ejs')%>
 
-    <!-- ============================================================== -->
-    <!-- pageheader  -->
-    <!-- ============================================================== -->
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
@@ -12,7 +9,7 @@
                 <div class="page-breadcrumb">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a>
+                            <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-link">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">Admin Dashboard
                             </li>
@@ -22,70 +19,67 @@
             </div>
         </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- pageheader  -->
-    <!-- ============================================================== -->
+
     <div class="row">
-        <!-- metric -->
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-muted">Customers</h5>
                     <div class="metric-value d-inline-block">
-                        <h1 class="mb-1 text-primary">32,100 </h1>
+                        <h1 class="mb-1 text-primary">
+                            <%=userCount%>
+                        </h1>
                     </div>
 
                 </div>
             </div>
         </div>
-        <!-- /. metric -->
-        <!-- metric -->
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="text-muted">Order</h5>
+                    <h5 class="text-muted">Orders</h5>
                     <div class="metric-value d-inline-block">
-                        <h1 class="mb-1 text-primary">4,200 </h1>
+                        <h1 class="mb-1 text-primary">
+                            <%=orderCount%>
+                        </h1>
                     </div>
 
                 </div>
             </div>
         </div>
-        <!-- /. metric -->
-        <!-- metric -->
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="text-muted">Revenue</h5>
                     <div class="metric-value d-inline-block">
-                        <h1 class="mb-1 text-primary">₹1,10,656</h1>
+                        <h1 class="mb-1 text-primary">
+                            ₹ <%= revenue.toFixed(2) %>
+                        </h1>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- /. metric -->
-        <!-- metric -->
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="text-muted">Growth</h5>
-                    <div class="metric-value d-inline-block">
-                        <h1 class="mb-1 text-primary">+28.45% </h1>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 
 
+    <h1>Sales Chart</h1>
+    <div>
+        <button class="btn btn-dark" onclick="fetchDailyData()">Daily</button>
+        <button class="btn btn-dark" onclick="fetchWeeklyData()">Weekly</button>
+        <button class="btn btn-dark" onclick="fetchMonthlyData()">Monthly</button>
+        <button class="btn btn-dark" onclick="fetchYearlyData()">Yearly</button>
+    </div>
+    <canvas id="salesChart"></canvas>
+
+
+
     <div class="row">
-        <!-- ============================================================== -->
-        <!-- top selling products  -->
-        <!-- ============================================================== -->
+
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Top Rated Products</h5>
+                <h5 class="card-header">Top Selling Products</h5>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table">
@@ -95,8 +89,7 @@
                                     <th class="border-0">Image</th>
                                     <th class="border-0">Product Name</th>
                                     <th class="border-0">Price</th>
-                                    <th class="border-0">Rating</th>
-                                    <th class="border-0">Stock</th>
+                                    <th class="border-0">Sold</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -107,43 +100,33 @@
                                                 <%=i+1%>
                                             </td>
                                             <td>
-                                                <div class="m-r-10"><img src="/img/shop/<%=product[i].images[0]%>"
-                                                        alt="<%=product[i].images[0]%>" class="rounded" width="45">
+                                                <div class="m-r-10"><img
+                                                        src="/img/shop/<%=product[i].productDetails.images[0]%>"
+                                                        alt="<%=product[i].productDetails.images[0]%>" class="rounded"
+                                                        width="45">
                                                 </div>
                                             </td>
                                             <td>
-                                                <%= product[i].name %>
+                                                <%= product[i].productDetails.name %>
                                             </td>
                                             <td>
-                                                ₹ <%= product[i].price %>
+                                                ₹ <%= product[i].productDetails.price %>
                                             </td>
                                             <td>
-                                                <%= product[i].rating %>
+                                                <%= product[i].totalQuantity %>
                                             </td>
-                                            <td>
-                                                <%= product[i].stock %>
-                                            </td>
+
                                         </tr>
 
                                         <%}}%>
-                                            <tr>
-                                                <td colspan="8"><a href="#"
-                                                        class="btn btn-outline-light float-right">View
-                                                        Details</a></td>
-                                            </tr>
+
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end top selling products  -->
-        <!-- ============================================================== -->
 
-        <!-- ============================================================== -->
-        <!-- footer -->
-        <!-- ============================================================== -->
         <div class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -161,15 +144,157 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end footer -->
-        <!-- ============================================================== -->
+
     </div>
-    <!-- ============================================================== -->
-    <!-- end wrapper  -->
-    <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- end main wrapper  -->
-    <!-- ============================================================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        let salesChart;
+
+        async function fetchWeeklyData() {
+            const response = await fetch(`/admin/sales/weekly`);
+            const data = await response.json();
+            console.log(data);
+
+            const labels = data.map(item => `week ${item._id.week} ${item._id.year}`);
+            const salesData = data.map(item => item.totalSales);
+
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: salesData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function fetchMonthlyData() {
+            const response = await fetch(`/admin/sales/monthly`);
+            const data = await response.json();
+            console.log(data);
+
+            const labels = data.map(item => `${item._id.month}/${item._id.year}`);
+            const salesData = data.map(item => item.totalSales);
+
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: salesData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function fetchYearlyData() {
+            try {
+                const response = await fetch('/admin/sales/yearly');
+                const data = await response.json();
+
+                const labels = data.map(item => {
+                    return `${item._id.year}`;
+                });
+
+                const salesData = data.map(item => item.totalSales);
+
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+
+                salesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Sales',
+                            data: salesData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching sales data:', error);
+            }
+        }
+
+        async function fetchDailyData() {
+            const response = await fetch(`/admin/sales/daily`);
+            const data = await response.json();
+            console.log(data);
+
+            const labels = data.map(item => `${item._id.month}/${item._id.day}`);
+            const salesData = data.map(item => item.totalSales);
+
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: salesData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial call to fetch and display weekly data
+        fetchWeeklyData();
+    </script>
     <%- include('../partials/adminPlugins.ejs')%>

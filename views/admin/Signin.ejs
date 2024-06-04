@@ -1,88 +1,86 @@
 <%- include('../partials/adminLoginHeader.ejs')%>
-    <!--==============================================================-->
-    <!-- login page  -->
-    <!-- ============================================================== -->
+
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
 
     <div class="splash-container">
         <div class="card ">
-            <div class="card-header text-center"><img class="logo-img" src="/img/logo.png" alt="logo"></a></div>
-            <% if(typeof message !=='undefined' ) { %>
+            <div class="card-header text-center"><img class="logo-img" src="/img/logo.png" alt="logo"></div>
+            <% if (typeof message !=='undefined' ) { %>
                 <p style="color: green;">
                     <%= message %>
+                </p>
+                <% } %>
+                    <% if (errorMessage.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <%- errorMessage %>
+                        </div>
                         <% } %>
-                            <% if (errorMessage.length> 0) { %>
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    <%- errorMessage %>
+                            <% if (successMessage.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- successMessage %>
                                 </div>
                                 <% } %>
-                                    <% if (successMessage.length> 0) { %>
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <%- successMessage %>
+                                    <div class="card-body">
+                                        <form action="/admin/login" method="post" class="form" id="form" novalidate>
+                                            <div class="form-group">
+                                                <input class="form-control form-control-lg" name="email" id="email"
+                                                    type="email" placeholder="Email" autocomplete="off">
+                                                <span class="error" id="email_error"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="form-control form-control-lg" name="password"
+                                                    id="password" type="password" placeholder="Password">
+                                                <span class="error" id="password_error"></span>
+                                            </div>
+                                            <button type="submit" class="btn btn-dark btn-lg btn-block">Sign in</button>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer bg-white p-0">
+                                        <div class="card-footer-item card-footer-item-bordered">
+                                            <a href="/admin/forgetPassword" class="footer-link">Forgot Password</a>
                                         </div>
-                                        <% } %>
-                                            <div class="card-body">
-
-                                                <form action="/admin/login" method="post" class="form" id="form" novalidate>
-                                                    <div class="form-group">
-                                                        <input class="form-control form-control-lg" name="email"
-                                                            id="name" type="email" placeholder="email"
-                                                            autocomplete="off">
-                                                    </div><span class="error" id="email_error"></span>
-                                                    <div class="form-group">
-                                                        <input class="form-control form-control-lg" name="password"
-                                                            id="password" type="password" placeholder="Password">
-                                                    </div><span class="error" id="password_error"></span>
-
-                                                    <button type="submit" class="btn btn-dark btn-lg btn-block">Sign
-                                                        in</button>
-                                                </form>
-                                            </div>
-                                            <div class="card-footer bg-white p-0  ">
-                                                <div class="card-footer-item card-footer-item-bordered">
-                                                    <a href="/forgotPassword" class="footer-link">Forgot
-                                                        Password</a>
-                                                </div>
-
-                                            </div>
+                                    </div>
         </div>
     </div>
+
     <script>
+        document.getElementById('form').addEventListener('submit', function (e) {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const email_error = document.getElementById('email_error');
+            const password_error = document.getElementById('password_error');
 
-        const email = document.getElementById('email');
-        const password = document.getElementById('password');
+            let valid = true;
+            const email_check = /^([A-Za-z0-9_\-\.])+@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
-        const form = document.getElementById('form');
+            // Reset error messages
+            email_error.innerHTML = "";
+            password_error.innerHTML = "";
 
-        const email_error = document.getElementById('email_error');
-        const password_error = document.getElementById('password_error');
-
-        form.addEventListener('submit', (e) => {
-
-            var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-
-            if (email.value === '' || email.value == null) {
-                e.preventDefault();
+            // Validate email
+            if (!email.value) {
                 email_error.innerHTML = "Email is required";
+                valid = false;
+            } else if (!email.value.match(email_check)) {
+                email_error.innerHTML = "Please enter a valid email";
+                valid = false;
             }
 
-            else {
-                email_error.innerHTML = "";
+            // Validate password
+            if (!password.value) {
+                password_error.innerHTML = "Password is required";
+                valid = false;
             }
-            if (!email.value.match(email_check)) {
+
+            if (!valid) {
                 e.preventDefault();
-                email_error.innerHTML = "Please enter valid email";
             }
-            else {
-                email_error.innerHTML = "";
-            }
-            if (password.value === '' || password.value == null) {
-                e.preventDefault();
-                password_error.innerHTML = "Password is required"
-            }
-            else {
-                password_error.innerHTML = "";
-            }
-        })
+        });
     </script>
     <!-- ============================================================== -->
     <!-- end login page  -->

@@ -83,9 +83,18 @@
                                                         <td>
                                                             <%= order[i].status %>
                                                         </td>
-                                                        <td> <a href="/admin/updateStatus?id=<%= order[i]._id %>">
-                                                                <button class=" btn-dark" style="width: auto;">Update
-                                                                </button></a>
+                                                        <td>
+                                                            <% if(order[i].status=='Cancelled'
+                                                                ||order[i].status=='Returned' ){ %>
+                                                                <a href="/admin/updateStatus?id=<%= order[i]._id %>">
+                                                                    <input type="button" class="btn btn-dark"
+                                                                        value="Update" disabled></a>
+                                                                <%}else{%>
+                                                                    <a
+                                                                        href="/admin/updateStatus?id=<%= order[i]._id %>">
+                                                                        <input type="button" class="btn btn-dark"
+                                                                            value="Update"></a>
+                                                                    <%}%>
                                                         </td>
                                                     </tr>
                                                     <% } %>

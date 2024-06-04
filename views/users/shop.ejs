@@ -29,95 +29,98 @@
         <!-- Shop Section Begin -->
         <section class="shop spad">
             <div class="container">
-                <div class="shop__option">
-                    <div class="row">
-
-                        <div class="col-lg-7 col-md-7">
-                            <div class="shop__option__search">
-
-                                <form action="#">
-                                    <select class="form-control" name="category" id="category">
-                                        <option>Categories</option>
-                                        <option value="All">All Products</option>
-
-                                        <% for( let i=0;i<category.length;i++) { %>
-
-                                            <option value='<%= category[i]._id%>'>
-                                                <%= category[i].name%>
-                                            </option>
-
-                                            <% } %>
-                                    </select>
-
-                                    <input type="text" placeholder="Search" name="name">
-                                    <button type="submit"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-lg-5 col-md-5">
-                            <div class="shop__option__right">
-
-
-                                <select name="sort" id="sort">
-
-                                    <option value=" sort">Sort</option>
-                                    <option value="nameAsc">Name:Ascending</option>
-                                    <option value="nameDesc">Name:Descending</option>
-                                    <option value="lowToHigh">Price:Low to High</option>
-                                    <option value="highToLow">Price: High to Low</option>
-                                    <option value="rating">Rating</option>
-                                    <option value="featured">Featured</option>
-
-                                </select>
-
-                            </div>
-                        </div>
+                <% if (message.length> 0) { %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <%- message %>
                     </div>
-                </div>
-                <div class="products-container">
-                    <div class="row">
-                        <% if(product.length>0){%>
-                            <%for(let i=0;i<product.length;i++){ %>
-                                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <% } %>
+                        <div class="shop__option">
+                            <div class="row">
 
-                                    <div class="product__item">
-                                        <div class="product__item__pic set-bg">
-                                            <a href="/product?id=<%=product[i]._id %>">
-                                                <img src="/img/shop/<%=product[i].images[0]%>"
-                                                    alt="<%=product[i].name%>" style=" height: 100%;width: 100%;">
-                                        </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="shop__option__search">
 
-                                        <div class="product__item__text">
-                                            <h6>
-                                                <%=product[i].name%>
-                                                    </a>
-                                            </h6>
-                                            <div class="product__item__price">
-                                                ₹<%=product[i].price%>/piece
-                                            </div>
-                                            <%if(product[i].stock<=0){%>
-                                                <div class="cart_add">
-                                                    <a href="#">
-                                                        Out of stock
-                                                    </a>
-                                                </div>
-                                                <%}else{%>
-                                                    <div class=" cart_add">
-                                                        <a href=" /cart/<%=product[i]._id%>">Add to cart</a>
-                                                    </div>
-                                                    <%}%>
-                                        </div>
+                                        <form action="#">
+                                            <select class="form-control" name="category" id="category">
+                                                <option>Categories</option>
+                                                <option value="All">All Products</option>
+
+                                                <% for( let i=0;i<category.length;i++) { %>
+
+                                                    <option value='<%= category[i]._id%>'>
+                                                        <%= category[i].name%>
+                                                    </option>
+
+                                                    <% } %>
+                                            </select>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-lg-9 col-md-6">
+                                    <div class="shop__option__right">
+
+
+                                        <select name="sort" id="sort">
+
+                                            <option value=" sort">Sort</option>
+                                            <option value="nameAsc">Name:Ascending</option>
+                                            <option value="nameDesc">Name:Descending</option>
+                                            <option value="lowToHigh">Price:Low to High</option>
+                                            <option value="highToLow">Price: High to Low</option>
+                                            <option value="featured">Featured</option>
+
+                                        </select>
 
                                     </div>
-
                                 </div>
-                                <%} } else {%>
-                                    Products Not Found
+                            </div>
+                        </div>
+                        <div class="products-container">
+                            <div class="row">
+                                <% if(product.length>0){%>
+                                    <%for(let i=0;i<product.length;i++){ %>
+                                        <div class="col-lg-3 col-md-6 col-sm-6">
 
-                                    <% } %>
+                                            <div class="product__item">
+                                                <div class="product__item__pic set-bg">
+                                                    <a href="/product?id=<%=product[i]._id %>">
+                                                        <img src="/img/shop/<%=product[i].images[0]%>"
+                                                            alt="<%=product[i].name%>"
+                                                            style=" height: 100%;width: 100%;">
+                                                </div>
 
-                    </div>
-                </div>
+                                                <div class="product__item__text">
+                                                    <h6>
+                                                        <%=product[i].name%>
+                                                            </a>
+                                                    </h6>
+                                                    <div class="product__item__price">
+                                                        ₹<%=product[i].price%>/piece
+                                                    </div>
+                                                    <%if(product[i].stock<=0){%>
+                                                        <div class="cart_add">
+                                                                <a href="">
+                                                                Out of stock
+                                                                </a>
+                                                            
+                                                        </div>
+                                                        <%}else{%>
+                                                            <div class=" cart_add">
+                                                                <a href=" /cart/<%=product[i]._id%>">Add to cart</a>
+                                                            </div>
+                                                            <%}%>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <%} } else {%>
+                                            Products Not Found
+
+                                            <% } %>
+
+                            </div>
+                        </div>
             </div>
 
             </div>
@@ -141,7 +144,6 @@
             });
             function fetchFilterProducts(filterOption) {
 
-                // Send the AJAX request
                 $.ajax({
                     url: '/shop',
                     type: 'GET',
@@ -157,7 +159,6 @@
 
             function fetchSortProducts(sortOption) {
 
-                // Send the AJAX request
                 $.ajax({
                     url: '/shop',
                     type: 'GET',
@@ -179,13 +180,8 @@
                 }
                 productsContainer.empty();
                 productsContainer.css('display', 'flex');
-                productsContainer.css('flex-wrap', 'wrap'); // Optional: Allow wrapping if needed
-
-                // productsContainer.append('<div class="row">');
-
-                // Iterate over products and append each product element
+                productsContainer.css('flex-wrap', 'wrap');
                 products.forEach(product => {
-                    // Append individual product element
                     productsContainer.append(`
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="product__item">

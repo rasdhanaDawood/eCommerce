@@ -1,87 +1,107 @@
-<%- include('../partials/head.ejs') %>
-    <%- include('../partials/userHeader.ejs') %>
-        <h1>My Wishlist</h1>
-        <br><br>
-        <div class="container">
-            <div>
-                <% if (message.length> 0) { %>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <%- message %>
-                    </div>
-                    <% } %>
-                        <%if(wishlistItems.length>0){%>
-                            <table style="width: 50%">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="product">
-                                    <% wishlistItems.forEach((item)=> { %>
-                                        <tr class="cart-items">
-
-                                            <td class=" product__cart__item">
-                                                <div class="product__cart__item__pic">
-
-                                                    <img src="img/shop/<%= item.product.images[0] %>"
-                                                        style="height:80px" alt="">
-                                                </div>
-
-                                                <div class="product__cart__item__text">
-                                                    <h6>
-                                                        <%= item.product.name %>
-                                                    </h6>
-
-                                                    <h5>
-                                                        <% if (item.product.stock<=0) { %>
-                                                            <span class="error">Out of
-                                                                stock!!</span>
-                                                            <% }else{ %>
-                                                                <% if (item.product.stock < 6) { %>
-                                                                    <span class="error">Only
-                                                                        <%=item.product.stock%>
-                                                                            left!!
-                                                                    </span>
-                                                                    <% }else{ %>
-                                                                        <span class="price">
-                                                                            ₹<%= item.product.price %>
-                                                                        </span>
-                                                                        <% }} %>
-                                                    </h5>
-                                                </div>
-                                            </td>
-                                            <td class="quantity__item">
-                                                <div class="quantity">
-                                                    <%= item.quantity %>
-                                                </div>
-                                            </td>
-
-                                            <td class=" cart__price"><span class="subtotal">
-                                                    ₹<%= item.product.price * item.quantity %>
-                                                </span></td>
-
-                                            <td class="cart__close"><a
-                                                    href="/deleteItem?productId=<%= item.product._id %>"><button
-                                                        class="btn icon_close" type="button"></button></a>
-                                            </td>
-
-                                        </tr>
-                                        <% }) %>
-
-                                </tbody>
-                            </table>
-                            <a href="/clearWishlist"><button type="submit" class="btn btn-dark">Clear All</button>
-                            </a>
-                            <%}else{%>
-
-                                <h3>Wishlist is empty!!</h3>
-                                <%}%>
+<%- include('../partials/head.ejs') %> <%- include('../partials/userHeader.ejs')
+%>
+<style>
+  .error {
+    color: red;
+  }
+</style>
+<h1>My Wishlist</h1>
+<br />
+<div class="container">
+  <div>
+    <% if (message.length> 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%- message %>
+    </div>
+    <% } %> <% if(isEmpty){ %>
+    <h3>Wishlist is Empty</h3>
+    <br />
+    <% } else {%>
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          <th style="text-align: center">Product</th>
+          <th style="text-align: center">Name</th>
+          <th style="text-align: center">Unit Price</th>
+          <th style="text-align: center">Quantity</th>
+          <th style="text-align: center">Total</th>
+          <th style="text-align: center"></th>
+          <th style="text-align: center"></th>
+        </tr>
+        <br />
+      </thead>
+      <br />
+      <tbody class="product">
+        <% wishlistItems.items.forEach((item)=> { %>
+        <tr class="cart-items">
+          <td style="text-align: center" class="product__cart__item">
+            <div class="product__cart__item__pic">
+              <img
+                src="img/shop/<%= item.product.images[0] %>"
+                style="height: 80px"
+                alt=""
+              />
             </div>
+          </td>
 
-        </div>
-        <%- include('../partials/footer.ejs') %>
+          <td style="text-align: center" class="product__cart">
+            <div class="product__cart__item">
+              <h6><%= item.product.name %></h6>
+              <% if (item.product.stock<=0) { %>
+              <span class="error">Out of stock!!</span>
+              <% }else{ %> <% if (item.product.stock < 6) { %>
+              <span class="error">Only <%=item.product.stock%> left!! </span>
+              <% }} %>
+            </div>
+          </td>
+          <td style="text-align: center" class="cart__price">
+            <div class="product__cart__item">
+              <h5>
+                <span>₹<%= item.product.price.toFixed(2) %></span>
+              </h5>
+            </div>
+          </td>
+          <td style="text-align: center" class="quantity__item">
+            <div class="quantity"><%= item.quantity %></div>
+          </td>
 
-            <%- include('../partials/plugins.ejs') %>
+          <td style="text-align: right" class="cart__price">
+            <span class="subtotal">
+              ₹<%= (item.product.price * item.quantity).toFixed(2) %>
+            </span>
+          </td>
+          <td style="text-align: right">
+            <a href="/addToCart?productId=<%=item.product._id%>%>">
+              <input type="button" class="btn btn-dark" value="Add to cart"
+            /></a>
+          </td>
+          <td class="cart__close">
+            <a href="/deleteItem?productId=<%= item.product._id %>"
+              ><button
+                class="btn icon_close"
+                type="button"
+                onclick="return deleteItem()"
+              ></button
+            ></a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <br />
+    <div class="d-flex justify-content-center">
+      <a href="/clearWishlist"
+        ><button type="submit" class="btn btn-dark">Clear All</button>
+      </a>
+    </div>
+    <br />
+    <%}%>
+  </div>
+</div>
+<script>
+  function deleteItem() {
+    return confirm("Do you want to remove it from wishlist?");
+  }
+</script>
+<%- include('../partials/footer.ejs') %> <%- include('../partials/plugins.ejs')
+%>

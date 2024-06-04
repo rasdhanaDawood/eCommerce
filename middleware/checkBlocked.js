@@ -1,6 +1,5 @@
 const User = require("../models/userModel");
 
-
 const isBlocked = async (req, res, next) => {
     if (req.session.user) {
 
@@ -11,13 +10,13 @@ const isBlocked = async (req, res, next) => {
             if (!user) {
                 console.log("User not found")
                 req.flash("errorMessage", "User not found!!")
-                res.redirect('/login');
+                return res.redirect('/login');
             }
 
             if (user.blocked) {
                 console.log("You dont have access to this page!!");
                 req.flash("errorMessage", "You dont have access to this page!!")
-                res.redirect("/login");
+                return res.redirect("/login");
                 req.session.destroy();
 
             }
@@ -27,10 +26,6 @@ const isBlocked = async (req, res, next) => {
             res.status(500).send("Internal Server Error");
         }
     };
-
-
-
-
 }
 
 

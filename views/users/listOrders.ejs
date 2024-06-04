@@ -19,11 +19,12 @@
                                                 <th>Order ID</th>
                                                 <th>Product Name</th>
                                                 <th>Quantity</th>
-                                                <th>Product Status</th>
                                                 <th>Order Date</th>
                                                 <th>Total Amount</th>
                                                 <th>Type of payment</th>
                                                 <th>Status</th>
+                                                <th>Action</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -46,22 +47,13 @@
                                                                     <% } %>
                                                         </td>
                                                         <% } %>
-                                                            <td>
-                                                                <% for(const product of item.products){ %>
-                                                                    <% if(product.productStatus==true){%>
-                                                                        Pending
-                                                                        <% }else{%>
-                                                                            Cancelled
-                                                                            <% }%><br>
 
-                                                                                <% } %>
-                                                            </td>
                                                             <td>
                                                                 <%= (new
                                                                     Date(item.created_at)).toLocaleDateString('en-US')
                                                                     %>
                                                             </td>
-                                                            <td>₹<%= item.totalPrice %>
+                                                            <td>₹<%= (item.totalPrice).toFixed(2) %>
                                                             </td>
                                                             <td>
                                                                 <%= item.payment %>
@@ -69,11 +61,39 @@
                                                             <td>
                                                                 <%= item.status %>
                                                             </td>
-                                                            <td>
 
-                                                            </td>
+                                                            <% if (item.status=='Delivered' ){ %>
+                                                                <td> <a href="/cancelAllProducts?orderId=<%=item._id%>">
+                                                                        <input type="button" class="btn btn-dark"
+                                                                            value="Return"></a></td>
+
+                                                                <% }else if(item.status=='Cancelled' ){%>
+
+                                                                    <td><a
+                                                                            href="/cancelAllProducts?orderId=<%=item._id%>">
+                                                                            <input type="button" class="btn btn-dark"
+                                                                                value="Cancel" disabled></a></td>
+
+                                                                    <% }else if(item.status=='Returned' ){%>
+
+                                                                        <td><a
+                                                                                href="/cancelAllProducts?orderId=<%=item._id%>">
+                                                                                <input type="button"
+                                                                                    class="btn btn-dark" value="Cancel"
+                                                                                    disabled></a></td>
+                                                                        <% }else{%>
+
+                                                                            <td><a
+                                                                                    href="/cancelAllProducts?orderId=<%=item._id%>">
+                                                                                    <input type="button"
+                                                                                        class="btn btn-dark"
+                                                                                        value="Cancel"></a></td>
+
+                                                                            <% } %>
+
                                                 </tr>
                                                 <% } %>
+
                                         </tbody>
                                     </table>
                                     <% } else { %>
@@ -84,7 +104,3 @@
                 </div>
             </div>
         </div>
-
-        <%- include('../partials/footer.ejs') %>
-
-            <%- include('../partials/plugins.ejs') %>

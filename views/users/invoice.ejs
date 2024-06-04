@@ -1,0 +1,84 @@
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/userHeader.ejs') %>
+        <div class="container">
+            <div class="order-details">
+                <h2>Invoice</h2><br>
+                <p><strong>Shipping Address:</strong>
+                    <%=orders.user.firstName%>
+                        <%=orders.user.lastName%><br>
+                            <%=orders.address.address%><br>
+                                <%=orders.address.city%>, <%=orders.address.state%>, Pin:
+                                        <%=orders.address.zip%>
+                </p>
+                <table class="table table-striped" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Product name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% var sum=0; %>
+                            <% orders.products.forEach(product=> { %>
+                                <% if(product.productStatus==true){%>
+
+
+                                    <tr>
+                                        <td>
+                                            <%= product.product.name %>
+                                        </td>
+                                        <td>
+                                            <%= product.quantity %>
+                                        </td>
+                                        <td>
+                                            <%= product.product.price.toFixed(2) %>
+                                        </td>
+                                        <% var total=product.quantity*product.product.price %>
+
+                                            <% sum+=product.quantity*product.product.price %>
+                                                <td>
+                                                    <%= total.toFixed(2) %>
+                                                </td>
+                                    </tr>
+                                    <%}%>
+                                        <% }); %>
+
+
+                                            <br>
+                                            <tr>
+                                                <td></td>
+                                                <td></td><br>
+                                                <td><b>Total</b></td>
+                                                <td>
+                                                    <%= (sum).toFixed(2)%>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td><br>
+                                                <td><b>Discount</b></td>
+                                                <td>
+                                                    <%= (sum-orders.totalPrice).toFixed(2)%>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td><b>Total</b></td>
+                                                <td>
+                                                    <%= orders.totalPrice.toFixed(2) %>
+                                                </td>
+
+                                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-center">
+                <a href="/generate-invoice" type="button" class="btn btn-dark">Download invoice in PDF</a>
+            </div><br>
+        </div>
+        <%- include('../partials/footer.ejs') %>
+
+            <%- include('../partials/plugins.ejs') %>

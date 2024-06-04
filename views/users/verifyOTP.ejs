@@ -49,13 +49,14 @@
                                             <button type="submit" class="btn btn-dark text-center pb-2">Proceed</button>
                                         </div>
                                     </form>
-                                    <form action="/resend-otp" method="post">
-                                        <input type="hidden" name="email" value="<%= email %>">
-                                        <button type="submit" class="btn btn-dark text-center pb-2">
-                                            Resend
-                                            OTP </button>
-                                    </form>
-
+                                    <div class="d-flex justify-content-center">
+                                        <form action="/resend-otp" method="post">
+                                            <input type="hidden" name="email" value="<%= email %>">
+                                            <button type="submit" class="btn btn-dark text-center pb-2">
+                                                Resend
+                                                OTP </button>
+                                        </form>
+                                    </div><br>
 
                 </div>
             </div>

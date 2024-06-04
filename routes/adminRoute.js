@@ -14,6 +14,14 @@ admin_route.get("/login", auth.isLoggedOut, adminController.loadLogin);
 
 admin_route.post("/login", adminController.verifyLogin);
 
+admin_route.get('/forgetPassword', auth.isLoggedOut, adminController.getForgetPassword);
+
+admin_route.post('/forgetPassword', adminController.forgetPassword);
+
+admin_route.get('/reset-Password', auth.isLoggedOut, adminController.getResetPassword);
+
+admin_route.post('/reset-Password', adminController.resetPassword);
+
 admin_route.get("/dashboard", auth.isAuthenticated, adminController.dashboard);
 
 admin_route.get("/addCategory", adminController.getCategory);
@@ -36,6 +44,8 @@ admin_route.post('/add_subcategory', adminController.create_subcategory);
 
 admin_route.get("/listProduct", auth.isAuthenticated, adminController.listProduct);
 
+admin_route.get("/listProduct/:categoryId", auth.isAuthenticated, adminController.listProduct);
+
 admin_route.get("/viewProduct", adminController.viewProduct);
 
 admin_route.get("/addProduct", adminController.getProduct);
@@ -49,6 +59,8 @@ admin_route.post("/editProduct", editedUploads, adminController.editProduct);
 admin_route.get("/deleteProduct", adminController.deleteProduct);
 
 admin_route.get('/crop_image', adminController.cropImage);
+
+admin_route.post('/save-cropped-image', editedUploads, adminController.saveImage);
 
 admin_route.get("/listOrders", auth.isAuthenticated, adminController.listOrders);
 
@@ -84,15 +96,19 @@ admin_route.get('/deleteReferralCoupon', adminController.deleteReferralCoupon);
 
 admin_route.get('/salesReport', adminController.displaySalesReport);
 
+admin_route.post('/salesReport', adminController.postSalesReport);
+
 admin_route.get("/editUser", adminController.getUser);
 
 admin_route.get("/updateUser", adminController.editUser);
 
-admin_route.get('/viewChart', adminController.chartData);
+admin_route.get('/sales/yearly', adminController.yearlySales);
 
-admin_route.get('/exportSalesExcel', adminController.exportDataExcel);
+admin_route.get('/sales/monthly', adminController.monthlySales);
 
-admin_route.get("/forgotPassword", auth.isLoggedOut, adminController.forgotPassword);
+admin_route.get('/sales/weekly', adminController.weeklySales);
+
+admin_route.get('/sales/daily', adminController.dailySales);
 
 admin_route.get('/logout', auth.isAuthenticated, adminController.logout);
 
@@ -101,9 +117,5 @@ admin_route.get("/new", async (req, res) => {
     res.render("new");
 });
 
-// admin_route.get("/*", (req, res) => {
-//     req.flash('errormessage', 'Please login First')
-//     res.redirect("/admin/login");
-// });
 
 module.exports = admin_route; 

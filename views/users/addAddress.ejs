@@ -1,0 +1,99 @@
+<%- include('../partials/head.ejs') %>
+    <style>
+        .valid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 80%;
+            color: #28a745;
+        }
+
+        .invalid {
+            color: #dc3545;
+        }
+    </style>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Add New Address</div>
+            <div class="card-body">
+                <form action="/addAddress" id="form" method="post" class="needs-validation" novalidate>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-3">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" id="address" placeholder="Address" name="address"
+                                required>
+                            <span id="addressError" class="invalid"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" name="city" id="city" placeholder="City" required>
+                            <span id="cityError" class="invalid"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" id="state" name="state" placeholder="State"
+                                required>
+                            <span id="stateError" class="invalid"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="zip">Zip</label>
+                            <input type="text" class="form-control" id="zip" name="zip" placeholder="Zip" required>
+                            <span id="zipError" class="invalid"></span>
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <button class="btn btn-dark" id="submitBtn" type="submit">Add address</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var form = document.getElementById('form');
+
+        var addressError = document.getElementById('addressError');
+        var stateError = document.getElementById('stateError');
+        var cityError = document.getElementById('cityError');
+        var zipError = document.getElementById('zipError');
+
+
+        form.addEventListener('submit', function (event) {
+
+            var address = document.getElementById('address').value;
+            var city = document.getElementById('city').value;
+            var state = document.getElementById('state').value;
+            var zip = document.getElementById('zip').value;
+
+
+            console.log(address);
+            console.log(city);
+            console.log(state);
+            console.log(zip);
+
+            if (address === '' || address == null) {
+                event.preventDefault();
+                addressError.innerHTML = "Please provide a valid address.";
+            }
+            if (!city) {
+                event.preventDefault();
+                cityError.innerHTML = "Please provide a valid city.";
+
+            }
+            if (!state) {
+                event.preventDefault();
+                stateError.innerHTML = "Please provide a valid state.";
+
+            }
+            if (!zip) {
+                event.preventDefault();
+                zipError.innerHTML = "Please provide a valid zip.";
+
+            }
+        });
+    </script>
+    <%- include('../partials/footer.ejs') %>
+
+        <%- include('../partials/plugins.ejs') %>

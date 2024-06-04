@@ -56,10 +56,12 @@
                                                         <a href="/admin/updateUser?id=<%= user[i]._id %>">
                                                             <% if(user[i].blocked===true){ %>
                                                                 <button class="btn-dark" style="width: 100%;"
+                                                                    onclick="return unblockUser()"
                                                                     type="button">Unblock</button>
                                                                 <% } %>
                                                                     <% if(user[i].blocked===false){ %>
                                                                         <button class="btn-dark" style="width: 100%;"
+                                                                            onclick="return blockUser()"
                                                                             type="button">Block</button>
                                                                         <% } %>
                                                         </a>
@@ -77,4 +79,12 @@
                             </div>
         </div>
     </div>
+    <script>
+        function blockUser() {
+            return confirm("DO you want to block this user?")
+        } function unblockUser() {
+            return confirm("DO you want to unblock this user?")
+
+        }
+    </script>
     <%- include('../partials/adminPlugins.ejs') -%>

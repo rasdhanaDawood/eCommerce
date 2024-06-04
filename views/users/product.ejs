@@ -86,7 +86,7 @@
                                         </div>
                                     </div> -->
                                                     <input type="hidden" name="id" value="<%=product[0]._id%>">
-                                                    <% if(product[0].stock==0) { %>
+                                                    <% if(product[0].stock<=0) { %>
                                                         <a href="/cart/<%= product[0]._id %>"
                                                             class="btn primary-btn disabled">
                                                             Add to Cart

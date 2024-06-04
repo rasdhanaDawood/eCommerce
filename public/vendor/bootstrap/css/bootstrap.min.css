@@ -179,22 +179,22 @@ a {
     color: #007bff;
     text-decoration: none;
     background-color: transparent;
-    -webkit-text-decoration-skip: objects
+    -webkit-text-decoration-skip: objects;
 }
 
 a:hover {
     color: #0056b3;
-    text-decoration: underline
+    text-decoration: none;
 }
 
 a:not([href]):not([tabindex]) {
-    color: inherit;
+    color: none;
     text-decoration: none
 }
 
 a:not([href]):not([tabindex]):focus,
 a:not([href]):not([tabindex]):hover {
-    color: inherit;
+    color: none;
     text-decoration: none
 }
 

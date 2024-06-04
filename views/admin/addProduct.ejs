@@ -8,98 +8,96 @@
                     <form action="/admin/addProduct" method="post" enctype="multipart/form-data" novalidate>
                         <div class="row">
                             <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="inputText3" class="col-form-label">Product Name</label>
-                                    <input id="inputText3" name="productname" type="text" placeholder="Product Name"
-                                        class="form-control" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputText4" class="col-form-label">Price</label>
-                                    <input id="inputText4" name="price" type="number" class="form-control"
-                                        placeholder="Price" required>
-                                </div>
-
-                                <!-- <div class="col-lg-6"> -->
-                                <div class="form-group">
-                                    <label for="input-select">Select Category</label>
-                                    <select class="form-control" name="category" id="input-select">
-                                        <option>--Choose Category-- </option>
-                                        <% for( let i=0;i<category.length;i++) { %>
-                                            <option value='<%= category[i]._id%>'>
-                                                <%= category[i].name%>
-                                            </option>
-                                            <% } %>
-                                    </select>
-                                </div>
-                                <div class=" form-group">
-                                    <label for="inputImage" class="col-form-label">Insert Images</label><br>
-                                    <input type="file" accept=".jpg,.jpeg,.png,.webp" name="image" id="inputImage"
-                                        alt="insert-image" required multiple>
-                                </div>
-                                <div class="row">
-                                    <div id="previewImages">
-
+                                <% if (errorMessage.length> 0) { %>
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <%- errorMessage %>
                                     </div>
-                                </div>
+                                    <% } %>
+                                        <div class="form-group">
+                                            <label for="inputText3" class="col-form-label">Product Name</label>
+                                            <input id="inputText3" name="productname" type="text"
+                                                placeholder="Product Name" class="form-control" required>
+                                        </div>
 
-                                <!-- </div> -->
-                                <div class=" form-group">
-                                    <label for="inputShort">Short Description</label>
-                                    <input id="inputShort" name="shortDesc" type="text" placeholder="Short description"
-                                        class="form-control" required>
-                                </div>
+                                        <div class="form-group">
+                                            <label for="inputText4" class="col-form-label">Price</label>
+                                            <input id="inputText4" name="price" type="number" class="form-control"
+                                                placeholder="Price" required>
+                                        </div>
 
-                                <div class="form-group">
-                                    <label for="exampleFormControlTextarea1">Detailed Description</label>
-                                    <textarea class="form-control" name="detailDesc" id="exampleFormControlTextarea1"
-                                        rows="3" required></textarea>
-                                </div>
+                                        <!-- <div class="col-lg-6"> -->
+                                        <div class="form-group">
+                                            <label for="input-select">Select Category</label>
+                                            <select class="form-control" name="category" id="input-select">
+                                                <option>--Choose Category-- </option>
+                                                <% for( let i=0;i<category.length;i++) { %>
+                                                    <option value='<%= category[i]._id%>'>
+                                                        <%= category[i].name%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <div class=" form-group">
+                                            <label for="inputImage" class="col-form-label">Insert Images</label><br>
+                                            <input type="file" accept=".jpg,.jpeg,.png,.webp" name="image"
+                                                id="inputImage" alt="insert-image" required multiple>
+                                        </div>
+                                        <div class="row">
+                                            <div id="previewImages">
 
-                                <div class="form-group">
-                                    <label for="inputSmall" class="col-form-label">Stock</label>
-                                    <input id="inputSmall" type="text" name="stock" class="form-control form-control-sm"
-                                        required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class=" col-form-label">Featured</label>
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isFeatured" value="true"
-                                            class=" custom-control-input"><span class="custom-control-label">Yes</span>
-                                    </label>
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isFeatured" value="false"
-                                            class="custom-control-input"><span class="custom-control-label">No</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="col-form-label">Deleted</label>
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isDeleted" value="true" id=""
-                                            class=" custom-control-input"><span class="custom-control-label">Yes</span>
-                                    </label>
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="isDeleted" value="false" id=""
-                                            class=" custom-control-input"><span class="custom-control-label">No</span>
-                                    </label>
-                                </div>
+                                            </div>
+                                        </div>
 
-                                <div class="form-group">
-                                    <label for="input-select">Rating</label>
-                                    <select class="form-control" name="rating" id="input-rating">
-                                        <option>Rating</option>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                </div>
+                                        <!-- </div> -->
+                                        <div class=" form-group">
+                                            <label for="inputShort">Short Description</label>
+                                            <input id="inputShort" name="shortDesc" type="text"
+                                                placeholder="Short description" class="form-control" required>
+                                        </div>
 
-                                <div class="form-group col-xl-3">
-                                    <button id="btn-submit" type="submit" class="btn btn-dark btn-ml btn-block">Add
-                                        Product</button>
-                                </div>
+                                        <div class="form-group">
+                                            <label for="exampleFormControlTextarea1">Detailed Description</label>
+                                            <textarea class="form-control" name="detailDesc"
+                                                id="exampleFormControlTextarea1" rows="3" required></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="inputSmall" class="col-form-label">Stock</label>
+                                            <input id="inputSmall" type="number" name="stock"
+                                                class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class=" col-form-label">Featured</label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="isFeatured" value="true"
+                                                    class=" custom-control-input"><span
+                                                    class="custom-control-label">Yes</span>
+                                            </label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="isFeatured" value="false"
+                                                    class="custom-control-input"><span
+                                                    class="custom-control-label">No</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-form-label">Deleted</label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="isDeleted" value="true" id=""
+                                                    class=" custom-control-input"><span
+                                                    class="custom-control-label">Yes</span>
+                                            </label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="isDeleted" value="false" id=""
+                                                    class=" custom-control-input"><span
+                                                    class="custom-control-label">No</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="form-group col-xl-3">
+                                            <button id="btn-submit" type="submit"
+                                                class="btn btn-dark btn-ml btn-block">Add
+                                                Product</button>
+                                        </div>
                             </div>
                         </div>
                     </form>

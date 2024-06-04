@@ -7,15 +7,32 @@
 
         .transparent-card {
             background-color: rgba(255, 255, 255, 0.8);
-            /* Adjust the last value for opacity (0-1) */
+        }
 
+        #message {
+            display: none;
+            color: #000;
+            position: relative;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #message p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .valid {
+            color: green;
+        }
+
+        .invalid {
+            color: red;
         }
     </style>
     <section class="hero">
         <div class="hero__item set-bg" data-setbg="img/hero/hero-1.jpg" style="width: 100% ;height: 100vh;">
-            <div class=" container">
-
-
+            <div class="container">
                 <div class="card transparent-card card-body col-lg-7 pt-2">
                     <h2>User Registration Form</h2>
                     <br>
@@ -27,7 +44,6 @@
                             <% if (successMessage.length> 0) { %>
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <%- successMessage %>
-
                                 </div>
                                 <% } %>
 
@@ -36,11 +52,11 @@
                                             <label for="firstName" class="col-3 col-lg-4 pl-4 col-form-label">First
                                                 name:</label>
                                             <div class="col-9 col-lg-8 pr-4 ">
-                                                <input type=" text" class="form-control" id="firstName"
+                                                <input type="text" class="form-control" id="firstName"
                                                     placeholder="Firstname" name="firstName" required>
                                             </div>
-                                        </div> <span class="error" id="firstName_error"></span>
-
+                                        </div>
+                                        <span class="error" id="firstName_error"></span>
 
                                         <div class="row form-group mb-2">
                                             <label for="lastName" class="col-3 col-lg-4 pl-4 col-form-label">Last
@@ -49,8 +65,8 @@
                                                 <input type="text" class="form-control" id="lastName"
                                                     placeholder="Last name" name="lastName" required>
                                             </div>
-                                        </div> <span class="error" id="lastName_error"></span>
-
+                                        </div>
+                                        <span class="error" id="lastName_error"></span>
 
                                         <div class="row form-group mb-2">
                                             <label for="email" class="col-3 col-lg-4 pl-4 col-form-label">Email:</label>
@@ -58,47 +74,50 @@
                                                 <input type="email" id="email" class="form-control" placeholder="Email"
                                                     name="email" required>
                                             </div>
-                                        </div> <span class="error" id="email_error"></span>
-
+                                        </div>
+                                        <span class="error" id="email_error"></span>
 
                                         <div class="row form-group mb-2">
                                             <label for="phone" class="col-3 col-lg-4 pl-4 col-form-label"
-                                                placeholder="Phone number">Phone
-                                                Number:</label>
+                                                placeholder="Phone number">Phone Number:</label>
                                             <div class="col-9 col-lg-8 pr-4">
                                                 <input type="tel" id="phone" class="form-control"
                                                     placeholder="Phone number" name="phone" pattern="[0-9]{10}"
                                                     required>
                                             </div>
-                                        </div> <span class="error" id="phone_error"></span>
+                                        </div>
+                                        <span class="error" id="phone_error"></span>
 
-
-                                        <div class="row form-group mb-2 ">
+                                        <div class="row form-group mb-2">
                                             <label for="password"
                                                 class="col-3 col-lg-4 col-form-label pl-4">Password:</label>
                                             <div class="col-9 col-lg-8 pr-4">
                                                 <input type="password" class="form-control" placeholder="Password"
                                                     id="password" name="password" required>
                                             </div>
-                                        </div> <span class="error" id="password_error"></span>
+                                        </div>
+                                        <div id="message">
+                                            <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+                                            <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+                                            <p id="number" class="invalid">A <b>number</b></p>
+                                            <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+                                        </div>
+                                        <span class="error" id="password_error"></span>
 
                                         <div class="row form-group mb-2">
                                             <label for="confirmPassword"
-                                                class="col-3 col-lg-4 col-form-label  pl-4">Confirm
-                                                Password:</label>
-
+                                                class="col-3 col-lg-4 col-form-label pl-4">Confirm Password:</label>
                                             <div class="col-9 col-lg-8 pr-4">
                                                 <input type="password" class="form-control"
                                                     placeholder="Confirm password" id="confirmPassword"
                                                     name="confirmPassword" required>
                                             </div>
-                                        </div> <span class="error" id="confirmPassword_error"></span><br>
-
+                                        </div>
+                                        <span class="error" id="confirmPassword_error"></span><br>
 
                                         <div class="form-group text-center pb-2 pt-2">
                                             <button type="submit" class="submit btn btn-dark">Register</button>
                                         </div>
-
                                     </form>
                 </div>
             </div>
@@ -110,7 +129,6 @@
             const phone = document.getElementById('phone');
             const password = document.getElementById('password');
             const confirmPassword = document.getElementById('confirmPassword');
-
             const form = document.getElementById('form');
 
             const firstName_error = document.getElementById('firstName_error');
@@ -120,100 +138,127 @@
             const password_error = document.getElementById('password_error');
             const confirmPassword_error = document.getElementById('confirmPassword_error');
 
-            form.addEventListener('submit', (e) => {
+            password.onfocus = function () {
+                document.getElementById("message").style.display = "block";
+            }
 
+            password.onblur = function () {
+                document.getElementById("message").style.display = "none";
+                validatePassword();
+            }
+
+            password.onkeyup = function () {
+                validatePassword();
+            }
+
+            function validatePassword() {
+                var lowerCaseLetters = /[a-z]/g;
+                var upperCaseLetters = /[A-Z]/g;
+                var numbers = /[0-9]/g;
+                var minLength = 8;
+                var isValid = true;
+
+                if (password.value.match(lowerCaseLetters)) {
+                    document.getElementById("letter").classList.remove("invalid");
+                    document.getElementById("letter").classList.add("valid");
+                } else {
+                    document.getElementById("letter").classList.remove("valid");
+                    document.getElementById("letter").classList.add("invalid");
+                    isValid = false;
+                }
+
+                if (password.value.match(upperCaseLetters)) {
+                    document.getElementById("capital").classList.remove("invalid");
+                    document.getElementById("capital").classList.add("valid");
+                } else {
+                    document.getElementById("capital").classList.remove("valid");
+                    document.getElementById("capital").classList.add("invalid");
+                    isValid = false;
+                }
+
+                if (password.value.match(numbers)) {
+                    document.getElementById("number").classList.remove("invalid");
+                    document.getElementById("number").classList.add("valid");
+                } else {
+                    document.getElementById("number").classList.remove("valid");
+                    document.getElementById("number").classList.add("invalid");
+                    isValid = false;
+                }
+
+                if (password.value.length >= minLength) {
+                    document.getElementById("length").classList.remove("invalid");
+                    document.getElementById("length").classList.add("valid");
+                } else {
+                    document.getElementById("length").classList.remove("valid");
+                    document.getElementById("length").classList.add("invalid");
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    password_error.innerHTML = "Password does not meet the requirements";
+                } else {
+                    password_error.innerHTML = "";
+                }
+            }
+
+            form.addEventListener('submit', (e) => {
                 var email_check = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
                 var phone_check = /^[0-9]{10}$/;
 
                 if (firstName.value === '' || firstName.value == null) {
                     e.preventDefault();
                     firstName_error.innerHTML = "First Name is required";
-                }
-
-                else {
+                } else {
                     firstName_error.innerHTML = "";
                 }
 
                 if (lastName.value === '' || lastName.value == null) {
                     e.preventDefault();
                     lastName_error.innerHTML = "Last Name is required";
-                }
-
-                else {
+                } else {
                     lastName_error.innerHTML = "";
                 }
+
                 if (email.value === '' || email.value == null) {
                     e.preventDefault();
                     email_error.innerHTML = "Email is required";
-                }
-
-                else {
+                } else {
                     email_error.innerHTML = "";
                 }
+
                 if (!email.value.match(email_check)) {
                     e.preventDefault();
-                    email_error.innerHTML = "Please enter valid email";
-
-                }
-                else {
+                    email_error.innerHTML = "Please enter a valid email";
+                } else {
                     email_error.innerHTML = "";
                 }
 
                 if (phone.value === '' || phone.value == null) {
                     e.preventDefault();
                     phone_error.innerHTML = "Phone number is required";
-                }
-
-                else {
+                } else {
                     phone_error.innerHTML = "";
                 }
 
                 if (!phone.value.match(phone_check)) {
                     e.preventDefault();
-                    phone_error.innerHTML = "Please enter valid phone number";
-
-                }
-                else {
+                    phone_error.innerHTML = "Please enter a valid phone number";
+                } else {
                     phone_error.innerHTML = "";
                 }
+
                 if (password.value === '' || password.value == null) {
                     e.preventDefault();
-                    password_error.innerHTML = "Password is required"
+                    password_error.innerHTML = "Password is required";
                 }
-                else {
-                    password_error.innerHTML = "";
 
-                }
-                if (password.value.length <= 5) {
+                if (confirmPassword.value !== password.value) {
                     e.preventDefault();
-                    password_error.innerHTML = "Password must be more than 6 characters";
+                    confirmPassword_error.innerHTML = "Passwords do not match";
                 } else {
-                    password_error.innerHTML = "";
-                } if (password.value.length >= 20) {
-                    e.preventDefault();
-                    password_error.innerHTML = "Password cannot be more than 20 characters";
-                }
-
-                if (password.value === 'password') {
-                    e.preventDefault();
-                    password_error.innerHTML = "Password cannot be password";
-                }
-
-                if (confirmPassword.value === '' || confirmPassword.value == null) {
-                    e.preventDefault();
-                    confirmPassword_error.innerHTML = "Confirmation password is required"
-                }
-                else {
                     confirmPassword_error.innerHTML = "";
-
                 }
-
-                if (password.value !== confirmPassword.value) {
-                    e.preventDefault();
-                    confirmPassword_error.innerHTML = "Password do not match";
-                }
-
-            })
+            });
         </script>
     </section>
     <%- include('../partials/plugins.ejs')%>

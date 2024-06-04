@@ -31,10 +31,6 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
-    rating: {
-        type: Number,
-        required: true
-    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",

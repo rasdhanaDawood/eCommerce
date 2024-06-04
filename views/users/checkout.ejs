@@ -1,5 +1,28 @@
 <%- include('../partials/head.ejs') %>
     <%- include('../partials/userHeader.ejs') %>
+        <style>
+            .address-item {
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+            }
+
+            .address-item input[type="radio"] {
+                margin-right: 10px;
+            }
+
+            .address-item label {
+                display: inline-block;
+                width: calc(100% - 30px);
+                vertical-align: middle;
+            }
+
+            .address-item:hover {
+                background-color: #f9f9f9;
+                border-color: #ccc;
+            }
+        </style>
         <!-- Breadcrumb Begin -->
         <div class="breadcrumb-option">
             <div class="container">
@@ -27,107 +50,120 @@
                     <form action="/checkout" method="post" novalidate>
                         <div class="row">
                             <div class="col-lg-8 col-md-6">
-
-                                <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? Enter
-                                    your code here <input type="text" name="coupon" id="coupon"
-                                        placeholder="Coupon code">
-                                </h6>
-
+                                <div class="coupon__code">
+                                    <span class="icon_tag_alt"></span> Have a coupon? Enter your code here
+                                    <input type="text" name="coupon" id="coupon" placeholder="Coupon code">
+                                    <button type="button" id="applyCouponButton" class="btn btn-dark">Apply</button>
+                                </div>
                                 <% if (errorMessage.length> 0) { %>
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         <%- errorMessage %>
                                     </div>
                                     <% } %>
                                         <h6 class="checkout__title">Billing Details</h6>
+                                        <br>
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="checkout__input">
-                                                    <p>
-                                                        First Name<span>*</span>
-                                                    </p>
-                                                    <input type="text" name="firstName" value="<%=user.firstName%>">
+                                                    <p>First Name<span>*</span></p>
+                                                    <input type="text" name="firstName" value="<%= user.firstName %>">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="checkout__input">
-                                                    <p>
-                                                        Last Name<span>*</span>
-                                                    </p>
-                                                    <input type="text" name="lastName" value="<%=user.lastName%>">
+                                                    <p>Last Name<span>*</span></p>
+                                                    <input type="text" name="lastName" value="<%= user.lastName %>">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            <p>Shipping address<span></span></p>
-                                            <% let addresses=user.address;console.log(addresses) %>
-                                                <% for (let i=0; i < addresses.length; i++) { %>
-                                                    <input type="radio" name="address" id="shippingAddress<%= i %>"
-                                                        value="<%= addresses[i]._id %>" required>
-                                                    <label for="shippingAddress<%= i %>">
-                                                        <%= addresses[i].address %>, <%= addresses[i].city %>, <%=
-                                                                    addresses[i].state %>, <%= addresses[i].zip %>
-                                                    </label>
-                                                    <br>
+                                        <!-- Hidden element to store offer values -->
 
+                                        <div>
+                                            <h4>Shipping address</h4><br>
+                                            <% let addresses=user.address; %>
+                                                <% for (let i=0; i < addresses.length; i++) { %>
+                                                    <div class="address-item">
+                                                        <input type="radio" name="address" id="shippingAddress<%= i %>"
+                                                            value="<%= addresses[i]._id %>" required>
+                                                        <label for="shippingAddress<%= i %>">
+                                                            <%= addresses[i].address %>, <%= addresses[i].city %>, <%=
+                                                                        addresses[i].state %>, <%= addresses[i].zip %>
+                                                        </label>
+                                                    </div>
+                                                    <br>
                                                     <% } %>
+                                                        <a href="/addAddress" class="btn btn-dark" type="button">Add
+                                                            Address</a>
+
+                                                        <br>
                                         </div>
+
                             </div>
                             <div class="col-lg-4 col-md-6">
-                                <%if(product.length>0){%>
-
+                                <% if (product.length> 0) { %>
                                     <div class="checkout__order">
                                         <h6 class="order__title">Your order</h6>
-                                        <div class="checkout__order__products">Product <span>Total</span></div>
+                                        <div class="checkout__order__products">Product <span>Total</span>
+                                        </div>
                                         <ul class="checkout__total__products">
-                                            <%for(let i=0;i < product.length;i++){%>
-                                                <li><samp>
-                                                        <%=i+1%>.
+                                            <% for (let i=0; i < product.length; i++) { %>
+                                                <li>
+                                                    <samp>
+                                                        <%= i + 1 %>.
                                                     </samp>
-                                                    <%=product[i].product.name%>
-                                                        <span>
-                                                            <%=product[i].product.price*product[i].quantity%>
+                                                    <%= product[i].product.name %>
+                                                        <span>₹<%= product[i].product.price * product[i].quantity %>
                                                         </span>
                                                 </li>
-                                                <%}%>
+                                                <% } %>
                                         </ul>
                                         <ul class="checkout__total__all">
-                                            <li>Subtotal <span>
-                                                    ₹<%=total%>
-                                                </span></li>
-                                            <li>Total <span>
-                                                    ₹<%=total%>
-                                                </span></li>
+                                            <li>Subtotal <span>₹<%= total %></span></li>
+                                            <% if (discount> 0) { %>
+                                                <li>Discount <span>- ₹<%= discount %></span></li>
+                                                <% } %>
+
+                                                    <li>Total <span id="total">₹<%= total %>
+                                                        </span>
+                                                    </li>
                                         </ul>
-                                        <!-- <div class="checkout__input__checkbox">
-                                            <label for="cash">
-                                                Cash on delivery
-
-                                                <input type="radio" id="cash" value="cash" name="payment">
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </div>
-
-                                        <div class="checkout__input__checkbox">
-                                            <label for="onlinePayment">
-                                                Online Payment
-                                                <input type="radio" id="onlinePayment" value="online" name="payment">
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </div> -->
-                                        <input type="hidden" name="amount" value="<%= parseInt(total)*100 %>">
                                         <input type="submit" class="btn btn-dark" value="Place order">
                                     </div>
-                                    <%}else{%>
+                                    <% } else { %>
                                         Your Cart is Empty!!
-                                        <%}%>
+                                        <% } %>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
         </section>
         <!-- Checkout Section End -->
-        <%- include('../partials/footer.ejs') %>
 
+
+        <script>
+
+            document.getElementById('applyCouponButton').addEventListener('click', function () {
+                const couponCode = document.getElementById('coupon').value;
+
+                fetch(`/applyCoupon?code=${couponCode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Calculate the total after applying the discount and offers
+                            const totalAfterDiscount = data.total - data.discount;
+
+                            // Update the total and discount fields in the DOM
+                            document.querySelector('.checkout__total__all').innerHTML = `
+                                    <li>Subtotal <span>₹${data.total.toFixed(2)}</span></li>
+                                    <li>Discount <span>- ₹${data.discount.toFixed(2)}</span></li>
+                                  <li>Total <span>₹${totalAfterDiscount.toFixed(2)}</span></li>
+                                `;
+                        } else {
+                            alert('Invalid coupon code');
+                        }
+                    });
+            });
+        </script>
+        <%- include('../partials/footer.ejs') %>
             <%- include('../partials/plugins.ejs') %>
