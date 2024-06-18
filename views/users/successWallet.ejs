@@ -1,0 +1,35 @@
+<%- include('../partials/head.ejs') %><%- include('../partials/userHeader.ejs')
+%>
+<style>
+  .container-box {
+    max-width: 50%;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  } 
+  .success{
+color: rgb(232, 162, 50);
+  }
+</style>
+
+<div class="fluid-container">
+  <div class="container-box">
+    <div class="col-lg-12 col-md-12 center">
+      <div class="card">
+        <div class="card-body">
+          
+          <h4>Your order is processing! Thank you!</h4>
+          <br /><h6 class="success">
+            Your amount is deducted from wallet!! Current balance is  ₹<%= balance
+            %>
+          </h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer.ejs') %> <%-
+  include('../partials/plugins.ejs') %>
+</div>

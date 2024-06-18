@@ -70,6 +70,14 @@ $(function () {
 
 
     // Download
+    console.log($download[0])
+    if ($download[0]?.download !== undefined) {
+       console.log('download not exist')
+        $download.addClass('disabled');
+    }
+
+
+
     if (typeof $download[0].download === 'undefined') {
         $download.addClass('disabled');
     }

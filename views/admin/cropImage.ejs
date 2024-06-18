@@ -1,74 +1,82 @@
 <%- include('../partials/adminHeader.ejs') %>
 
-    <div class="container-fluid dashboard-content">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-header">
-                    <h2 class="pageheader-title">Crop Image</h2>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-8">
-                        <div class="img-container">
-                            <img id="image" src="/img/shop/<%= image %>" alt="Picture"
-                                style="height: 25%; width: auto;">
-                        </div>
-                    </div>
-                    <div class="col-md-4 r-2">
-                        <div class="docs-preview clearfix">
-                            <div class="img-preview preview-lg"></div>
-                            <div class="img-preview preview-md"></div>
-                            <div class="img-preview preview-sm"></div>
-                            <div class="img-preview preview-xs"></div>
-                        </div>
-                        <button type="button" class="btn btn-dark" id="saveCroppedImage">
-                            <span class="docs-tooltip" data-toggle="tooltip" data-animation="false"
-                                title="Save Cropped Image">
-                                Save Cropped Image
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid dashboard-content">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-header">
+        <h2 class="pageheader-title">Crop Image</h2>
+      </div>
     </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-8">
+          <div class="img-container">
+            <img
+              id="image"
+              src="/img/shop/<%= image %>"
+              alt="Picture"
+              style="height: 25%; width: auto"
+            />
+          </div>
+        </div>
+        <div class="col-md-4 r-2">
+          <div class="docs-preview clearfix">
+            <div class="img-preview preview-lg"></div>
+            <div class="img-preview preview-md"></div>
+            <div class="img-preview preview-sm"></div>
+            <div class="img-preview preview-xs"></div>
+          </div>
+          <button type="button" class="btn btn-dark" id="saveCroppedImage">
+            <span
+              class="docs-tooltip"
+              data-toggle="tooltip"
+              data-animation="false"
+              title="Save Cropped Image"
+            >
+              Save Cropped Image
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var image = document.getElementById('image');
-            var cropper = new Cropper(image, {
-                aspectRatio: 1,
-                viewMode: 1,
-                preview: '.img-preview'
-            });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var image = document.getElementById("image");
+    var cropper = new Cropper(image, {
+      aspectRatio: 1,
+      viewMode: 1,
+      preview: ".img-preview",
+    });
 
-            document.getElementById('saveCroppedImage').addEventListener('click', function () {
-                var croppedCanvas = cropper.getCroppedCanvas();
-                croppedCanvas.toBlob(function (blob) {
-                    var formData = new FormData();
-                    formData.append('image1', blob, '<%= image %>'); // Send with the original filename
+    document
+      .getElementById("saveCroppedImage")
+      .addEventListener("click", function () {
+        var croppedCanvas = cropper.getCroppedCanvas();
+        croppedCanvas.toBlob(function (blob) {
+          var formData = new FormData();
+          formData.append("image1", blob, "<%= image %>");
 
-                    // Use AJAX to send the image to the server
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/admin/save-cropped-image', true);
-                    xhr.onload = function () {
-                        if (xhr.status === 200) {
-                            alert('Image saved successfully');
-                            window.location.href = '/admin/listProduct';
-                            // location.reload();
-                        } else {
-                            alert('Error saving image');
-                        }
-                    };
-                    xhr.send(formData);
-                });
-            });
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/admin/save-cropped-image", true);
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              alert("Image saved successfully");
+              window.location.href = "/admin/listProduct";
+            } else {
+              alert("Error saving image");
+            }
+          };
+          xhr.send(formData);
         });
-    </script>
-    <%- include('../partials/adminPlugins.ejs') %>
+      });
+  });
+</script>
+<%- include('../partials/adminPlugins.ejs') %>

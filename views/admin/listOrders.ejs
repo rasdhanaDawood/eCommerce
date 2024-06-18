@@ -32,7 +32,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <!-- Example order rows (replace with dynamic data from backend) -->
                                                 <% for(let i=0;i < order.length;i++){%>
                                                     <tr>
                                                         <td>
@@ -75,7 +74,11 @@
                                                                             <% } %>
                                                         </td>
                                                         <td>
-                                                            ₹<%= order[i].totalPrice %>
+                                                            <% if(order[i].totalPrice<=0){ %>
+                                                                0
+                                                            <% }else{ %>
+                                                                ₹<%= order[i].totalPrice %>
+                                                            <% } %>
                                                         </td>
                                                         <td>
                                                             <%= order[i].payment %>
@@ -86,9 +89,7 @@
                                                         <td>
                                                             <% if(order[i].status=='Cancelled'
                                                                 ||order[i].status=='Returned' ){ %>
-                                                                <a href="/admin/updateStatus?id=<%= order[i]._id %>">
-                                                                    <input type="button" class="btn btn-dark"
-                                                                        value="Update" disabled></a>
+                                                              
                                                                 <%}else{%>
                                                                     <a
                                                                         href="/admin/updateStatus?id=<%= order[i]._id %>">

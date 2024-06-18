@@ -15,6 +15,8 @@ const userCheck = require("../middleware/checkBlocked");
 const userController = require("../controllers/userController");
 const sendOTP = require("../utils/sendOTP");
 
+user_route.get('/', auth.isLoggedOut, userController.getHome);
+
 user_route.get("/register", auth.isLoggedOut, userController.loadRegister);
 
 user_route.post("/register", sendOTP, userController.postRegister);
@@ -113,19 +115,23 @@ user_route.post("/checkout", userController.placeOrder);
 
 user_route.get("/applyCoupon", userController.applyCoupon);
 
+user_route.get("/removeCoupon", userController.removeCoupon);
+
 user_route.get("/orderPage", userController.viewOrder);
 
 user_route.post("/cashOnDelivery", userController.cashOnDelivery);
 
 user_route.post("/onlinePayment", userController.onlinePayment);
 
-// user_route.get('/download', userController.generatePdf)
+user_route.post("/walletPayment", userController.walletPayment);
 
 user_route.get("/generate-invoice", invoice);
 
 user_route.get("/viewOrder", userController.viewOrderDetails);
 
-user_route.get("/successForCash", userController.successPageForCash);
+user_route.get("/orderSuccess", userController.successOrder);
+
+user_route.get("/walletSuccess", userController.successOrderWallet);
 
 user_route.get("/success", userController.successPage);
 

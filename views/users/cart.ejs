@@ -219,12 +219,7 @@
         <script>
             let total = 0;
             document.addEventListener('DOMContentLoaded', function () {
-                // const offersData = document.getElementById('offersData');
-                // const productOffer = parseFloat(offersData.getAttribute('data-product-offer')) || 0;
-                // const categoryOffer = parseFloat(offersData.getAttribute('data-category-offer')) || 0;
-                // console.log(productOffer)
-                // console.log(categoryOffer)
-
+        
                 document.querySelectorAll('.dec').forEach(function (decreaseButton) {
                     decreaseButton.addEventListener('click', function (event) {
                         event.preventDefault();
@@ -285,10 +280,7 @@
                     document.getElementById('total').textContent = '₹' + finalTotal.toFixed(2);
                     document.getElementById('sub').textContent = '₹' + total.toFixed(2);
 
-                    // document.getElementById('productOffer').textContent = '- ₹' + productOffer.toFixed(2);
-
-                    // document.getElementById('categoryOffer').textContent = '- ₹' + categoryOffer.toFixed(2);
-
+                
                 }
                 updateTotal();
             });
@@ -301,48 +293,8 @@
                 document.getElementById("updateCartForm").submit();
             }
 
-            // function updateTotal() {
-            //     var total = 0;
-            //     var totalProductOffer = 0;
-            //     var totalCategoryOffer = 0;
-            //     document.querySelectorAll('.cart-items').forEach(function (item) {
-            //         const quantity = parseInt(item.querySelector('.qty').value);
-            //         const price = parseFloat(item.querySelector('.price').textContent.replace('₹', ''));
-            //         const subtotal = price * quantity;
-            //         total += subtotal;
-            //         console.log(total)
-
-            //         if (item.classList.contains('product-offer-eligible')) {
-            //             console.log(item.classList.contains('product-offer-eligible'));
-            //             totalProductOffer += (productOffer * quantity);
-            //             console.log(totalProductOffer)
-            //             console.log(quantity)
-
-            //         }
-            //         console.log('totalprod:', totalProductOffer)
-            //         // Check if the product is eligible for category offer
-            //         if (item.classList.contains('category-offer-eligible')) {
-            //             totalCategoryOffer += (categoryOffer * quantity);
-            //         }
-            //         console.log('total cat:', totalCategoryOffer)
-
-            //     });
-
-            //     const finalTotal = total - totalProductOffer - totalCategoryOffer;
-            //     console.log('final:', finalTotal)
-
-            //     document.getElementById('total').textContent = '₹' + finalTotal.toFixed(2);
-            //     document.getElementById('sub').textContent = '₹' + total.toFixed(2);
-            //     if (productOffer > 0) {
-            //         document.getElementById('productOffer').textContent = '- ₹' + totalProductOffer.toFixed(2);
-            //     }
-            //     if (categoryOffer > 0) {
-            //         document.getElementById('categoryOffer').textContent = '- ₹' + totalCategoryOffer.toFixed(2);
-            //     }
-            // }
-
-
             function deleteProduct(productId) {
+                if (confirm("Do you want to remove the item from cart?")) {
                 fetch(`/cart/${productId}`, {
                     method: 'DELETE',
                     headers: {
@@ -358,6 +310,7 @@
                     .catch(error => {
                         console.error('Error deleting product:', error);
                     });
+                }
             }
 
             function isProductInStock() {

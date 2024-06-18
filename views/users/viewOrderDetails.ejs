@@ -57,7 +57,7 @@
 
                         </div>
                         <% } %>
-                            <% if(order){ %>
+                            <% if(order){ %>  <% let sum=0;var flag=0; %>
                                 <div class="order-details">
                                     <h2>Order Information</h2><br>
                                     <p><strong>Order ID:</strong> ID#<%=order._id%>
@@ -89,10 +89,8 @@
                                     <p><strong>Order Date & Time: </strong>
                                     <div>
                                         <%= (new Date(order.created_at)).toLocaleDateString('en-US') %>
-
                                     </div>
                                 </div>
-
                                 <div class="order-details">
                                     <h2>Order Items</h2>
                                     <table>
@@ -102,14 +100,14 @@
                                                 <th>Unit Price</th>
                                                 <th>Quantity</th>
                                                 <th>Price</th>
+                                                <%if(order.status!="Delivered"){%>
                                                 <th>Action</th>
+                                                <%}%>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% for(let i=0; i < order.products.length; i++){ %>
                                                 <tr>
-
-
                                                     <td>
                                                         <%= order.products[i].product.name %>
                                                     </td>
@@ -138,6 +136,7 @@
                                                             </p>
                                                         </td>
                                                         <%}else{%>
+                                                            <%if(order.status!="Delivered"){%>
                                                             <td>
                                                                 <form action="/cancelProduct" method="post">
                                                                     <input type="hidden" name="productId"
@@ -149,10 +148,11 @@
                                                                 </form>
 
                                                             </td>
-                                                            <%}%>
+                                                            <%}}%>
                                                                 <br>
                                                 </tr>
                                                 <% } %>
+                                                <% if (order.status!="Cancelled"){ %>
                                                     <tr>
                                                         <td></td>
                                                         <td></td>
@@ -161,16 +161,16 @@
                                                         </td>
                                                         <td>
                                                             <strong>
-                                                                <% let sum=0 %>
+                                                              
                                                                     <% let orders=order.products%>
                                                                         <% for(let i=0; i < orders.length; i++){ %>
                                                                             <% if(orders[i].productStatus==true){%>
                                                                                 <% sum+=orders[i].product.price *
                                                                                     order.products[i].quantity %>
-                                                                                    <% } %>
+                                                                                 
                                                                                         <%}%>
-
-                                                                                            ₹<%= sum %>
+                                                                                        <%}%>
+                                                                                          ₹<%= sum %>
                                                             </strong>
                                                         </td>
                                                     </tr>
@@ -182,8 +182,12 @@
                                                         </td>
                                                         <td>
                                                             <strong>
-                                                                <% sum-=order.totalPrice %>
+                                                               <% if(sum<=0){ %>
+                                                                0
+                                                               <% }else{ %> 
+                                                               <% sum-=order.totalPrice %>
                                                                     ₹<%= sum.toFixed(2) %>
+                                                               <% } %> 
                                                             </strong>
                                                         </td>
                                                     </tr>
@@ -195,14 +199,22 @@
                                                         </td>
                                                         <td>
                                                             <strong>
-                                                                ₹<%= (order.totalPrice).toFixed(2) %>
-                                                            </strong>
+                                                                <%if(order.totalPrice<=0){%>
+                                                                    0
+                                                                <%}else{%>
+                                                                ₹<%= (order.totalPrice).toFixed(2) %>  
+                                                                <%}%>                                                            </strong>
                                                         </td>
-                                                    </tr>
+                                                    </tr> 
+                                                     <%}%>
                                         </tbody>
                                     </table>
 
-                                </div>
+                                </div> <%if(order.status=="Delivered"){%><div class="d-flex justify-content-center">
+                                    <a href="/generate-invoice?order=<%=order._id%>" type="button" class="btn btn-dark"
+                                      >Download invoice(PDF)</a
+                                    >
+                                  </div><br><%}%>
                                 <div class="row d-flex justify-content-center">
                                     <%if(order.payment==undefined||order.payment==''){%>
                                         <div class="pl-2">
@@ -220,10 +232,17 @@
                                                 <button class="btn-dark btn submit-button">Pay Online
                                                 </button>
                                             </form>
-                                            <br><br>
+                                            
+                                        </div><br> <div class="pl-2">
+                                            <form action="/walletPayment" method="post" id="payment-form">
+                                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                <button class="btn-dark btn submit-button">Wallet
+                                                </button>
+                                            </form>
+                                            
                                         </div>
                                         <%}%>
-                                </div>
+                                </div><br>
                                 <% } else{ %>
                                     <div>
                                         <h3>No Orders</h3>

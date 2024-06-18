@@ -68,7 +68,7 @@
                                                                                 </h6>
                                                                 </a>
                                                                 <div class="product__item__price">
-                                                                        <%=product[i].price%>
+                                                                        ₹ <%=product[i].price.toFixed(2)%>
                                                                 </div>
                                                                 <%if(product[i].stock<=0){%>
                                                                         <div class="cart_add">
@@ -95,17 +95,13 @@
                 </section>
                 <!-- Product Section End -->
 
-
-
-
-
                 <!-- Map Begin -->
                 <div class="map">
                         <div class="container">
                                 <div class="row">
                                         <div class="col-lg-4 col-md-7">
                                                 <div class="map__inner">
-                                                        <h6>COlorado</h6>
+                                                        <h6>Colorado</h6>
                                                         <ul>
                                                                 <li>1000 Lakepoint Dr, Frisco, CO 80443, USA</li>
                                                                 <li>Sweetcake@support.com</li>

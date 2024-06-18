@@ -1,193 +1,215 @@
-<%- include('../partials/head.ejs') %>
-    <%- include('../partials/userHeader.ejs') %>
-        <style>
-            h1 {
-                text-align: center;
-                margin-bottom: 20px;
-            }
+<%- include('../partials/head.ejs') %> <%- include('../partials/userHeader.ejs')
+%>
+<style>
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-            .pending {
-                color: red;
-            }
+  .pending {
+    color: red;
+  }
 
-            .delivered {
-                color: green;
-            }
+  .delivered {
+    color: green;
+  }
 
-            .order-details {
-                margin-bottom: 20px;
-            }
+  .order-details {
+    margin-bottom: 20px;
+  }
 
-            .order-details h2 {
-                margin-bottom: 10px;
-            }
+  .order-details h2 {
+    margin-bottom: 10px;
+  }
 
-            .order-details table {
-                width: 100%;
-                border-collapse: collapse;
-            }
+  .order-details table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-            .order-details th,
-            .order-details td {
-                padding: 10px;
-                border-bottom: 1px solid #ddd;
-                text-align: left;
-            }
+  .order-details th,
+  .order-details td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
 
-            .order-details th {
-                background-color: #f2f2f2;
-            }
+  .order-details th {
+    background-color: #f2f2f2;
+  }
 
-            .order-details tr:hover {
-                background-color: #f9f9f9;
-            }
+  .order-details tr:hover {
+    background-color: #f9f9f9;
+  }
 
-            .order-summary {
-                margin-top: 20px;
-            }
+  .order-summary {
+    margin-top: 20px;
+  }
 
-            .order-summary strong {
-                display: block;
-                margin-bottom: 5px;
-            }
+  .order-summary strong {
+    display: block;
+    margin-bottom: 5px;
+  }
 
-            .payment-options {
-                margin-top: 20px;
-            }
+  .payment-options {
+    margin-top: 20px;
+  }
 
-            .payment-options .btn {
-                margin-right: 10px;
-            }
-        </style>
-        <div class="container">
-            <% if(order){ %>
-                <div class="order-details">
-                    <h2>Order Information</h2><br>
-
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <p><strong>Order ID:</strong> ID#<%= order._id %>
-                            </p>
-
-                            <p><strong>Order Status:</strong>
-                                <% if (order.status==='pending' ) { %>
-                                    <span class="pending">
-                                        <%= order.status %>
-                                    </span>
-                                    <% } else if (order.status==='delivered' ) { %>
-                                        <span class="delivered">
-                                            <%= order.status %>
-                                        </span>
-                                        <% } else { %>
-                                            <span>
-                                                <%= order.status %>
-                                            </span>
-                                            <% } %>
-                            </p>
-                            <p><strong>Order Date:</strong>
-                                <%= (new Date(order.created_at)).toLocaleDateString('en-US') %>
-                            </p>
-                        </div>
-                        <div class="col-lg-6">
-                            <p><strong>Shipping Address:</strong><br>
-                                <%= user.firstName %>
-                                    <%= user.lastName %><br>
-                                        <%= address.address %><br>
-                                            <%= address.city %>, <%= address.state %>, Pin: <%= address.zip %>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Order Details -->
-                <div class="order-details">
-                    <h2>Order Items</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% let sum=0; %>
-                                <% for (let i=0; i < order.products.length; i++) { %>
-                                    <tr>
-                                        <td>
-                                            <%= order.products[i].product.name %>
-                                        </td>
-                                        <td>
-                                            <%= order.products[i].quantity %>
-                                        </td>
-                                        <td>₹<%= order.products[i].product.price * order.products[i].quantity %>
-                                        </td>
-                                    </tr>
-                                    <% sum +=order.products[i].product.price * order.products[i].quantity; %>
-                                        <% } %>
-                                            <tr>
-                                                <td></td>
-                                                <td><strong>Grand Total</strong></td>
-                                                <td><strong>₹<%= sum %></strong></td>
-                                            </tr>
-                                            <% if(discount>0){ %>
-                                                <tr>
-                                                    <td></td>
-                                                    <td><strong>Discount</strong></td>
-                                                    <td><strong>₹<%= discount.toFixed(2) %></strong></td>
-                                                </tr>
-                                                <% } %>
-                                                    <% if(productOfferAmount>0){ %>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td><strong>Product Offer</strong></td>
-                                                            <td><strong>₹<%= productOfferAmount.toFixed(2) %>
-                                                                </strong>
-                                                            </td>
-                                                        </tr>
-                                                        <% } %>
-                                                            <% if(categoryOfferAmount>0){ %>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td><strong>Category Offer</strong></td>
-                                                                    <td><strong>₹<%= categoryOfferAmount.toFixed(2) %>
-                                                                        </strong>
-                                                                    </td>
-                                                                </tr>
-                                                                <% } %>
-                                                                    <tr>
-                                                                        <td></td>
-                                                                        <td><strong>Total</strong></td>
-                                                                        <td><strong>₹<%= order.totalPrice.toFixed(2) %>
-                                                                            </strong>
-                                                                        </td>
-                                                                    </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Payment Options -->
-                <div class="row d-flex justify-content-center payment-options">
-                    <div class="col-md-2 text-center">
-                        <form action="/cashOnDelivery" method="post">
-                            <input type="hidden" name="orderId" value="<%= order._id %>">
-                            <input type="submit" class="btn btn-dark" name="cashOnDelivery" value="Cash on Delivery">
-                        </form>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <form action="/onlinePayment" method="post" id="payment-form">
-                            <input type="hidden" name="orderId" value="<%= order._id %>">
-                            <input type="hidden" name="amount" value="<%= order.totalPrice %>">
-                            <input type="hidden" name="discount" value="<%= sum - order.totalPrice %>">
-                            <button class="btn btn-dark submit-button">Pay Online</button>
-                        </form>
-                    </div>
-                </div><br>
+  .payment-options .btn {
+    margin-right: 10px;
+  }
+</style>
+<div class="container">
+    <% if(order){ %><%console.log(productOfferAmount,categoryOfferAmount,discount);%>
+        <div class="order-details">
+          <br />
+          <% if (errorMessage && errorMessage.length > 0) {
+          console.log(errorMessage);%>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= errorMessage %>
+          </div>
+          <% } %>
+          <h2>Order Information</h2>
+          <br />
+      
+          <div class="row">
+            <div class="col-lg-6">
+              <p><strong>Order ID:</strong> ID#<%= order._id %></p>
+      
+              <p>
+                <strong>Order Status:</strong>
+                <% if (order.status==='pending' ) { %>
+                <span class="pending"> <%= order.status %> </span>
+                <% } else if (order.status==='delivered' ) { %>
+                <span class="delivered"> <%= order.status %> </span>
                 <% } else { %>
-                    <div class="text-center">
-                        <h3>No Orders</h3>
-                    </div>
-                    <% } %>
+                <span> <%= order.status %> </span>
+                <% } %>
+              </p>
+              <p>
+                <strong>Order Date:</strong>
+                <%= (new Date(order.created_at)).toLocaleDateString('en-US') %>
+              </p>
+            </div>
+            <div class="col-lg-6">
+              <p>
+                <strong>Shipping Address:</strong><br />
+                <%= user.firstName %> <%= user.lastName %><br />
+                <%= address.address %><br />
+                <%= address.city %>, <%= address.state %>, Pin: <%= address.zip %>
+              </p>
+            </div>
+          </div>
         </div>
-        <%- include('../partials/footer.ejs') %>
-            <%- include('../partials/plugins.ejs') %>
+      
+        <!-- Order Details -->
+        <div class="order-details">
+            <h2>Order Items</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% let sum=0; %> <% for (let i=0; i < order.products.length; i++) { %>
+                <tr>
+                  <td><%= order.products[i].product.name %></td>
+                  <td><%= order.products[i].quantity %></td>
+                  <td>
+                    ₹<%= order.products[i].product.price * order.products[i].quantity %>
+                  </td>
+                </tr>
+                <% sum +=order.products[i].product.price * order.products[i].quantity;
+                %> <% } %>
+                <tr>
+                  <td></td>
+                  <td><strong>Grand Total</strong></td>
+                  <td><strong>₹<%= sum %></strong></td>
+                </tr>
+                
+                <% if(discount>0){ %>
+                    <tr>
+                      <td></td>
+                      <td><strong>Discount</strong></td>
+                      <td><strong>₹<%= discount.toFixed(2) %></strong></td>
+                    </tr>
+                    <% } %> 
+                    <% if(productOfferAmount>0){ %>
+                        <tr>
+                          <td></td>
+                          <td><strong>Product Offer</strong></td>
+                          <td><strong>₹<%= productOfferAmount.toFixed(2) %> </strong></td>
+                        </tr>
+                        <% } %> 
+                        <% if(categoryOfferAmount>0){ %>
+                        <tr>
+                          <td></td>
+                          <td><strong>Category Offer</strong></td>
+                          <td><strong>₹<%= categoryOfferAmount.toFixed(2) %> </strong></td>
+                        </tr>
+                        <% } %>
+                <tr>
+                  <td></td>
+                  <td><strong>Total</strong></td>
+                  <td><strong>₹<%= order.totalPrice.toFixed(2) %> </strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      
+        <!-- Payment Options -->
+        <div class="row d-flex justify-content-center payment-options">
+            <div class="col-md-2 text-center">
+              <form action="/cashOnDelivery" method="post">
+                <input type="hidden" name="orderId" value="<%= order._id %>" />
+                <input
+                  type="submit"
+                  class="btn btn-dark"
+                  name="cashOnDelivery"
+                  value="Cash on Delivery"
+                />
+              </form>
+            </div>
+            <div class="col-md-2 text-center">
+              <form action="/onlinePayment" method="post" id="payment-form">
+                <input type="hidden" name="orderId" value="<%= order._id %>" />
+                <input type="hidden" name="amount" value="<%= order.totalPrice %>" />
+                <input
+                  type="hidden"
+                  name="discount"
+                  value="<%= sum - order.totalPrice %>"
+                />
+                <button class="btn btn-dark submit-button">Pay Online</button>
+              </form>
+            </div>
+            <div>
+              <form action="/walletPayment" method="post">
+                  <input type="hidden" name="orderId" value="<%= order._id %>" />
+                  <input type="hidden" name="amount" value="<%= order.totalPrice %>" />
+                  <input
+                    type="hidden"
+                    name="discount"
+                    value="<%= sum - order.totalPrice %>"
+                  />
+                  <input
+                    type="submit"
+                    class="btn btn-dark"
+                    name="walletPayment"
+                    value="Wallet"
+                  />
+                </form>
+            </div>
+          </div>
+        <br />
+        <% } else { %>
+        <div class="text-center">
+          <h3>No Orders</h3>
+        </div>
+        <% } %>
+      </div>
+      <%- include('../partials/footer.ejs') %> 
+      <%- include('../partials/plugins.ejs') %>
+</div>

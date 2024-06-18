@@ -42,7 +42,7 @@ const sendResetPasswordmail = async (name, email, token) => {
       from: process.env.MAIL_USER,
       to: email,
       subject: "Reset Password",
-      html: `<p> Hi, ${name}, <a href="http://127.0.0.1:3000/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
+      html: `<p> Hi, ${name}, <a href="${process.env.BASE_URL}/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
     });
 
     passwordTransporter.sendMail(mailOptions, function (error, info) {
@@ -57,7 +57,6 @@ const sendResetPasswordmail = async (name, email, token) => {
   }
 };
 const bcrypt = require("bcrypt");
-const Transaction = require("../models/transactionsModel");
 
 const securePassword = async (password) => {
   try {
@@ -68,12 +67,39 @@ const securePassword = async (password) => {
   }
 };
 
+// const calculateOfferAmount = async (product) => {
+//   try {
+//     var productOfferAmount = 0;
+//     var categoryOfferAmount = 0;
+
+//     const productOffer = await ProductOffer.findOne({
+//       active: true,
+//       product: product._id,
+//     });
+//     if (productOffer) {
+//       productOfferAmount +=
+//         product.price * (productOffer.amount / 100) * cartItem.quantity;
+//     }
+
+//     const categoryOffer = await CategoryOffer.findOne({
+//       active: true,
+//       category: product.category,
+//     });
+//     if (categoryOffer) {
+//       categoryOfferAmount +=
+//         product.price * (categoryOffer.amount / 100) * cartItem.quantity;
+//     }
+//     return { productOfferAmount, categoryOfferAmount };
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
 const getHome = async (req, res) => {
   try {
     const user = req.session.user;
     const productData = await Product.find({ is_Deleted: false });
 
-    res.render("home", {
+    return res.render("home", {
       user: user,
       product: productData,
     });
@@ -84,7 +110,7 @@ const getHome = async (req, res) => {
 
 const loadRegister = async (req, res) => {
   try {
-    res.render("register", {
+    return res.render("register", {
       errorMessage: req.flash("errorMessage"),
       successMessage: req.flash("successMessage"),
     });
@@ -134,7 +160,7 @@ const postRegister = async (req, res) => {
         return res.redirect("/register");
       }
     }
-    res.render("verifyOTP", {
+    return res.render("verifyOTP", {
       email: email,
       errorMessage: req.flash("errorMessage"),
       successMessage: req.flash("successMessage"),
@@ -147,7 +173,7 @@ const postRegister = async (req, res) => {
 const getOTP = async (req, res) => {
   try {
     console.log(email);
-    res.render("verifyOTP", {
+    return res.render("verifyOTP", {
       email: email,
       errorMessage: req.flash("errorMessage"),
       successMessage: req.flash("successMessage"),
@@ -163,7 +189,7 @@ const verifyOTP = async (req, res) => {
     const otp = req.body.otp;
     if (!email || !otp) {
       req.flash("errorMessage", "Please fill all fields!!");
-      res.render("verifyOTP", {
+      return res.render("verifyOTP", {
         email: email,
         errorMessage: req.flash("errorMessage"),
         successMessage: req.flash("successMessage"),
@@ -186,7 +212,7 @@ const verifyOTP = async (req, res) => {
         return res.redirect("/home");
       } else {
         req.flash("errorMessage", "Email and OTP not match");
-        res.render("verifyOTP", {
+        return res.render("verifyOTP", {
           email: email,
           errorMessage: req.flash("errorMessage"),
           successMessage: req.flash("successMessage"),
@@ -195,7 +221,7 @@ const verifyOTP = async (req, res) => {
       }
     } else {
       req.flash("errorMessage", "Incorrect email or OTP");
-      res.render("verifyOTP", {
+      return res.render("verifyOTP", {
         email: email,
         errorMessage: req.flash("errorMessage"),
         successMessage: req.flash("successMessage"),
@@ -210,7 +236,7 @@ const resend = async (req, res) => {
   try {
     console.log(req.body);
     const { email } = req.body;
-    res.render("verifyOTP", {
+    return res.render("verifyOTP", {
       email: email,
       errorMessage: req.flash("errorMessage"),
       successMessage: req.flash("successMessage"),
@@ -225,7 +251,7 @@ const userProfile = async (req, res) => {
     const user = req.session.user;
     const userData = await User.find({ _id: user }).populate("address");
 
-    res.render("viewUser", {
+    return res.render("viewUser", {
       user: userData,
       message: req.flash("message"),
     });
@@ -245,7 +271,7 @@ const userAccount = async (req, res) => {
 
     console.log(userData[0].firstName);
     const user = req.session.user;
-    res.render("userAccount", {
+    return res.render("userAccount", {
       user: userData,
     });
   } catch (error) {
@@ -301,7 +327,7 @@ const addDetails = async (req, res) => {
 const getNewAddress = async (req, res) => {
   try {
     const user = req.session.user;
-    res.render("newAddress", {
+    return res.render("newAddress", {
       user: user,
     });
   } catch (error) {
@@ -368,7 +394,7 @@ const deleteAddress = async (req, res) => {
 const getUserLogin = async (req, res) => {
   try {
     if (!req.session.user) {
-      res.render("login", {
+      return res.render("login", {
         errorMessage: req.flash("errorMessage"),
         successMessage: req.flash("successMessage"),
       });
@@ -416,7 +442,7 @@ const postLogin = async (req, res) => {
 
 const getForgetPassword = async (req, res) => {
   try {
-    res.render("forgetPassword", {
+    return res.render("forgetPassword", {
       message: req.flash("message"),
     });
   } catch (error) {
@@ -456,7 +482,7 @@ const getResetPassword = async (req, res) => {
     const token = req.query.token;
     console.log(token);
 
-    res.render("resetPassword", {
+    return res.render("resetPassword", {
       message: req.flash("message"),
       token: token,
     });
@@ -492,7 +518,7 @@ const resetPassword = async (req, res) => {
 const getChangePassword = async (req, res) => {
   try {
     const user = req.session.user;
-    res.render("changePassword", {
+    return res.render("changePassword", {
       user: user,
       message: req.flash("message"),
     });
@@ -625,37 +651,15 @@ const viewCart = async (req, res) => {
     for (const cartItem of cartItems) {
       const product = cartItem.product;
       total += cartItem.quantity * product.price;
-
-      //     const productOffer = await ProductOffer.findOne({ active: true, product: product._id });
-      //     if (productOffer) {
-      //         productDiscountPrice += product.price * (productOffer.amount / 100)
-      //         productOfferAmount += (product.price * (productOffer.amount / 100)) * cartItem.quantity;
-      //     }
-
-      //     const categoryOffer = await CategoryOffer.findOne({ active: true, category: product.category });
-      //     if (categoryOffer) {
-      //         categoryDiscountPrice = product.price * (categoryOffer.amount / 100)
-      //         categoryOfferAmount += (product.price * (categoryOffer.amount / 100)) * cartItem.quantity;
-      //     }
     }
     console.log(total);
-    // console.log(productOfferAmount);
-    // console.log(categoryOfferAmount);
-    // console.log(productDiscountPrice);
-    // console.log(categoryDiscountPrice);
 
-    // const offerTotal = total - productOfferAmount - categoryOfferAmount;
-    // console.log(offerTotal)
     req.session.total = total;
-    res.render("cart", {
+    return res.render("cart", {
       user: userId,
       message: req.flash("message"),
       cartItems: cartItems,
       total: total,
-      // productDiscount: productDiscountPrice,
-      // categoryDiscount: categoryDiscountPrice,
-      // productOffer: productOfferAmount,
-      // categoryOffer: categoryOfferAmount,
       finalTotal: total,
       isEmpty: false,
     });
@@ -746,7 +750,7 @@ const updateCart = async (req, res) => {
 const getAddress = async (req, res) => {
   try {
     const user = req.session.user;
-    res.render("addAddress", {
+    return res.render("addAddress", {
       user: user,
     });
   } catch (error) {
@@ -801,7 +805,7 @@ const proceedCheckout = async (req, res) => {
       let discount = 0;
       let couponCode = req.query.coupon || "";
 
-      res.render("checkout", {
+      return res.render("checkout", {
         user: userData,
         product: cartItems,
         total: total,
@@ -854,6 +858,42 @@ const applyCoupon = async (req, res) => {
   }
 };
 
+const removeCoupon = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const user = req.session.user;
+    const productData = await Cart.findOne({ user: user }).populate(
+      "cartItems.product"
+    );
+
+    if (productData) {
+      let total = parseFloat(req.session.total);
+      console.log(typeof total);
+      var discount;
+      console.log("total", total);
+
+      const coupon = await ReferralOffer.findOne({ active: true, code: code });
+
+      if (coupon) {
+        discount = 0;
+      }
+      console.log("discount", discount);
+
+      req.session.discount = discount;
+      res.json({
+        success: true,
+        total: total,
+        discount: discount,
+      });
+    } else {
+      res.json({ success: false, message: "Cart is empty" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ success: false, message: "An error occurred" });
+  }
+};
+
 const placeOrder = async (req, res) => {
   try {
     const user = req.session.user;
@@ -868,14 +908,12 @@ const placeOrder = async (req, res) => {
       return res.redirect("/checkout");
     }
     if (productData) {
-      let totalAmount = 0;
       let productOfferAmount = 0;
       let categoryOfferAmount = 0;
 
       var discount = 0;
       for (const cartItem of productData.cartItems) {
         const product = cartItem.product;
-        totalAmount += cartItem.quantity * product.price;
 
         const productOffer = await ProductOffer.findOne({
           active: true,
@@ -895,6 +933,8 @@ const placeOrder = async (req, res) => {
             product.price * (categoryOffer.amount / 100) * cartItem.quantity;
         }
       }
+      req.session.productOffer = productOfferAmount;
+      req.session.categoryOffer = categoryOfferAmount;
       console.log(productOfferAmount);
       console.log(categoryOfferAmount);
 
@@ -907,7 +947,7 @@ const placeOrder = async (req, res) => {
 
       const finalTotal =
         total - discount - productOfferAmount - categoryOfferAmount;
-
+      req.session.amount = finalTotal;
       const order = new Order({
         user: user,
         products: productData.cartItems,
@@ -917,18 +957,16 @@ const placeOrder = async (req, res) => {
 
       const newOrderData = await order.save();
       const addressData = await newOrderData.populate("address");
-      console.log(addressData);
+      console.log(addressData.address);
 
-      await Cart.deleteOne({ user: user });
-
-      res.render("orderPage", {
+      return res.render("orderPage", {
         user: userData,
         address: addressData.address,
         order: newOrderData,
         productOfferAmount: productOfferAmount,
         categoryOfferAmount: categoryOfferAmount,
         discount: discount,
-        message: req.flash("message"),
+        errorMessage: req.flash("errorMessage"),
       });
     } else {
       req.flash("message", "Cart is empty! Add products");
@@ -942,16 +980,31 @@ const placeOrder = async (req, res) => {
 const viewOrder = async (req, res) => {
   try {
     const user = req.session.user;
-    const orderId = req.session.orderId;
+    const orderId = req.session.orderId||req.query.orderId;
     const orderData = await Order.findOne({ _id: orderId })
       .populate("user")
       .populate("address")
       .populate("products.product");
+    const address = orderData.address;
+    const addressData = await Address.findOne({ _id: address._id });
+    console.log("address:", addressData);
+    var discount = 0;
     if (orderData) {
-      res.render("orderPage", {
+      if (req.session.discount) {
+        discount = req.session.discount;
+      }
+      console.log(discount);
+      console.log(req.session.productOffer);
+      console.log(req.session.categoryOffer);
+
+      return res.render("orderPage", {
         user: user,
         order: orderData,
-        message: req.flash("message"),
+        address: addressData,
+        productOfferAmount: req.session.productOffer,
+        categoryOfferAmount: req.session.categoryOffer,
+        discount: discount,
+        errorMessage: req.flash("errorMessage"),
       });
     }
   } catch (error) {
@@ -971,18 +1024,19 @@ const cashOnDelivery = async (req, res) => {
       });
       if (priceData) {
         req.flash(
-          "message",
+          "errorMessage",
           "Cash on delivery is not available for orders above 1000"
         );
-        return res.redirect("/orderPage");
+        return res.redirect(`/viewOrder?id=${orderId}`);
       }
       const updateData = await Order.findOneAndUpdate(
         { _id: orderId },
         { $set: { payment: "cash" } }
       );
+      await Cart.deleteOne({ user: user });
       if (updateData) {
         console.log("payment added to database");
-        return res.redirect("/successForCash");
+        return res.redirect("/orderSuccess");
       }
     }
   } catch (error) {
@@ -1006,6 +1060,7 @@ const onlinePayment = async (req, res) => {
       if (updateData) {
         console.log("payment added to database");
       }
+      await Cart.deleteOne({ user: user });
 
       const populatedData = await Order.findOne({ _id: orderId })
         .populate("user")
@@ -1018,12 +1073,7 @@ const onlinePayment = async (req, res) => {
       for (const productList of productsList) {
         const product = productList.product;
         console.log(product);
-        // if (product && product.images && product.images.length > 0) {
-        //     productImages.push('/img/shop/' + product.images[0]);
-        // }
       }
-
-      console.log(productImages);
 
       stripe.customers
         .create({
@@ -1052,8 +1102,8 @@ const onlinePayment = async (req, res) => {
               mode: "payment",
               customer: customer.id,
               billing_address_collection: "required",
-              success_url: "http://127.0.0.1:3000/success",
-              cancel_url: "http://127.0.0.1:3000/cancel",
+              success_url: `${process.env.BASE_URL}/success`,
+              cancel_url: `${process.env.BASE_URL}/cancel`,
             })
             .then((session) => {
               console.log(session);
@@ -1072,16 +1122,68 @@ const onlinePayment = async (req, res) => {
   }
 };
 
-const successPageForCash = async (req, res) => {
+const walletPayment = async (req, res) => {
   try {
     const user = req.session.user;
-    res.render("successPage", {
+    console.log(req.body);
+    const orderId = req.body.orderId;
+    req.session.orderId = orderId;
+    const orderData = await Order.findOne({ _id: orderId, user: user });
+    const userData = await User.findOne({ _id: user });
+    if (orderData) {
+      const price = orderData.totalPrice;
+      if (price >= userData.wallet) {
+        req.flash("errorMessage", "No sufficient balance in wallet!!");
+        return res.redirect("/orderPage");
+      }
+      const updatedWalletData = await User.findOneAndUpdate(
+        { _id: user },
+        { $inc: { wallet: -price } }
+      );
+      const updateData = await Order.findOneAndUpdate(
+        { _id: orderId },
+        { $set: { payment: "wallet" } }
+      );
+      if (updateData) {
+        console.log("payment added to database");
+      }
+      await Cart.deleteOne({ user: user });
+      return res.redirect("/walletSuccess");
+    } else {
+      console.log("order details not found!!");
+      req.flash("errorMessage", "Order details not found!!");
+      return res.redirect("/orderPage");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const successOrder = async (req, res) => {
+  try {
+    const user = req.session.user;
+    return res.render("successPage", {
       user: user,
     });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+const successOrderWallet = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findOne({ _id: user });
+    const walletBalance = userData.wallet;
+    return res.render("successWallet", {
+      user: user,
+      balance: walletBalance,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 const successPage = async (req, res) => {
   try {
     const user = req.session.user;
@@ -1102,7 +1204,7 @@ const successPage = async (req, res) => {
     console.log(orderData);
 
     if (orderData) {
-      res.render("invoice", {
+      return res.render("invoice", {
         orders: orderData,
         user: user,
       });
@@ -1117,16 +1219,22 @@ const cancelPage = async (req, res) => {
     const orderId = req.session.orderId;
     const user = req.session.user;
     const amount = req.session.amount;
-    // const updateOrderData = await Order.findOneAndUpdate({ _id: orderId }, { $set: { status: 'Cancelled' } });
-    const order = await Order.findOneAndUpdate({ _id: orderId });
+    var deductedAmount = 0;
+    const order = await Order.findOne({ _id: orderId }).populate(
+      "products.product"
+    );
     order.products.forEach((product) => {
       product.productStatus = false;
+      console.log(product.product.price);
+
+      console.log(typeof product.product.price);
+      console.log(typeof product.quantity);
+
+      deductedAmount +=
+        parseFloat(product.product.price) * parseFloat(product.quantity);
     });
-
-    // Update the order status to "Cancelled"
+    console.log(deductedAmount);
     order.status = "Cancelled";
-
-    // Save the updated order
     await order.save();
 
     const updateData = await User.findOneAndUpdate(
@@ -1162,14 +1270,40 @@ const cancelProduct = async (req, res) => {
       }
     }
     for (const product of orderData.products) {
-      console.log(product.product);
-      console.log(productIdObject);
-
       if (product.product.equals(productIdObject)) {
         product.productStatus = false;
         console.log(product.product.price);
+        var productOfferAmount = 0;
+        var categoryOfferAmount = 0;
+
+        const productOffer = await ProductOffer.findOne({
+          active: true,
+          product: product.product._id,
+        });
+        if (productOffer) {
+          productOfferAmount +=
+            product.product.price *
+            (productOffer.amount / 100) *
+            product.quantity;
+        }
+        console.log(productOfferAmount);
+
+        const categoryOffer = await CategoryOffer.findOne({
+          active: true,
+          category: product.product.category,
+        });
+        if (categoryOffer) {
+          categoryOfferAmount +=
+            product.product.price *
+            (categoryOffer.amount / 100) *
+            product.quantity;
+          console.log(categoryOfferAmount);
+        }
+
         orderData.totalPrice -= parseFloat(
-          product.product.price * product.quantity
+          product.product.price * product.quantity +
+            productOfferAmount +
+            categoryOfferAmount
         );
         try {
           await orderData.save();
@@ -1178,8 +1312,22 @@ const cancelProduct = async (req, res) => {
           productData.stock += product.quantity;
           console.log(productData.stock);
           await productData.save();
+          var flag = 0;
+          const updatedOrderData = await Order.findOne({
+            _id: orderId,
+            user: user,
+          }).populate("products.product");
+          for (const product of updatedOrderData.products) {
+            if ((product.productStatus = true)) {
+              flag = 1; break;
+            }
+          }
+          if (flag == 0) {
+            orderData.status = "Cancelled";
+            await orderData.save();
+          }
           console.log(`Status of ${productIdObject} set to false`);
-          req.flash("message", "Product cancelled");
+          req.flash("errorMessage", "Product cancelled");
           return res.redirect(`/viewOrder?id=${orderId}`);
         } catch (error) {
           console.error("Error updating product status:", error);
@@ -1259,7 +1407,7 @@ const viewWishlist = async (req, res) => {
       "items.product"
     );
     if (!productData || productData.items.length === 0) {
-      res.render("wishlist", {
+      return res.render("wishlist", {
         user: user,
         message: req.flash("message"),
         wishlistItems: [],
@@ -1267,7 +1415,7 @@ const viewWishlist = async (req, res) => {
       });
     }
     if (productData) {
-      res.render("wishlist", {
+      return res.render("wishlist", {
         user: user,
         wishlistItems: productData,
         message: req.flash("message"),
@@ -1314,7 +1462,7 @@ const addToWishlist = async (req, res) => {
       console.log(wishlistData);
       const newData = await wishlistData.populate("items.product");
       if (newData) {
-        res.render("wishlist", {
+        return res.render("wishlist", {
           user: user,
           wishlistItems: newData,
           message: req.flash("message"),
@@ -1436,7 +1584,7 @@ const listOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const allOrdersData = await Order.find({ user: user })
-      .sort({ created_at: -1 })
+      .sort({ created_at: 1 })
       .populate("products.product")
       .populate("address");
     if (allOrdersData) {
@@ -1463,7 +1611,7 @@ const listOrders = async (req, res) => {
       }
 
       await allOrdersData.save;
-      res.render("listorders", {
+      return res.render("listorders", {
         user: user,
         order: allOrdersData,
         message: req.flash("message"),
@@ -1492,7 +1640,7 @@ const viewOrderDetails = async (req, res) => {
     console.log(orderDetails);
     console.log(orderDetails.address);
     req.session.amount = orderDetails.totalPrice;
-    res.render("viewOrderDetails", {
+    return res.render("viewOrderDetails", {
       user: user,
       order: orderDetails,
       successMessage: req.flash("successMessage"),
@@ -1510,7 +1658,7 @@ const wallet = async (req, res) => {
       user: user,
       status: "Cancelled",
     }).populate("products.product");
-    res.render("wallet", {
+    return res.render("wallet", {
       user: user,
       order: order,
       message: req.flash("message"),
@@ -1523,7 +1671,7 @@ const wallet = async (req, res) => {
 const aboutPage = async (req, res) => {
   try {
     const userData = req.session.user;
-    res.render("about", { user: userData });
+    return res.render("about", { user: userData });
   } catch (error) {
     console.log(error.message);
   }
@@ -1532,7 +1680,7 @@ const aboutPage = async (req, res) => {
 const contactPage = async (req, res) => {
   try {
     const userData = req.session.user;
-    res.render("contact", { user: userData });
+    return res.render("contact", { user: userData });
   } catch (error) {
     console.log(error.message);
   }
@@ -1573,11 +1721,14 @@ module.exports = {
   proceedCheckout,
   placeOrder,
   applyCoupon,
+  removeCoupon,
   viewOrder,
   cashOnDelivery,
   onlinePayment,
+  walletPayment,
   cancelPage,
-  successPageForCash,
+  successOrder,
+  successOrderWallet,
   successPage,
   cancelProduct,
   cancelAllProducts,
