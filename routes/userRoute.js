@@ -157,4 +157,8 @@ user_route.get("/about", userCheck.isBlocked, userController.aboutPage);
 
 user_route.get("/contact", userCheck.isBlocked, userController.contactPage);
 
+user_route.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
 module.exports = user_route;

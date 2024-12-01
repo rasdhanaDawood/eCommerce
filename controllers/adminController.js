@@ -15,6 +15,9 @@ const {
 const excelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 
+const IP = process.env.IP || '127.0.0.1';
+const PORT = process.env.PORT || 8080;
+
 const bcrypt = require("bcrypt");
 
 const randomstring = require("randomstring");
@@ -46,7 +49,7 @@ const sendResetPasswordmail = async (name, email, token) => {
       from: process.env.MAIL_USER,
       to: email,
       subject: "Reset Password",
-      html: `<p> Hi, ${name}, <a href="${process.env.BASE_URL}/admin/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
+      html: `<p> Hi, ${name}, <a href="http://${IP}:${PORT}/admin/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
     });
 
     passwordTransporter.sendMail(mailOptions, function (error, info) {

@@ -16,7 +16,11 @@ const {
   ReferralOffer,
 } = require("../models/offerModel");
 const Wishlist = require("../models/wishlistModel");
+
 const PDFDocument = require("pdfkit");
+
+const IP = process.env.IP || '127.0.0.1';
+const PORT = process.env.PORT || 8080;
 
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
@@ -42,7 +46,7 @@ const sendResetPasswordmail = async (name, email, token) => {
       from: process.env.MAIL_USER,
       to: email,
       subject: "Reset Password",
-      html: `<p> Hi, ${name}, <a href="${process.env.BASE_URL}/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
+      html: `<p> Hi, ${name}, <a href="http://${IP}:${PORT}/reset-Password?token=${token}"> Please  click here to reset your password</a> `,
     });
 
     passwordTransporter.sendMail(mailOptions, function (error, info) {
@@ -67,33 +71,7 @@ const securePassword = async (password) => {
   }
 };
 
-// const calculateOfferAmount = async (product) => {
-//   try {
-//     var productOfferAmount = 0;
-//     var categoryOfferAmount = 0;
 
-//     const productOffer = await ProductOffer.findOne({
-//       active: true,
-//       product: product._id,
-//     });
-//     if (productOffer) {
-//       productOfferAmount +=
-//         product.price * (productOffer.amount / 100) * cartItem.quantity;
-//     }
-
-//     const categoryOffer = await CategoryOffer.findOne({
-//       active: true,
-//       category: product.category,
-//     });
-//     if (categoryOffer) {
-//       categoryOfferAmount +=
-//         product.price * (categoryOffer.amount / 100) * cartItem.quantity;
-//     }
-//     return { productOfferAmount, categoryOfferAmount };
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
 const getHome = async (req, res) => {
   try {
     const user = req.session.user;
@@ -1102,8 +1080,8 @@ const onlinePayment = async (req, res) => {
               mode: "payment",
               customer: customer.id,
               billing_address_collection: "required",
-              success_url: `${process.env.BASE_URL}/success`,
-              cancel_url: `${process.env.BASE_URL}/cancel`,
+              success_url: `http://${IP}:${PORT}/success`,
+              cancel_url: `http://${IP}:${PORT}/cancel`,
             })
             .then((session) => {
               console.log(session);
@@ -1584,7 +1562,7 @@ const listOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const allOrdersData = await Order.find({ user: user })
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       .populate("products.product")
       .populate("address");
     if (allOrdersData) {
@@ -1611,7 +1589,7 @@ const listOrders = async (req, res) => {
       }
 
       await allOrdersData.save;
-      return res.render("listorders", {
+      return res.render("listOrders", {
         user: user,
         order: allOrdersData,
         message: req.flash("message"),
