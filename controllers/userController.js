@@ -1052,7 +1052,7 @@ const onlinePayment = async (req, res) => {
         .populate("products.product");
       console.log(populatedData);
       const productsList = populatedData.products;
-      const productImages = [];
+      // const productImages = [];
 
       for (const productList of productsList) {
         const product = productList.product;
@@ -1094,15 +1094,20 @@ const onlinePayment = async (req, res) => {
               return res.redirect(session.url);
             })
             .catch((error) => {
-              console.log(error.message);
+              console.error("Error creating Stripe session:", error.message);
+              return res.status(500).send("Internal Server Error");
             });
         })
         .catch((error) => {
-          console.log(error.message);
+          console.error("Error creating Stripe customer:", error.message);
+          return res.status(500).send("Internal Server Error");
         });
+      } else {
+        return res.status(404).send("Order not found");  
     }
   } catch (error) {
-    console.log(error.message);
+    console.error("Error processing payment:", error.message);
+    return res.status(500).send("Internal Server Error");
   }
 };
 
