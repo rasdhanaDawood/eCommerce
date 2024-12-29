@@ -8,7 +8,7 @@ const userCheck = require('../middleware/checkBlocked');
 
 const auth = require('../middleware/auth');
 
-const productController = require("../controllers/productcontroller");
+const productController = require("../controllers/productController");
 
 product_route.get('/product', userCheck.isBlocked, productController.viewProduct);
 
