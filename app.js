@@ -74,7 +74,7 @@ const productRoute = require("./routes/productRoute");
 app.use("/", productRoute);
 
 const IP = process.env.IP || "127.0.0.1";
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
   console.log(`Server is running at http://${IP}:${port}/login`);

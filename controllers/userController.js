@@ -75,12 +75,18 @@ const securePassword = async (password) => {
 const getHome = async (req, res) => {
   try {
     const user = req.session.user;
-    const productData = await Product.find({ is_Deleted: false });
+    if (user) {
+      const productData = await Product.find({ is_Deleted: false });
 
     return res.render("home", {
       user: user,
       product: productData,
     });
+    }
+    else {
+      return res.redirect("/login");
+    }
+    
   } catch (error) {
     console.log(error.message);
   }
