@@ -523,7 +523,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     // host name
     '(?:(?:[a-zA-Z\\u00a1-\\uffff0-9]-*)*[a-zA-Z\\u00a1-\\uffff0-9]+)' +
     // domain name
-    '(?:\\.(?:[a-zA-Z\\u00a1-\\uffff0-9]-*)*[a-zA-Z\\u00a1-\\uffff0-9]+)*' +
+    '(?:\\.[a-zA-Z\\u00a1-\\uffff0-9](?:[a-zA-Z\\u00a1-\\uffff0-9-]{0,61}[a-zA-Z\\u00a1-\\uffff0-9])?)*' +
     // TLD identifier
     '(?:\\.(?:[a-zA-Z\\u00a1-\\uffff]{2,}))' + ")" +
     // port number
