@@ -1176,7 +1176,7 @@ const deleteReferralCoupon = async (req, res) => {
 const displaySalesReport = async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    console.log(startDate, endDate);
+    console.log("startDate: %s, endDate: %s", startDate, endDate);
 
     if (startDate && endDate) {
       filter.created_at = { $gte: new Date(startDate), $lt: new Date(endDate) };
