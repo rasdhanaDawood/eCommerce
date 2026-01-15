@@ -11,6 +11,7 @@ const {
   CategoryOffer,
   ReferralOffer,
 } = require("../models/offerModel");
+const _ = require("lodash");
 
 const excelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
@@ -540,8 +541,9 @@ const addCategory = async (req, res) => {
       status = false;
     }
 
+    const safeName = _.escapeRegExp(name);
     const categoryData = await Category.findOne({
-      name: { $regex: new RegExp(name, "i") },
+      name: { $regex: new RegExp(safeName, "i") },
     });
     if (categoryData) {
       req.flash("successMessage", "Category already saved");
